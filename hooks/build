@@ -1,0 +1,26 @@
+#!/bin/bash -xe
+
+# the name of the branch or the tag that is currently being tested
+echo "SOURCE_BRANCH=${SOURCE_BRANCH}"
+# the SHA1 hash of the commit being tested
+echo "SOURCE_COMMIT=${SOURCE_COMMIT}"
+# the message from the commit being tested and built
+echo "COMMIT_MSG=${COMMIT_MSG}"
+# the name of the Docker repository being built
+echo "DOCKER_REPO=${DOCKER_REPO}"
+# the dockerfile currently being built
+echo "DOCKERFILE_PATH=${DOCKERFILE_PATH}"
+# the Docker repository tag being built
+echo "CACHE_TAG=${CACHE_TAG}"
+# the name and tag of the Docker repository being built
+echo "IMAGE_NAME=${IMAGE_NAME}"
+
+[ -n "${BUILD_VERSION}" ]	||	BUILD_VERSION=$(git describe --tags --long --dirty --always)
+[ -n "${BUILD_DATE}" ]		||	BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+docker build $@ \
+	--build-arg "BUILD_VERSION=${BUILD_VERSION}" \
+	--build-arg "BUILD_DATE=${BUILD_DATE}" \
+	--file "${DOCKERFILE_PATH}" \
+	--tag "${IMAGE_NAME}" \
+	.
