@@ -16,7 +16,8 @@ make armhf
 
 ```bash
 docker run --name unbound \
-    -p 5353:5353 \
+    -p 5353:53/tcp \
+    -p 5353:53/udp \
     klutchell/unbound
 ```
 
