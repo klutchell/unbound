@@ -1,6 +1,6 @@
-# docker-cloud9
+# unbound-docker
 
-[cloud9](https://c9.io/) docker images
+[unbound](https://www.nlnetlabs.nl/projects/unbound/about/) docker images
 
 ## Build
 
@@ -15,25 +15,20 @@ make armhf
 ## Deploy
 
 ```bash
-docker run --name cloud9 \
-    -v cloud9_home:/root \
-    -v cloud9_workspace:/workspace \
-    -p 8080:8080 \
-    --privileged \
-    klutchell/cloud9
+docker run --name unbound \
+    -p 5353:5353 \
+    klutchell/unbound
 ```
 
 ## Environment
 
 |Name|Description|Example|
 |---|---|---|
-|`C9_USER`|(optional) username for http auth|`root`|
-|`C9_PASS`|(optional) password for http auth|`resin`|
 |`TZ`|(optional) container timezone|`America/Toronto`|
 
 ## Usage
 
-log into the [cloud9 ide](https://c9.io/) by visiting `http://<server-ip>:8080`
+_tbd_
 
 ## Author
 
@@ -45,5 +40,5 @@ Kyle Harding <kylemharding@gmail.com>
 
 ## Acknowledgments
 
-* https://github.com/hwegge2/rpi-cloud9-ide
-* https://github.com/kdelfour/cloud9-docker
+* https://docs.pi-hole.net/guides/unbound/
+* https://github.com/MatthewVance/unbound-docker
