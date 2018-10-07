@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 # - Verify DNSSEC signatures, discarding BOGUS domains
 # - Apply a few security and privacy tricks
 WORKDIR /etc/unbound/unbound.conf.d
-COPY unbound.conf ./
+COPY default.conf ./
 
 # Optional: Download the list of primary root servers (serving the domain .).
 # Unbound ships its own list but we can also download the most recent list and

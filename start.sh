@@ -5,4 +5,4 @@
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # start unbound daemon
-/usr/sbin/unbound -d -c /etc/unbound/unbound.conf.d/unbound.conf
+/usr/sbin/unbound -d -c /etc/unbound/unbound.conf.d/default.conf
