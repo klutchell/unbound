@@ -8,7 +8,6 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # http://dnssec.vs.uni-due.de/
 # https://nlnetlabs.nl/documentation/unbound/howto-anchor/
 unbound-anchor
-echo 'auto-trust-anchor-file: "/var/lib/unbound/root.key"' >> /etc/unbound/unbound.conf.d/default.conf
 
 # start unbound daemon
 /usr/sbin/unbound -d -c /etc/unbound/unbound.conf.d/default.conf
