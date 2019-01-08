@@ -5,11 +5,11 @@
 ## Build
 
 ```bash
-# build for x86_64
-make
+# build for amd64
+make ARCH=amd64
 
-# build for armhf
-make armhf
+# build for armv7hf
+make ARCH=armv7hf
 ```
 
 ## Deploy
@@ -18,7 +18,7 @@ make armhf
 docker run --name unbound \
     -p 5353:53/tcp \
     -p 5353:53/udp \
-    klutchell/unbound
+    klutchell/unbound:amd64
 ```
 
 ## Environment
