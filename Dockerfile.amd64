@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-debian
+FROM balenalib/amd64
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -7,20 +7,12 @@ LABEL build_version="${BUILD_VERSION}"
 LABEL build_date="${BUILD_DATE}"
 LABEL maintainer="kylemharding@gmail.com"
 
-# allow building on x86
-RUN [ "cross-build-start" ]
-
-# set frontend
-ENV DEBIAN_FRONTEND noninteractive
-
-# install updates and common utilities
-RUN apt-get update && apt-get install -yq --no-install-recommends \
+# install packages
+RUN install_packages \
 	ca-certificates \
 	curl \
 	dnsutils \
-	unbound \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	unbound
 	
 # Highlights:
 # - Listen only for queries from the local Pi-hole installation (on port 5353)
@@ -38,11 +30,8 @@ WORKDIR /var/lib/unbound
 RUN curl https://www.internic.net/domain/named.root -o root.hints
 
 # copy start script
-COPY start.sh /
+WORKDIR /
+COPY start.sh .
 
 # run start script on boot
-CMD ["/bin/sh", "/start.sh"]
-
-# end cross build
-RUN [ "cross-build-end" ]
-
+CMD ["bash", "start.sh"]

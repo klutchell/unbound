@@ -1,7 +1,13 @@
 
 DOCKER_REPO		:= klutchell/unbound
+ARCH			:= amd64
+
 BUILD_VERSION	:= $$(git describe --tags --long --dirty --always)
 BUILD_DATE		:= $$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+IMAGE_NAME      := ${DOCKER_REPO}:${ARCH}-${BUILD_VERSION}
+LATEST_NAME     := ${DOCKER_REPO}:${ARCH}-latest
+DOCKERFILE_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/Dockerfile.${ARCH}
 
 .DEFAULT_GOAL	:= build
 
@@ -20,33 +26,18 @@ tag-patch:
 	@git tag -a ${VERSION} -m "version ${VERSION}"
 	@git push --tags
 
-tag:	tag-patch
-
 build:
-	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${DOCKER_REPO}:${BUILD_VERSION} DOCKERFILE_PATH=Dockerfile ./hooks/build
-	@docker tag ${DOCKER_REPO}:${BUILD_VERSION} ${DOCKER_REPO}:latest
+	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${IMAGE_NAME} DOCKERFILE_PATH=${DOCKERFILE_PATH} ./hooks/build
+	@docker tag ${IMAGE_NAME} ${LATEST_NAME}
 
 build-nc:
-	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${DOCKER_REPO}:${BUILD_VERSION} DOCKERFILE_PATH=Dockerfile ./hooks/build --no-cache
-	@docker tag ${DOCKER_REPO}:${BUILD_VERSION} ${DOCKER_REPO}:latest
-
-build-armhf:
-	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${DOCKER_REPO}:armhf-${BUILD_VERSION} DOCKERFILE_PATH=Dockerfile.armhf ./hooks/build
-	@docker tag ${DOCKER_REPO}:armhf-${BUILD_VERSION} ${DOCKER_REPO}:armhf-latest
-
-build-armhf-nc:
-	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${DOCKER_REPO}:armhf-${BUILD_VERSION} DOCKERFILE_PATH=Dockerfile.armhf ./hooks/build --no-cache
-	@docker tag ${DOCKER_REPO}:armhf-${BUILD_VERSION} ${DOCKER_REPO}:armhf-latest
+	BUILD_VERSION=${BUILD_VERSION} BUILD_DATE=${BUILD_DATE} IMAGE_NAME=${IMAGE_NAME} DOCKERFILE_PATH=${DOCKERFILE_PATH} ./hooks/build --no-cache
+	@docker tag ${IMAGE_NAME} ${LATEST_NAME}
 
 push:
-	@docker push ${DOCKER_REPO}:${BUILD_VERSION}
+	@docker push ${IMAGE_NAME}
 
-push-armhf:
-	@docker push ${DOCKER_REPO}:armhf-${BUILD_VERSION}
+tag:		tag-patch
 
-release:		build push
-
-release-armhf:	build-armhf push-armhf
-
-armhf:			build-armhf
+release:	build push
 
