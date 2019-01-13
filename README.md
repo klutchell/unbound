@@ -7,6 +7,8 @@
 ![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)
 ![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)
 
+## Build
+
 ```bash
 # build for platform
 make ARCH=amd64
