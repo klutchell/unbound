@@ -4,7 +4,7 @@
 # eg. TZ=America/Toronto
 ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# enable dnssec
+# update the root anchor for dnssec
 /usr/sbin/unbound-anchor -a "/var/lib/unbound/root.key"
 
 # Download the list of primary root servers.
@@ -13,8 +13,8 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # doing it more often then every 6 months.
 curl https://www.internic.net/domain/named.root -o "/var/lib/unbound/root.hints"
 
-# take full ownership of unbound lib dir since the unbound process needs write access
-# fatal error: could not open autotrust file for writing, /var/lib/unbound/root.key.17-0: Permission denied
+# take full ownership of unbound lib dir since the unbound process needs
+# write access to the root.key parent dir from above
 chown -R unbound:unbound "/var/lib/unbound"
 
 # start unbound daemon
