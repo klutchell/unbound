@@ -5,7 +5,9 @@
 ![](https://img.shields.io/github/last-commit/klutchell/unbound-docker.svg?style=for-the-badge)
 ![](https://img.shields.io/github/tag-date/klutchell/unbound-docker.svg?style=for-the-badge)
 ![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)
+![](https://img.shields.io/microbadger/layers/klutchell/unbound.svg?style=for-the-badge)
 ![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)
+![](https://img.shields.io/docker/stars/klutchell/unbound.svg?style=for-the-badge)
 
 ## Build
 
