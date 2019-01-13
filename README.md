@@ -14,8 +14,8 @@ make ARCH=armv7hf
 
 ```bash
 docker run --name unbound \
-    -p 53:53/tcp \
-    -p 53:53/udp \
+    -p 5353:53/tcp \
+    -p 5353:53/udp \
     klutchell/unbound:amd64
 ```
 
@@ -27,13 +27,24 @@ docker run --name unbound \
 
 ## Usage
 
-Set your DNS servers to `<docker-host-ip>:53` on your other devices.
+Set your DNS servers to `<docker-host-ip>:5353` on your other devices.
+
+## Testing
+
+Copied from: https://docs.pi-hole.net/guides/unbound/
+
+Start your local recursive server and test that it's operational:
+```bash
+dig pi-hole.net @127.0.0.1 -p 5353
+```
+The first query may be quite slow, but subsequent queries, also to other domains under the same TLD, should be fairly quick.
 
 You can test DNSSEC validation using
 ```bash
-dig sigfail.verteiltesysteme.net @127.0.0.1 -p 53
-dig sigok.verteiltesysteme.net @127.0.0.1 -p 53
+dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
+dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
 ```
+The first command should give a status report of SERVFAIL and no IP address. The second should give NOERROR plus an IP address.
 
 ## Contributing
 
