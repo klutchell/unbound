@@ -1,8 +1,9 @@
 # unbound-docker
 
-[unbound](https://unbound.net) docker images
+[Unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
 
-## Build
+![](https://img.shields.io/microbadger/image-size/klutchell/unbound/amd64.svg?style=for-the-badge)
+![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)
 
 ```bash
 # build for platform
@@ -30,8 +31,6 @@ docker run --name unbound \
 Set your DNS servers to `<docker-host-ip>:5353` on your other devices.
 
 ## Testing
-
-Copied from: https://docs.pi-hole.net/guides/unbound/
 
 Start your local recursive server and test that it's operational:
 ```bash
@@ -69,11 +68,13 @@ Kyle Harding <kylemharding@gmail.com>
 
 ## Acknowledgments
 
-This image wouldn't be possible without the hard work of the unbound
-core team and the references included below!
+* [nlnetlabs.nl](https://nlnetlabs.nl/projects/unbound/about/)
+* [balena.io](https://www.balena.io/docs/reference/base-images/base-images/)
+* [pi-hole.net](https://docs.pi-hole.net/guides/unbound/)
 
 ## References
 
+* https://www.balena.io/docs/reference/base-images/base-images/
 * https://www.nlnetlabs.nl/svn/unbound/trunk/doc/example.conf.in
 * https://docs.pi-hole.net/guides/unbound/
 * https://github.com/folhabranca/docker-unbound

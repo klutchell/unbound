@@ -1,22 +1,11 @@
 #!/bin/bash -xe
 
-# docker hub will provide the following environment variables:
-# 	SOURCE_BRANCH: the name of the branch or the tag that is currently being tested.
-# 	SOURCE_COMMIT: the SHA1 hash of the commit being tested.
-# 	COMMIT_MSG: the message from the commit being tested and built.
-# 	DOCKER_REPO: the name of the Docker repository being built.
-# 	DOCKERFILE_PATH: the dockerfile currently being built.
-# 	CACHE_TAG: the Docker repository tag being built.
-# 	IMAGE_NAME: the name and tag of the Docker repository being built. (This variable is a combination of DOCKER_REPO:CACHE_TAG.)
-# from: https://docs.docker.com/docker-hub/builds/advanced/
 env
 
-[ -n "${BUILD_VERSION}" ]	||	BUILD_VERSION=$(git describe --tags --long --dirty --always)
-[ -n "${BUILD_DATE}" ]		||	BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
 docker build $@ \
-	--build-arg "BUILD_VERSION=${BUILD_VERSION}" \
-	--build-arg "BUILD_DATE=${BUILD_DATE}" \
+    --build-arg "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+	--build-arg "BUILD_VERSION=$(git describe --tags --long --dirty --always)" \
+    --build-arg "VCS_REF=$(git rev-parse --short HEAD)" \
 	--file "${DOCKERFILE_PATH}" \
 	--tag "${IMAGE_NAME}" \
 	.
