@@ -16,8 +16,8 @@ make ARCH=armv7hf
 
 ```bash
 docker run --name unbound \
-    -p 5353:53/tcp \
-    -p 5353:53/udp \
+    -p 53:53/tcp \
+    -p 53:53/udp \
     klutchell/unbound:amd64
 ```
 
@@ -29,17 +29,32 @@ docker run --name unbound \
 
 ## Usage
 
-_tbd_
+Set your DNS servers to `<docker-host-ip>:53` on your other devices.
+
+You can test DNSSEC validation using
+```bash
+dig sigfail.verteiltesysteme.net @127.0.0.1 -p 53
+dig sigok.verteiltesysteme.net @127.0.0.1 -p 53
+```
 
 ## Author
 
 Kyle Harding <kylemharding@gmail.com>
 
+## Acknowledgments
+
+This image wouldn't be possible without the hard work of the unbound
+core team and the references included below!
+
+## References
+
+* https://www.nlnetlabs.nl/svn/unbound/trunk/doc/example.conf.in
+* https://docs.pi-hole.net/guides/unbound/
+* https://github.com/folhabranca/docker-unbound
+* https://github.com/MatthewVance/unbound-docker
+* http://dnssec.vs.uni-due.de/
+* https://nlnetlabs.nl/documentation/unbound/howto-anchor/
+
 ## License
 
 [MIT License](./LICENSE)
-
-## Acknowledgments
-
-* https://docs.pi-hole.net/guides/unbound/
-* https://github.com/MatthewVance/unbound-docker
