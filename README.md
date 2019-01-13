@@ -11,18 +11,21 @@
 ## Build
 
 ```bash
-# build for platform
+# build for amd64
 make ARCH=amd64
+
+# build for armv7hf
 make ARCH=armv7hf
 ```
 
 ## Deploy
 
 ```bash
-docker run --name unbound \
-    -p 5353:53/tcp \
-    -p 5353:53/udp \
-    klutchell/unbound:amd64
+# deploy on amd64
+docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:amd64
+
+# deploy on armv7hf
+docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:armv7hf
 ```
 
 ## Environment
@@ -53,18 +56,20 @@ The first command should give a status report of SERVFAIL and no IP address. The
 ## Contributing
 
 ```bash
-# bump git version tag
+# bump patch version
 make tag BUMP=patch
+
+# bump minor version
 make tag BUMP=minor
+
+# bump major version
 make tag BUMP=major
 
-# deploy to docker hub
+# push amd64 image to docker hub
 make push ARCH=amd64
-make push ARCH=armv7hf
 
-# build and deploy to docker hub
-make release ARCH=amd64
-make release ARCH=armv7hf
+# push armv7hf image to docker hub
+make push ARCH=armv7hf
 ```
 
 ## Author
