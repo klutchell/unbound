@@ -2,7 +2,9 @@
 
 [Unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
 
-![](https://img.shields.io/microbadger/image-size/klutchell/unbound/amd64.svg?style=for-the-badge)
+![](https://img.shields.io/github/last-commit/klutchell/unbound-docker.svg?style=for-the-badge)
+![](https://img.shields.io/github/tag-date/klutchell/unbound-docker.svg?style=for-the-badge)
+![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)
 ![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)
 
 ```bash

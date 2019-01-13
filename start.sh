@@ -14,7 +14,7 @@ ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 curl https://www.internic.net/domain/named.root -o "/var/lib/unbound/root.hints"
 
 # take full ownership of unbound lib dir since the unbound process needs
-# write access to the root.key parent dir from above
+# write access to the root.key parent dir
 chown -R unbound:unbound "/var/lib/unbound"
 
 # start unbound daemon
