@@ -19,7 +19,7 @@ WORKDIR /etc/unbound/unbound.conf.d
 COPY default.conf .
 
 # copy startup script
-WORKDIR /usr/src/app
+WORKDIR /var/lib/unbound
 COPY start.sh .
 
 # run start script on boot
