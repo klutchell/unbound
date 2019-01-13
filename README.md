@@ -5,10 +5,8 @@
 ## Build
 
 ```bash
-# build for amd64
+# build for platform
 make ARCH=amd64
-
-# build for armv7hf
 make ARCH=armv7hf
 ```
 
@@ -35,6 +33,23 @@ You can test DNSSEC validation using
 ```bash
 dig sigfail.verteiltesysteme.net @127.0.0.1 -p 53
 dig sigok.verteiltesysteme.net @127.0.0.1 -p 53
+```
+
+## Contributing
+
+```bash
+# bump git version tag
+make tag BUMP=patch
+make tag BUMP=minor
+make tag BUMP=major
+
+# deploy to docker hub
+make push ARCH=amd64
+make push ARCH=armv7hf
+
+# build and deploy to docker hub
+make release ARCH=amd64
+make release ARCH=armv7hf
 ```
 
 ## Author

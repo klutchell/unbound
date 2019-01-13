@@ -1,9 +1,11 @@
 
 DOCKER_REPO		:= klutchell/unbound
 ARCH			:= amd64
+BUMP            := patch
 
 BUILD_VERSION	:= $$(git describe --tags --long --dirty --always)
 BUILD_DATE		:= $$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+NEXT_VERSION    := $$(docker run --rm treeder/bump --input "$$(git describe --tags)" ${BUMP})
 
 IMAGE_NAME      := ${DOCKER_REPO}:${ARCH}-${BUILD_VERSION}
 LATEST_NAME     := ${DOCKER_REPO}:${ARCH}-latest
@@ -11,19 +13,8 @@ DOCKERFILE_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))/Doc
 
 .DEFAULT_GOAL	:= build
 
-tag-major: VERSION	:= $$(docker run --rm treeder/bump --input "$$(git describe --tags)" major)
-tag-major:
-	@git tag -a ${VERSION} -m "version ${VERSION}"
-	@git push --tags
-
-tag-minor: VERSION	:= $$(docker run --rm treeder/bump --input "$$(git describe --tags)" minor)
-tag-minor:
-	@git tag -a ${VERSION} -m "version ${VERSION}"
-	@git push --tags
-
-tag-patch: VERSION	:= $$(docker run --rm treeder/bump --input "$$(git describe --tags)" patch)
-tag-patch:
-	@git tag -a ${VERSION} -m "version ${VERSION}"
+tag:
+	@git tag -a ${NEXT_VERSION} -m "version ${NEXT_VERSION}"
 	@git push --tags
 
 build:
@@ -36,8 +27,6 @@ build-nc:
 
 push:
 	@docker push ${IMAGE_NAME}
-
-tag:		tag-patch
 
 release:	build push
 
