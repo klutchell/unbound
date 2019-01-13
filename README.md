@@ -2,11 +2,11 @@
 
 [Unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
 
-![](https://img.shields.io/github/tag-date/klutchell/unbound-docker.svg?style=for-the-badge)
-![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)
-![](https://img.shields.io/microbadger/layers/klutchell/unbound.svg?style=for-the-badge)
-![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)
-![](https://img.shields.io/docker/stars/klutchell/unbound.svg?style=for-the-badge)
+[![](https://img.shields.io/github/tag-date/klutchell/unbound-docker.svg?style=for-the-badge)](https://github.com/klutchell/unbound-docker/tags)
+[![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)](https://microbadger.com/images/klutchell/unbound)
+[![](https://img.shields.io/microbadger/layers/klutchell/unbound.svg?style=for-the-badge)](https://microbadger.com/images/klutchell/unbound)
+[![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)](https://cloud.docker.com/repository/docker/klutchell/unbound)
+[![](https://img.shields.io/docker/stars/klutchell/unbound.svg?style=for-the-badge)](https://cloud.docker.com/repository/docker/klutchell/unbound)
 
 ## Build
 
