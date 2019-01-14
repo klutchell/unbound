@@ -2,11 +2,13 @@
 
 [Unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
 
-[![](https://img.shields.io/github/tag-date/klutchell/unbound-docker.svg?style=for-the-badge)](https://github.com/klutchell/unbound-docker/tags)
-[![](https://img.shields.io/microbadger/image-size/klutchell/unbound.svg?style=for-the-badge)](https://microbadger.com/images/klutchell/unbound)
-[![](https://img.shields.io/microbadger/layers/klutchell/unbound.svg?style=for-the-badge)](https://microbadger.com/images/klutchell/unbound)
-[![](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=for-the-badge)](https://cloud.docker.com/repository/docker/klutchell/unbound)
-[![](https://img.shields.io/docker/stars/klutchell/unbound.svg?style=for-the-badge)](https://cloud.docker.com/repository/docker/klutchell/unbound)
+[![](https://images.microbadger.com/badges/version/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/commit/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own commit badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own image badge on microbadger.com")
+
+[![](https://images.microbadger.com/badges/version/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/commit/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own commit badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own image badge on microbadger.com")
 
 ## Build
 
