@@ -38,15 +38,9 @@ docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:armv7hf
 
 ## Usage
 
-Set your DNS servers to `<docker-host-ip>:5353` on your other devices.
+https://nlnetlabs.nl/documentation/unbound/
 
 ## Testing
-
-Start your local recursive server and test that it's operational:
-```bash
-dig pi-hole.net @127.0.0.1 -p 5353
-```
-The first query may be quite slow, but subsequent queries, also to other domains under the same TLD, should be fairly quick.
 
 You can test DNSSEC validation using
 ```bash
@@ -80,9 +74,11 @@ Kyle Harding <kylemharding@gmail.com>
 
 ## Acknowledgments
 
-* [nlnetlabs.nl](https://nlnetlabs.nl/projects/unbound/about/)
-* [balena.io](https://www.balena.io/docs/reference/base-images/base-images/)
-* [pi-hole.net](https://docs.pi-hole.net/guides/unbound/)
+* [nlnetlabs.nl](https://nlnetlabs.nl/)
+* [balena.io](https://www.balena.io/)
+* [pi-hole.net](https://pi-hole.net/)
+* [Eduardo Rocha](https://github.com/folhabranca)
+* [Matthew Vance](https://github.com/MatthewVance)
 
 ## References
 
@@ -94,6 +90,7 @@ Kyle Harding <kylemharding@gmail.com>
 * http://dnssec.vs.uni-due.de/
 * https://nlnetlabs.nl/documentation/unbound/howto-anchor/
 * http://www.linuxfromscratch.org/blfs/view/svn/server/unbound.html
+* https://nlnetlabs.nl/documentation/unbound/howto-setup/
 
 ## License
 
