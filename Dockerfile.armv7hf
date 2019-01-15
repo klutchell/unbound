@@ -24,16 +24,16 @@ RUN LIBRESSL_DOWNLOAD_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl
 
 # configure, compile, and install libressl
 RUN CFLAGS="-DLIBRESSL_APPS=off -DLIBRESSL_TESTS=off" \
-    	./configure --prefix=/opt/libressl --enable-static=no \
-    && make -j$(getconf _NPROCESSORS_ONLN) \
-    && make install \
+		./configure --prefix=/opt/libressl --enable-static=no \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
 	&& rm -rf \
 		/opt/libressl/share \
-    	/opt/libressl/include\* \
-    	/opt/libressl/lib/libtls.* \
+		/opt/libressl/include\* \
+		/opt/libressl/lib/libtls.* \
 		/opt/libressl/bin/ocspcheck \
-    	/opt/libressl/lib/pkgconfig \
-    	/opt/libressl/lib/*.la \
+		/opt/libressl/lib/pkgconfig \
+		/opt/libressl/lib/*.la \
 	&& strip --strip-all \
 		/opt/libressl/bin/* \
 		/opt/libressl/lib/lib*
@@ -50,15 +50,15 @@ RUN UNBOUND_DOWNLOAD_URL="https://www.unbound.net/downloads/unbound-${UNBOUND_VE
 
 # create unbound group and user
 RUN addgroup -S -g 88 unbound \
-    && adduser -S -D -H -s /sbin/nologin -G unbound -g "Unbound DNS resolver" -u 88 unbound
+	&& adduser -S -D -H -s /sbin/nologin -G unbound -g "Unbound DNS resolver" -u 88 unbound
 
 # configure, compile, and install unbound
 RUN RANLIB="gcc-ranlib" \
 		./configure --prefix=/opt/unbound --with-pthreads \
-        --with-username=unbound --with-ssl=/opt/libressl --with-libevent \
-        --enable-event-api --enable-static=no --enable-pie  --enable-relro-now \
-    && make -j$(getconf _NPROCESSORS_ONLN) \
-    && make install \
+		--with-username=unbound --with-ssl=/opt/libressl --with-libevent \
+		--enable-event-api --enable-static=no --enable-pie  --enable-relro-now \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make install \
 	&& rm -rf \
 		/opt/unbound/share \
 		/opt/unbound/include \
@@ -67,10 +67,10 @@ RUN RANLIB="gcc-ranlib" \
 	&& strip --strip-all \
 		/opt/unbound/lib/lib* \
 		/opt/unbound/sbin/unbound \
-    	/opt/unbound/sbin/unbound-anchor \
-    	/opt/unbound/sbin/unbound-checkconf \
-    	/opt/unbound/sbin/unbound-control \
-    	/opt/unbound/sbin/unbound-host
+		/opt/unbound/sbin/unbound-anchor \
+		/opt/unbound/sbin/unbound-checkconf \
+		/opt/unbound/sbin/unbound-control \
+		/opt/unbound/sbin/unbound-host
 
 # end cross build
 RUN [ "cross-build-end" ]
@@ -102,7 +102,7 @@ RUN install_packages libevent expat
 
 # create unbound group and user
 RUN addgroup -S -g 88 unbound \
-    && adduser -S -D -H -s /sbin/nologin -G unbound -g "Unbound DNS resolver" -u 88 unbound
+	&& adduser -S -D -H -s /sbin/nologin -G unbound -g "Unbound DNS resolver" -u 88 unbound
 
 # copy libressl and unbound from builder
 COPY --from=builder /opt/ /opt/
