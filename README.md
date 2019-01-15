@@ -93,6 +93,7 @@ Kyle Harding <kylemharding@gmail.com>
 * https://github.com/MatthewVance/unbound-docker
 * http://dnssec.vs.uni-due.de/
 * https://nlnetlabs.nl/documentation/unbound/howto-anchor/
+* http://www.linuxfromscratch.org/blfs/view/svn/server/unbound.html
 
 ## License
 
