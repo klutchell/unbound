@@ -1,6 +1,6 @@
 # unbound-docker
 
-[Unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
+[unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
 
 [![](https://images.microbadger.com/badges/version/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own version badge on microbadger.com")
 [![](https://images.microbadger.com/badges/commit/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own commit badge on microbadger.com")
@@ -10,7 +10,14 @@
 [![](https://images.microbadger.com/badges/commit/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own commit badge on microbadger.com")
 [![](https://images.microbadger.com/badges/image/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own image badge on microbadger.com")
 
-## Build
+## Motivation
+
+* run [unbound](https://unbound.net) upstream of [my pi-hole stack](https://github.com/klutchell/balena-pihole)
+* support for x86_64 and raspberry pi 3
+* build minimal images
+* use the most recent builds of unbound from source
+
+## Building
 
 ```bash
 # build for amd64
@@ -20,7 +27,7 @@ make ARCH=amd64
 make ARCH=armv7hf
 ```
 
-## Deploy
+## Deployment
 
 ```bash
 # deploy on amd64
@@ -30,15 +37,13 @@ docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:amd64
 docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:armv7hf
 ```
 
-## Environment
+## Usage
+
+This image supports the following environment variables at runtime.
 
 |Name|Description|Example|
 |---|---|---|
 |`TZ`|(optional) container timezone|`America/Toronto`|
-
-## Usage
-
-https://nlnetlabs.nl/documentation/unbound/
 
 ## Testing
 
