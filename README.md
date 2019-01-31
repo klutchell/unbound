@@ -79,23 +79,13 @@ Kyle Harding <kylemharding@gmail.com>
 
 ## Acknowledgments
 
-* [nlnetlabs.nl](https://nlnetlabs.nl/)
-* [balena.io](https://www.balena.io/)
-* [pi-hole.net](https://pi-hole.net/)
-* [Eduardo Rocha](https://github.com/folhabranca)
-* [Matthew Vance](https://github.com/MatthewVance)
-
-## References
-
-* https://www.balena.io/docs/reference/base-images/base-images/
-* https://www.nlnetlabs.nl/svn/unbound/trunk/doc/example.conf.in
 * https://docs.pi-hole.net/guides/unbound/
 * https://github.com/folhabranca/docker-unbound
 * https://github.com/MatthewVance/unbound-docker
-* http://dnssec.vs.uni-due.de/
+* https://www.balena.io/docs/reference/base-images/base-images/
 * https://nlnetlabs.nl/documentation/unbound/howto-anchor/
-* http://www.linuxfromscratch.org/blfs/view/svn/server/unbound.html
 * https://nlnetlabs.nl/documentation/unbound/howto-setup/
+* http://www.linuxfromscratch.org/blfs/view/svn/server/unbound.html
 
 ## License
 
