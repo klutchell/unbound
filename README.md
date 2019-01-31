@@ -1,77 +1,45 @@
 # unbound-docker
 
-[unbound](https://unbound.net) is a validating, recursive, caching DNS resolver.
+Unofficial [Unbound](https://unbound.net) docker image
 
-[![](https://images.microbadger.com/badges/version/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own version badge on microbadger.com")
-[![](https://images.microbadger.com/badges/commit/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own commit badge on microbadger.com")
-[![](https://images.microbadger.com/badges/image/klutchell/unbound:amd64.svg)](https://microbadger.com/images/klutchell/unbound:amd64 "Get your own image badge on microbadger.com")
+## Tags
 
-[![](https://images.microbadger.com/badges/version/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own version badge on microbadger.com")
-[![](https://images.microbadger.com/badges/commit/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own commit badge on microbadger.com")
-[![](https://images.microbadger.com/badges/image/klutchell/unbound:armv7hf.svg)](https://microbadger.com/images/klutchell/unbound:armv7hf "Get your own image badge on microbadger.com")
-
-## Motivation
-
-* run [unbound](https://unbound.net) upstream of [my pi-hole stack](https://github.com/klutchell/balena-pihole)
-* support for x86_64 and raspberry pi 3
-* build minimal images
-* use the most recent builds of unbound from source
-
-## Building
-
-```bash
-# build for amd64
-make ARCH=amd64
-
-# build for armv7hf
-make ARCH=armv7hf
-```
+* `dev` - used for testing pre-release versions (not recommended)
+* `amd64` - latest amd64 build (x86_64)
+* `armv7hf` - latest armv7hf build (raspberrypi3)
+* `latest` - same as `amd64`
+* `amd64-<version>` - latest amd64 build with [Unbound version x.y.z](https://www.nlnetlabs.nl/downloads/unbound/)
+* `armv7hf-<version>` - latest armv7hf build with [Unbound version x.y.z](https://www.nlnetlabs.nl/downloads/unbound/)
 
 ## Deployment
 
 ```bash
-# deploy on amd64
-docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:amd64
-
-# deploy on armv7hf
-docker run -p 5353:53/tcp -p 5353:53/udp -d klutchell/unbound:armv7hf
+docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 ```
+
+## Parameters
+
+* `-p 5353:53/tcp` - expose tcp port 53 on the container to tcp port 5353 on the host
+* `-p 5353:53/udp` - expose udp port 53 on the container to udp port 5353 on the host
+* `-e TZ=America/Toronto` - (optional) provide desired timezone from [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 ## Usage
 
-This image supports the following environment variables at runtime.
+Check out the following guide for usage with [Pi-hole](https://pi-hole.net/)
 
-|Name|Description|Example|
-|---|---|---|
-|`TZ`|(optional) container timezone|`America/Toronto`|
+* https://docs.pi-hole.net/guides/unbound/
 
 ## Testing
 
 You can test DNSSEC validation using
+
 ```bash
 dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
 dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
 ```
-The first command should give a status report of SERVFAIL and no IP address. The second should give NOERROR plus an IP address.
 
-## Contributing
-
-```bash
-# bump patch version
-make tag BUMP=patch
-
-# bump minor version
-make tag BUMP=minor
-
-# bump major version
-make tag BUMP=major
-
-# push amd64 image to docker hub
-make push ARCH=amd64
-
-# push armv7hf image to docker hub
-make push ARCH=armv7hf
-```
+The first command should give a status report of `SERVFAIL` and no IP address.
+The second should give `NOERROR` plus an IP address.
 
 ## Author
 
