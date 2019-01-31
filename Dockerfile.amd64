@@ -75,7 +75,6 @@ FROM balenalib/amd64-alpine:edge-run
 LABEL maintainer="kylemharding@gmail.com"
 
 ARG BUILD_DATE
-ARG BUILD_VERSION
 ARG VCS_REF
 
 LABEL org.label-schema.schema-version="1.0"
@@ -85,7 +84,7 @@ LABEL org.label-schema.url="https://nlnetlabs.nl/projects/unbound/about/"
 LABEL org.label-schema.vcs-url="https://github.com/klutchell/unbound-docker"
 LABEL org.label-schema.docker.cmd="docker run -p 5353:53/tcp -p 5353:53/udp klutchell/unbound"
 LABEL org.label-schema.build-date="${BUILD_DATE}"
-LABEL org.label-schema.version="${BUILD_VERSION}"
+LABEL org.label-schema.version="1.9.0rc1"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 # install runtime dependencies
