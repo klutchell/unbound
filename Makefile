@@ -3,14 +3,18 @@ DOCKER_REPO		:= klutchell/unbound
 ARCH			:= amd64	# amd64 | armv7hf
 
 DOCKERFILE_PATH	:= Dockerfile.${ARCH}
+
 BUILD_VERSION	:= $$(git describe --tags --long --dirty --always)
-DOCKER_TAG		:= ${ARCH}-${BUILD_VERSION/-g*/}
+UNBOUND_VERSION	:= $$(sed -r -n -e 's/ENV UNBOUND_VERSION="(.+)"/\1/p' ${DOCKERFILE_PATH})
+REVISION		:= $$(git rev-list ${UNBOUND_VERSION}.. --count)
+
+DOCKER_TAG		:= ${ARCH}-${UNBOUND_VERSION}-${REVISION}
 IMAGE_NAME		:= ${DOCKER_REPO}:${DOCKER_TAG}
 
 .DEFAULT_GOAL	:= build
 
 tag:
-	@git tag -a ${BUILD_VERSION} -m "build version ${BUILD_VERSION}"
+	@git tag -a ${DOCKER_TAG} -m "tagging version ${DOCKER_TAG}"
 	@git push --tags
 
 build:

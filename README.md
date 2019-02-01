@@ -7,15 +7,15 @@ unofficial [Unbound](https://unbound.net) docker image
 * `latest` - latest x86_64 release
 * `{ARCH}` - latest architecture release
 * `{ARCH}-{VERSION}` - latest architecture release with a specific unbound version
-* `{ARCH}-{VERSION}-{RELEASE}` - tagged architecture release with a specific unbound version
+* `{ARCH}-{VERSION}-{REVISION}` - tagged architecture release with a specific unbound version
+
+Examples: `amd64`, `amd64-1.9.0rc1`, `amd64-1.9.0rc1-8`
 
 |key|values|
 |---|---|
 |`{ARCH}`|`amd64` (x86_64)<br>`armv7hf` (raspberrypi3)|
 |`{VERSION}`|[unbound versions](https://www.nlnetlabs.nl/downloads/unbound/)|
-|`{RELEASE}`|[tagged releases](https://github.com/klutchell/unbound-docker/releases)|
-
-eg. 
+|`{REVISION}`|[revisions](https://github.com/klutchell/unbound-docker/releases)|
 
 ## Deployment
 
