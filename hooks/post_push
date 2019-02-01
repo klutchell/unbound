@@ -1,0 +1,14 @@
+#!/bin/bash -xe
+
+env
+
+readonly ARCH="${DOCKER_TAG%-*}"
+
+docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:${ARCH}"
+docker push "${DOCKER_REPO}:${ARCH}"
+
+if [ "${ARCH}" == "amd64" ]
+then
+	docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:latest"
+	docker push "${DOCKER_REPO}:latest"
+fi

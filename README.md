@@ -25,7 +25,7 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 ## Testing
 
 ```bash
-docker-compose -f docker-compose.test.yml -p ci up --build
+docker-compose -f docker-compose.test.yml -p ci up --build --abort-on-container-exit
 ```
 
 ## Usage
