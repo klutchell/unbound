@@ -4,11 +4,18 @@ unofficial [Unbound](https://unbound.net) docker image
 
 ## Tags
 
-* `latest` / `amd64` - latest amd64 build (x86_64)
-* `armv7hf` - latest armv7hf build (raspberrypi3)
-* `amd64-{version}` - amd64 build with [Unbound {version}](https://www.nlnetlabs.nl/downloads/unbound/)
-* `armv7hf-{version}` - armv7hf build with [Unbound {version}](https://www.nlnetlabs.nl/downloads/unbound/)
-* `dev` - used for testing pre-release versions (not recommended)
+* `latest` - latest x86_64 release
+* `{ARCH}` - latest architecture release
+* `{ARCH}-{VERSION}` - latest architecture release with a specific unbound version
+* `{ARCH}-{VERSION}-{RELEASE}` - tagged architecture release with a specific unbound version
+
+|key|values|
+|---|---|
+|`{ARCH}`|`amd64` (x86_64)<br>`armv7hf` (raspberrypi3)|
+|`{VERSION}`|[unbound versions](https://www.nlnetlabs.nl/downloads/unbound/)|
+|`{RELEASE}`|[tagged releases](https://github.com/klutchell/unbound-docker/releases)|
+
+eg. 
 
 ## Deployment
 
