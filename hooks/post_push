@@ -1,9 +1,0 @@
-#!/bin/bash -xe
-
-env
-
-if [ "${DOCKER_TAG}" == "amd64" ]
-then
-	docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:latest"
-	docker push "${DOCKER_REPO}:latest"
-fi
