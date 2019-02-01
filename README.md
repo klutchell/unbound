@@ -7,9 +7,9 @@ unofficial [Unbound](https://unbound.net) docker image
 * `latest` - latest x86_64 release
 * `{ARCH}` - latest architecture release
 * `{ARCH}-{VERSION}` - latest architecture release with a specific unbound version
-* `{ARCH}-{VERSION}-{REVISION}` - tagged architecture release with a specific unbound version
+* `{ARCH}-{VERSION}-{REVISION}` - architecture release with a specific unbound version and specific commit
 
-Examples: `amd64`, `amd64-1.9.0rc1`, `amd64-1.9.0rc1-8`
+Examples: `amd64`, `amd64-1.9.0rc1`, `amd64-1.9.0rc1-635df27`
 
 |key|values|
 |---|---|
