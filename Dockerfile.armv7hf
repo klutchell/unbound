@@ -1,4 +1,4 @@
-FROM balenalib/armv7hf-alpine:edge-build AS build
+FROM balenalib/armv7hf-alpine:latest-build AS build
 
 # allow building on x86
 RUN [ "cross-build-start" ]
@@ -77,7 +77,7 @@ RUN [ "cross-build-end" ]
 
 # ----------------------------------------------------------------------------
 
-FROM balenalib/armv7hf-alpine:edge-run
+FROM balenalib/armv7hf-alpine:latest-run
 LABEL maintainer="kylemharding@gmail.com"
 
 # allow building on x86

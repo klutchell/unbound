@@ -22,23 +22,17 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 * `-p 5353:53/udp` - expose udp port 53 on the container to udp port 5353 on the host
 * `-e TZ=America/Toronto` - (optional) provide desired timezone from [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
+## Testing
+
+```bash
+docker-compose -f docker-compose.test.yml -p ci up --build
+```
+
 ## Usage
 
 Check out the following guide for usage with [Pi-hole](https://pi-hole.net/)
 
 * https://docs.pi-hole.net/guides/unbound/
-
-## Testing
-
-You can test DNSSEC validation using
-
-```bash
-dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
-dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
-```
-
-The first command should give a status report of `SERVFAIL` and no IP address.
-The second should give `NOERROR` plus an IP address.
 
 ## Author
 
