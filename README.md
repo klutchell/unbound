@@ -6,8 +6,8 @@ unofficial [Unbound](https://unbound.net) docker image
 
 * `latest` / `amd64` - latest amd64 build (x86_64)
 * `armv7hf` - latest armv7hf build (raspberrypi3)
-* `<version>` / `amd64-<version>` - amd64 build with [Unbound version](https://www.nlnetlabs.nl/downloads/unbound/)
-* `armv7hf-<version>` - armv7hf build with [Unbound version](https://www.nlnetlabs.nl/downloads/unbound/)
+* `{version}` / `amd64-{version}` - amd64 build with [Unbound {version}](https://www.nlnetlabs.nl/downloads/unbound/)
+* `armv7hf-{version}` - armv7hf build with [Unbound {version}](https://www.nlnetlabs.nl/downloads/unbound/)
 * `dev` - used for testing pre-release versions (not recommended)
 
 ## Deployment
