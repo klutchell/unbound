@@ -8,7 +8,7 @@ BUILD_OPTS		:=
 DOCKERFILE_PATH	:= Dockerfile.${ARCH}
 
 BUILD_DATE		:= $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ')
-BUILD_VERSION	:= $(shell docker run --rm -w /app -v ${CURDIR}:/app alpine /app/utils/version.sh ${DOCKERFILE_PATH})
+BUILD_VERSION	:= $(shell docker run --rm -w /app -v ${CURDIR}:/app alpine /app/utils/bump.sh ${DOCKERFILE_PATH})
 APP_VERSION		:= $(shell echo ${BUILD_VERSION} | sed -r "s/(.+)-[0-9]+/\1/")
 VCS_REF			:= $(shell git describe --tags --long --dirty --always)
 

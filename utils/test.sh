@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# for use with alpine linux only
+
+# 1. install dig via bind-tools
+# 2. test unbound dns response to sigfail.verteiltesysteme.net
+# 3. fail if response does not include SERVFAIL
+# 4. test unbound dns response to sigok.verteiltesysteme.net
+# 5. fail if response does not include NOERROR
+
 sleep 5
 
 apk add --no-cache bind-tools
