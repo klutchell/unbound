@@ -48,5 +48,8 @@ push:
 	docker push ${IMAGE_NAME}
 	docker push ${DOCKER_REPO}:${ARCH}
 	docker push ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
+ifeq "${ARCH}" "amd64"
+	docker push ${DOCKER_REPO}:latest
+endif
 
 release:	build push
