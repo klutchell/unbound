@@ -80,6 +80,7 @@ help:	# https://gist.github.com/prwhite/8168133
 ##     - {repo}:{arch}
 ##     - {repo}:{arch}-{appversion}
 ##     - {repo}:{arch}-{appversion}-{revision}
+##     - {repo}:latest (amd64 only)
 ##
 .PHONY: build
 build:
@@ -110,6 +111,7 @@ endif
 ##     - {repo}:{arch}
 ##     - {repo}:{arch}-{appversion}
 ##     - {repo}:{arch}-{appversion}-{revision}
+##     - {repo}:latest (amd64 only)
 ##
 .PHONY: push
 push:
@@ -165,6 +167,11 @@ tag:
 ##     - make release
 ##     - make release ARCH=armv7hf
 ##     - make release BUILD_OPTS=--no-cache
+## Tags:
+##     - {repo}:{arch}
+##     - {repo}:{arch}-{appversion}
+##     - {repo}:{arch}-{appversion}-{revision}
+##     - {repo}:latest (amd64 only)
 ##
 .PHONY: release
 release:	build push
