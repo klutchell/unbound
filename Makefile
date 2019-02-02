@@ -16,7 +16,7 @@ IMAGE_NAME		:= ${DOCKER_REPO}:${DOCKER_TAG}
 
 tag:
 	git fetch --tags
-	git tag -a "${BUILD_VERSION}" -m "tagging release "${BUILD_VERSION}"
+	git tag -a "${BUILD_VERSION}" -m "tagging release ${BUILD_VERSION}"
 	git push --tags
 
 build:
