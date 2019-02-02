@@ -1,9 +1,11 @@
 
 sut:
-    build: tests
-    dockerfile: Dockerfile.test
+    image: alpine
+    command: /app/utils/test.sh
     links:
         - unbound
+    volumes:
+        - .:/app
 
 unbound:
     build: .

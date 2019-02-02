@@ -1,9 +1,9 @@
 #!/bin/sh
 
-apk add git >/dev/null
+apk add --no-cache git >/dev/null
 
 DOCKERFILE_PATH=${1:-"Dockerfile.amd64"}
-UNBOUND_VERSION=$(sed -r -n 's/ENV UNBOUND_VERSION="(.+)"/\1/p' ${DOCKERFILE_PATH})
+UNBOUND_VERSION=$(sed -r -n 's/ENV UNBOUND_VERSION="(.+)"/\1/p' "${DOCKERFILE_PATH}")
 LAST_TAG=$(git describe --match "${UNBOUND_VERSION}-*" --abbrev=0)
 
 case ${LAST_TAG##*-} in
