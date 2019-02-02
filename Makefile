@@ -23,9 +23,9 @@ REVISION		:= $(strip $(shell echo ${BUILD_VERSION} | sed -r "s/.+-([0-9]+)/\1/")
 VCS_REF			:= $(strip $(shell git describe --tags --long --dirty --always))
 
 # create multiple docker tags per image
-DOCKER_TAG_1	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}-$(REVISION)
-DOCKER_TAG_2	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
-DOCKER_TAG_3	:= ${DOCKER_REPO}:${ARCH}
+DOCKER_TAG_REV	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}-${REVISION}
+DOCKER_TAG_APP	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
+DOCKER_TAG_ARCH	:= ${DOCKER_REPO}:${ARCH}
 
 .DEFAULT_GOAL	:= help
 
@@ -88,10 +88,13 @@ build:
 	--build-arg BUILD_VERSION=${BUILD_VERSION} \
 	--build-arg VCS_REF=${VCS_REF} \
 	--file ${DOCKERFILE_PATH} \
-	--tag ${DOCKER_TAG_1} \
+	--tag ${DOCKER_TAG_REV} \
 	.
-	docker tag ${DOCKER_TAG_1} ${DOCKER_TAG_2}
-	docker tag ${DOCKER_TAG_1} ${DOCKER_TAG_3}
+	docker tag ${DOCKER_TAG_REV} ${DOCKER_TAG_APP}
+	docker tag ${DOCKER_TAG_REV} ${DOCKER_TAG_ARCH}
+ifeq "${ARCH}" "amd64"
+	docker tag ${DOCKER_TAG_REV} ${DOCKER_REPO}:latest
+endif
 
 ## Description:
 ##     - push existing tagged images to docker repo
@@ -110,9 +113,9 @@ build:
 ##
 .PHONY: push
 push:
-	docker push ${DOCKER_TAG_1}
-	docker push ${DOCKER_TAG_2}
-	docker push ${DOCKER_TAG_3}
+	docker push ${DOCKER_TAG_REV}
+	docker push ${DOCKER_TAG_APP}
+	docker push ${DOCKER_TAG_ARCH}
 ifeq "${ARCH}" "amd64"
 	docker push ${DOCKER_REPO}:latest
 endif
