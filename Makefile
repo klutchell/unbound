@@ -1,6 +1,9 @@
 
 DOCKER_REPO		:= klutchell/unbound
 ARCH			:= amd64
+BUILD_OPTS		:=
+
+# eg. make ARCH=armv7hf BUILD_OPTS=--no-cache
 
 DOCKERFILE_PATH	:= Dockerfile.${ARCH}
 
@@ -20,18 +23,7 @@ tag:
 	git push --tags
 
 build:
-	docker build \
-	--build-arg BUILD_DATE=${BUILD_DATE} \
-	--build-arg BUILD_VERSION=${BUILD_VERSION} \
-	--build-arg VCS_REF=${VCS_REF} \
-	--file ${DOCKERFILE_PATH} \
-	--tag ${IMAGE_NAME} \
-	.
-	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}
-	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
-
-build-nc:
-	docker build --no-cache \
+	docker build ${BUILD_OPTS} \
 	--build-arg BUILD_DATE=${BUILD_DATE} \
 	--build-arg BUILD_VERSION=${BUILD_VERSION} \
 	--build-arg VCS_REF=${VCS_REF} \
