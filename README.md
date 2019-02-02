@@ -6,18 +6,11 @@ unofficial [Unbound](https://unbound.net) docker image
 
 Formats:
 
-* `latest`
-* `{ARCH}`
-* `{ARCH}-{VERSION}`
-* `{ARCH}-{VERSION}-{REVISION}`
-
-Legend:
-
-|key|description|default|
-|---|---|---|
-|`{ARCH}`|container architecture|amd64|
-|`{VERSION}`|included unbound version|latest|
-|`{REVISION}`|build revision|latest|
+* `{ARCH}` -> container architecture
+* `{ARCH}-{VERSION}` -> included unbound version
+* `{ARCH}-{VERSION}-{REVISION}` -> sequential build revision
+* `latest` -> latest amd64 release
+* `dev` -> latest development build (not recommended)
 
 Examples:
 
@@ -42,6 +35,7 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 
 ## Testing
 
+Testing is only supported on amd64 for now.
 ```bash
 docker-compose -f docker-compose.test.yml -p ci up --build --abort-on-container-exit
 ```
