@@ -5,13 +5,27 @@ BUILD_OPTS		:=
 
 DOCKERFILE_PATH	:= Dockerfile.${ARCH}
 
-BUILD_DATE		:= $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ')
-BUILD_VERSION	:= $(shell docker run --rm -w /app -v ${CURDIR}:/app alpine /app/utils/bump.sh ${DOCKERFILE_PATH})
-APP_VERSION		:= $(shell echo ${BUILD_VERSION} | sed -r "s/(.+)-[0-9]+/\1/")
-VCS_REF			:= $(shell git describe --tags --long --dirty --always)
+# run date command in an alpine linux container to remain host-agnostic
+BUILD_DATE		:= $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 
-DOCKER_TAG		:= ${ARCH}-${BUILD_VERSION}
-IMAGE_NAME		:= ${DOCKER_REPO}:${DOCKER_TAG}
+# run this shell script in an alpine linux container to remain host-agnostic
+# automatic docker builds will use the latest git tag but since we are
+# running locally we need to increment the revision by one and this script will do just that
+BUILD_VERSION	:= $(strip $(shell docker run --rm -w /app -v ${CURDIR}:/app alpine /app/utils/bump.sh ${DOCKERFILE_PATH}))
+
+# remove the build revision to get just the app version
+APP_VERSION		:= $(strip $(shell echo ${BUILD_VERSION} | sed -r "s/(.+)-[0-9]+/\1/"))
+
+# remove the app version to get just the build revision
+REVISION		:= $(strip $(shell echo ${BUILD_VERSION} | sed -r "s/.+-([0-9]+)/\1/"))
+
+# use the raw git state including tag, commits, hash, and dirty flag
+VCS_REF			:= $(strip $(shell git describe --tags --long --dirty --always))
+
+# create multiple docker tags per image
+DOCKER_TAG_1	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}-$(REVISION)
+DOCKER_TAG_2	:= ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
+DOCKER_TAG_3	:= ${DOCKER_REPO}:${ARCH}
 
 .DEFAULT_GOAL	:= help
 
@@ -74,10 +88,10 @@ build:
 	--build-arg BUILD_VERSION=${BUILD_VERSION} \
 	--build-arg VCS_REF=${VCS_REF} \
 	--file ${DOCKERFILE_PATH} \
-	--tag ${IMAGE_NAME} \
+	--tag ${DOCKER_TAG_1} \
 	.
-	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}
-	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
+	docker tag ${DOCKER_TAG_1} ${DOCKER_TAG_2}
+	docker tag ${DOCKER_TAG_1} ${DOCKER_TAG_3}
 
 ## Description:
 ##     - push existing tagged images to docker repo
@@ -96,9 +110,9 @@ build:
 ##
 .PHONY: push
 push:
-	docker push ${IMAGE_NAME}
-	docker push ${DOCKER_REPO}:${ARCH}
-	docker push ${DOCKER_REPO}:${ARCH}-${APP_VERSION}
+	docker push ${DOCKER_TAG_1}
+	docker push ${DOCKER_TAG_2}
+	docker push ${DOCKER_TAG_3}
 ifeq "${ARCH}" "amd64"
 	docker push ${DOCKER_REPO}:latest
 endif
