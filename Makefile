@@ -13,7 +13,7 @@ VCS_REF			:= $(strip $(shell git describe --all --long --dirty --always))
 
 .PHONY: build
 build:
-	docker build ${BUILD_OPTS} --build-arg ${BUILD_DATE} --build-arg ${VCS_REF} -f ${DOCKERFILE_PATH} -t ${DOCKER_TAG} .
+	docker build ${BUILD_OPTS} --build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF}  -f ${DOCKERFILE_PATH} -t ${DOCKER_TAG} .
 
 .PHONY: test
 test:
