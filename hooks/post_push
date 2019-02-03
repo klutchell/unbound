@@ -1,18 +1,4 @@
 #!/bin/bash -xe
 
-env
-
-# eg. klutchell/unbound:amd64-1.9.0rc1
-docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:${DOCKER_TAG%-*}"
-docker push "${DOCKER_REPO}:${DOCKER_TAG%-*}"
-
-# eg. klutchell/unbound:amd64
-docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:${DOCKER_TAG%%-*}"
-docker push "${DOCKER_REPO}:${DOCKER_TAG%%-*}"
-
-if [ "${DOCKER_TAG%%-*}" == "amd64" ]
-then
-	# eg. klutchell/unbound:latest
-	docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:latest"
-	docker push "${DOCKER_REPO}:latest"
-fi
+# push mult-arch manifest
+docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/multiarch.yml
