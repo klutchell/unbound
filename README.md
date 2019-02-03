@@ -2,15 +2,6 @@
 
 unofficial [Unbound](https://unbound.net) docker image
 
-## Tags
-
-|tag|description|example|
-|---|---|---|
-|`{VERSION}`|included unbound [version](https://nlnetlabs.nl/downloads/unbound/)|`1.9.0rc1`|
-|`{ARCH}-{VERSION}`|specific platform builds|`armv7hf-1.9.0rc1`|
-|`{ARCH}-dev`|development builds (not recommended)|`amd64-dev`|
-
-
 ## Deployment
 
 ```bash
