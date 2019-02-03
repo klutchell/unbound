@@ -2,17 +2,13 @@
 
 env
 
-# eg. klutchell/unbound:amd64-1.9.0rc1
-docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:${DOCKER_TAG%-*}"
-docker push "${DOCKER_REPO}:${DOCKER_TAG%-*}"
+# exit if the branch does not match the version yml
+grep -q "$(git rev-parse --abbrev-ref HEAD)" version.yml || exit 0
 
-# eg. klutchell/unbound:amd64
-docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:${DOCKER_TAG%%-*}"
-docker push "${DOCKER_REPO}:${DOCKER_TAG%%-*}"
+# push mult-arch manifest for version
+# eg. klutchell/unbound:1.9.0rc1
+docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/version.yml
 
-if [ "${DOCKER_TAG%%-*}" == "amd64" ]
-then
-	# eg. klutchell/unbound:latest
-	docker tag "${IMAGE_NAME}" "${DOCKER_REPO}:latest"
-	docker push "${DOCKER_REPO}:latest"
-fi
+# push mult-arch manifest for latest
+# eg. klutchell/unbound:latest
+docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/latest.yml
