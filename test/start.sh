@@ -10,8 +10,6 @@
 
 sleep 5
 
-apk add --no-cache bind-tools
-
 echo "Testing sigfail.verteiltesysteme.net..."
 if dig "sigfail.verteiltesysteme.net" @unbound -p 53 | grep -q "SERVFAIL"
 then

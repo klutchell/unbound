@@ -6,4 +6,3 @@ chmod +x manifest-tool
 
 # push manifest list with provided spec
 ./manifest-tool push from-spec manifest.yml
-
