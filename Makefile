@@ -93,9 +93,7 @@ build:
 	.
 	docker tag ${DOCKER_TAG_REV} ${DOCKER_TAG_APP}
 	docker tag ${DOCKER_TAG_REV} ${DOCKER_TAG_ARCH}
-ifeq "${ARCH}" "amd64"
 	docker tag ${DOCKER_TAG_REV} ${DOCKER_REPO}:latest
-endif
 
 ## Description:
 ##     - push existing tagged images to docker repo
