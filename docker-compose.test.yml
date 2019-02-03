@@ -1,6 +1,6 @@
 sut:
-    build: test
-    dockerfile: Dockerfile.test
+    build: tests
+    dockerfile: Dockerfile.tests
     links:
         - unbound
 unbound:
