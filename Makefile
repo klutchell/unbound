@@ -9,7 +9,7 @@ DOCKER_TAG := ${DOCKER_REPO}:${ARCH}-dev
 BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 VCS_REF := $(strip $(shell git describe --all --long --dirty --always))
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := build
 
 .PHONY: build
 build:
