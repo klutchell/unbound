@@ -1,4 +1,4 @@
 #!/bin/bash -xe
 
 # push mult-arch manifest
-docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/multiarch.yml
+docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/manifest.yml
