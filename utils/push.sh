@@ -10,4 +10,4 @@ git clone https://github.com/estesp/manifest-tool
 cd manifest-tool && make binary
 
 # push manifest list (spec must be provided in docker run command)
-./manifest-tool push from-spec
+./manifest-tool push from-spec "${1}" || exit 0

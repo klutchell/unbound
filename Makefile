@@ -8,10 +8,8 @@ DOCKERFILE_PATH	:= Dockerfile.${ARCH}
 # run date command in a linux container to remain host-agnostic
 BUILD_DATE		:= $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 VCS_REF			:= $(strip $(shell git describe --all --long --dirty --always))
-VCS_BRANCH		:= $(strip $(shell git rev-parse --abbrev-ref HEAD))
 
-# for local builds the docker tag should be {repo}:{version}-{arch}
-DOCKER_TAG	:= ${DOCKER_REPO}:${VCS_BRANCH}-${ARCH}
+DOCKER_TAG	:= ${DOCKER_REPO}:${ARCH}-dev
 
 .DEFAULT_GOAL	:= help
 
@@ -84,9 +82,6 @@ build:
 ##
 .PHONY: push
 push:
-ifneq "${VCS_BRANCH}" "dev"
-	$(error Push disabled from ${VCS_BRANCH} branch)
-endif
 	docker push ${DOCKER_TAG}
 
 ## Description:

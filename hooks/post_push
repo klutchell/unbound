@@ -1,14 +1,4 @@
 #!/bin/bash -xe
 
-env
-
-# exit if the branch does not match the version yml
-grep -q "$(git rev-parse --abbrev-ref HEAD)" version.yml || exit 0
-
-# push mult-arch manifest for version
-# eg. klutchell/unbound:1.9.0rc1
-docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/version.yml
-
-# push mult-arch manifest for latest
-# eg. klutchell/unbound:latest
-docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/latest.yml
+# push mult-arch manifest
+docker run --rm -v $(pwd):/app golang /app/utils/push.sh /app/multiarch.yml
