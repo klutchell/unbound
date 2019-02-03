@@ -1,15 +1,15 @@
 
-DOCKER_REPO		:= klutchell/unbound
-ARCH			:= amd64
-BUILD_OPTS		:=
+DOCKER_REPO := klutchell/unbound
+ARCH := amd64
+BUILD_OPTS :=
 
-DOCKERFILE_PATH	:= Dockerfile.${ARCH}
-DOCKER_TAG		:= ${DOCKER_REPO}:${ARCH}-dev
+DOCKERFILE_PATH := Dockerfile.${ARCH}
+DOCKER_TAG := ${DOCKER_REPO}:${ARCH}-dev
 
-BUILD_DATE		:= $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
-VCS_REF			:= $(strip $(shell git describe --all --long --dirty --always))
+BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
+VCS_REF := $(strip $(shell git describe --all --long --dirty --always))
 
-.DEFAULT_GOAL	:= help
+.DEFAULT_GOAL := help
 
 .PHONY: build
 build:
