@@ -5,4 +5,4 @@ curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/ma
 chmod +x manifest-tool
 
 # push manifest list with provided spec
-./manifest-tool push from-spec manifest.yml
+./manifest-tool push from-spec manifest.yml || exit 0
