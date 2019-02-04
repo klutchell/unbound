@@ -1,12 +1,12 @@
-image: klutchell/unbound:1.9.0rc1
+image: klutchell/unbound:latest
 manifests:
   - 
-    image: klutchell/unbound:amd64-1.9.0rc1
+    image: klutchell/unbound:amd64
     platform:
       architecture: amd64
       os: linux
   - 
-    image: klutchell/unbound:armv7hf-1.9.0rc1
+    image: klutchell/unbound:armv7hf
     platform:
       architecture: arm
       variant: armv7hf
