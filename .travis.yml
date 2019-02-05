@@ -1,0 +1,26 @@
+
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_REPO=klutchell/unbound
+  matrix:
+    - ARCH=amd64
+    - ARCH=armhf
+    - ARCH=arm64
+
+install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+script:
+  - export BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+  - export BUILD_VERSION="$(git describe --all --long --dirty --always)"
+  - export VCS_REF="${TRAVIS_COMMIT}"
+  - docker-compose build
+  - docker-compose run test
+
+deploy:
+  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+  - docker push ${DOCKER_REPO}:${ARCH}

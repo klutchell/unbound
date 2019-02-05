@@ -6,4 +6,4 @@ WORKDIR /app
 
 COPY start.sh .
 
-CMD [ "sh", "start.sh" ]
+CMD [ "sh", "run.sh" ]

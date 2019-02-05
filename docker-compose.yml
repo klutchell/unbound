@@ -1,0 +1,14 @@
+unbound:
+    image: ${DOCKER_REPO}:${ARCH}
+    build:
+        context: .
+        dockerfile: Dockerfile.${ARCH}
+        args:
+            - BUILD_DATE
+            - BUILD_VERSION
+            - VCS_REF
+
+test:
+    build: test
+    links:
+        - unbound

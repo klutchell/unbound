@@ -1,8 +1,0 @@
-sut:
-    build: tests
-    dockerfile: Dockerfile.tests
-    links:
-        - unbound
-unbound:
-    build: .
-    dockerfile: Dockerfile.amd64

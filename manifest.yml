@@ -6,8 +6,14 @@ manifests:
       architecture: amd64
       os: linux
   - 
-    image: klutchell/unbound:armv7hf
+    image: klutchell/unbound:armhf
     platform:
       architecture: arm
-      variant: armv7hf
+      variant: v7
+      os: linux
+  - 
+    image: klutchell/unbound:arm64
+    platform:
+      architecture: arm64
+      variant: v8
       os: linux

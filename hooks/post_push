@@ -1,8 +1,0 @@
-#!/bin/bash -xe
-
-# install manifest-tool from https://github.com/estesp/manifest-tool
-curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool
-chmod +x manifest-tool
-
-# push manifest list with provided spec
-./manifest-tool push from-spec manifest.yml || exit 0
