@@ -2,6 +2,22 @@
 
 unofficial [Unbound](https://unbound.net) docker image
 
+## Tags
+
+|tag|description|
+|---|---|
+|`latest`|latest multi-arch|
+|`amd64`|latest amd64|
+|`armv7hf`|latest armv7hf|
+|`1.9.0`|multi-arch with unbound 1.9.0|
+|`amd64-1.9.0`|amd64 with unbound 1.9.0|
+|`armv7hf-1.9.0`|armv7hf with unbound 1.9.0|
+|`1.9.0rc1`|multi-arch with unbound 1.9.0rc1| 
+|`amd64-1.9.0rc1`|amd64 with unbound 1.9.0rc1|
+|`armv7hf-1.9.0rc1`|armv7hf with unbound 1.9.0rc1|
+|`amd64-dev`|amd64 development|
+|`armv7hf-dev`|armv7hf development|
+
 ## Deployment
 
 ```bash
