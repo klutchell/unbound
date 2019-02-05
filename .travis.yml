@@ -1,3 +1,4 @@
+language: minimal
 
 sudo: required
 
@@ -7,6 +8,7 @@ services:
 env:
   global:
     - DOCKER_REPO=klutchell/unbound
+    - IMAGE_NAME=${DOCKER_REPO}:${ARCH}
   matrix:
     - ARCH=amd64
     - ARCH=armhf
@@ -17,10 +19,10 @@ install: docker run --rm --privileged multiarch/qemu-user-static:register --rese
 script:
   - export BUILD_DATE="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   - export BUILD_VERSION="$(git describe --all --long --dirty --always)"
-  - export VCS_REF="${TRAVIS_COMMIT}"
+  - export VCS_REF="$(git rev-parse --short HEAD)"
   - docker-compose build
   - docker-compose run test
 
-deploy:
+after_success:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-  - docker push ${DOCKER_REPO}:${ARCH}
+  - docker push ${IMAGE_NAME}

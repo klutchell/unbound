@@ -1,5 +1,5 @@
 unbound:
-    image: ${DOCKER_REPO}:${ARCH}
+    image: ${IMAGE_NAME}
     build:
         context: .
         dockerfile: Dockerfile.${ARCH}
