@@ -1,14 +1,24 @@
-unbound:
-    image: ${IMAGE_NAME}
-    build:
-        context: .
-        dockerfile: Dockerfile.${ARCH}
-        args:
-            - BUILD_DATE
-            - BUILD_VERSION
-            - VCS_REF
+version: '3'
+services:
 
-test:
-    build: test
-    links:
-        - unbound
+    unbound:
+        image: ${IMAGE_NAME}
+        build:
+            context: .
+            dockerfile: ${DOCKERFILE}
+            args:
+                - BUILD_DATE
+                - BUILD_VERSION
+                - VCS_REF
+
+    sigfail:
+        build: test
+        links:
+            - unbound
+        command: sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
+
+    sigok:
+        build: test
+        links:
+            - unbound
+        command: sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'

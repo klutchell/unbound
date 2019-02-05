@@ -1,4 +1,4 @@
-FROM balenalib/arm64v8-alpine:latest-build AS build
+FROM balenalib/aarch64-alpine:latest-build AS build
 
 # allow building on x86
 RUN [ "cross-build-start" ]
@@ -77,7 +77,7 @@ RUN [ "cross-build-end" ]
 
 # ----------------------------------------------------------------------------
 
-FROM balenalib/arm64v8-alpine:latest-run
+FROM balenalib/aarch64-alpine:latest-run
 LABEL maintainer="kylemharding@gmail.com"
 
 # allow building on x86
