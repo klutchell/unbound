@@ -11,7 +11,7 @@ branches:
 env:
   global:
     - VERSION=1.9.0
-    - BUILD=${TRAVIS_BUILD_NUMBER}
+    - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
   matrix:
     - ARCH=amd64
     - ARCH=arm32v6
@@ -21,9 +21,9 @@ before_script:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 script:
-  - make build ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
-  - make test ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
-  - make push ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
+  - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+  - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+  - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
 
 jobs:
   include:

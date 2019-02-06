@@ -1,20 +1,15 @@
 
 DOCKER_REPO := klutchell/unbound
 ARCH := amd64
-VERSION := 1.9.0
-BUILD := dev
 BUILD_OPTS :=
+VERSION := 1.9.0
 
-IMAGE_NAME := ${DOCKER_REPO}:${ARCH}-${VERSION}
-
+BUILD_NUMBER := $(strip $(shell git describe --all --long --dirty --always))
 BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
-ifeq "${BUILD}" "dev"
-BUILD_VERSION := $(strip $(shell git describe --all --long --dirty --always))
-else
-BUILD_VERSION := ${VERSION}-${BUILD}
-endif
+IMAGE_NAME := ${DOCKER_REPO}:${ARCH}-${VERSION}
+BUILD_VERSION := ${VERSION}-${BUILD_NUMBER}
 
 
 .DEFAULT_GOAL := build
@@ -28,8 +23,8 @@ build:
 .PHONY: test
 test:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-	docker-compose -p ci run sigfail
-	docker-compose -p ci run sigok
+	docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
+	docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
 
 .PHONY: push
 push:

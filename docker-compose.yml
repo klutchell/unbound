@@ -11,18 +11,9 @@ services:
                 - BUILD_VERSION
                 - VCS_REF
 
-    sigfail:
+    test:
         build:
             context: .
             dockerfile: Dockerfile.test
         links:
             - unbound
-        command: sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
-
-    sigok:
-        build:
-            context: .
-            dockerfile: Dockerfile.test
-        links:
-            - unbound
-        command: sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
