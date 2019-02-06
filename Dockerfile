@@ -1,7 +1,4 @@
-FROM balenalib/aarch64-alpine:latest-build AS build
-
-# allow building on x86
-RUN [ "cross-build-start" ]
+FROM amd64/alpine AS build
 
 ENV LIBRESSL_VERSION="2.8.3"
 ENV LIBRESSL_SHA="3967e08b3dc2277bf77057ea1f11148df7f96a2203cd21cf841902f2a1ec11320384a001d01fa58154d35612f7981bf89d5b1a60a2387713d5657677f76cc682"
@@ -10,7 +7,7 @@ ENV UNBOUND_VERSION="1.9.0"
 ENV UNBOUND_SHA="7dfa8e078507fc24a2d0938eea590389453bacfcac023f1a41af19350ea1f7b87d0c82d7eead121a11068921292a96865e177274ff27ed8b8868445f80f7baf6"
 
 # install build dependencies
-RUN install_packages build-base curl file linux-headers libevent libevent-dev expat expat-dev
+RUN apk add --no-cache build-base curl file linux-headers libevent libevent-dev expat expat-dev
 
 # work in /tmp
 WORKDIR /tmp/src/libressl
@@ -72,16 +69,10 @@ RUN RANLIB="gcc-ranlib" \
 		/opt/unbound/sbin/unbound-control \
 		/opt/unbound/sbin/unbound-host
 
-# end cross build
-RUN [ "cross-build-end" ]
-
 # ----------------------------------------------------------------------------
 
-FROM balenalib/aarch64-alpine:latest-run
+FROM amd64/alpine
 LABEL maintainer="kylemharding@gmail.com"
-
-# allow building on x86
-RUN [ "cross-build-start" ]
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -98,7 +89,7 @@ LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 # install runtime dependencies
-RUN install_packages libevent expat
+RUN apk add --no-cache libevent expat
 
 # create unbound group and user
 RUN addgroup -S -g 88 unbound \
@@ -117,6 +108,3 @@ CMD ["/bin/bash", "/start.sh"]
 
 # expose dns ports
 EXPOSE 53/tcp 53/udp
-
-# end cross build
-RUN [ "cross-build-end" ]

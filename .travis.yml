@@ -1,21 +1,31 @@
+services:
+  - docker
+
 language: minimal
 
 sudo: required
 
-services:
-  - docker
+# if: branch =~ /^[0-9.]+/
 
-env:
-  - ARCH=amd64
-  - ARCH=armhf
-  - ARCH=arm64
-
-install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-script:
-  - make build ARCH=${ARCH}
-  - make test ARCH=${ARCH}
-
-after_success:
-  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-  - make push ARCH=${ARCH}
+jobs:
+  include:
+    - env: ARCH=amd64
+      script:
+        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+    - env: ARCH=armhf
+      script:
+        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+    - env: ARCH=arm64
+      script:
+        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+    - stage: deploy
+      script:
+        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        - make push ARCH=amd64
+        - make push ARCH=armhf
+        - make push ARCH=arm64
+        - curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool && chmod +x manifest-tool
+        - ./manifest-tool push from-spec manifest.yml
