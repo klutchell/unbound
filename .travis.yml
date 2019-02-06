@@ -35,6 +35,5 @@ jobs:
       before_script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
       script:
-        - sed "s/{VERSION}/${VERSION}/g" -i manifest.yml
-        - sed "s/{BUILD}/${BUILD}/g" -i manifest.yml
-        - ./manifest-tool push from-spec manifest.yml
+        - sed "s/{VERSION}/${VERSION}/g" manifest.yml > tmp.yml
+        - ./manifest-tool push from-spec tmp.yml

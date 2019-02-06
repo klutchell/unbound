@@ -29,9 +29,23 @@ test:
 .PHONY: push
 push:
 	docker push ${IMAGE_NAME}
+	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}
+	docker push ${DOCKER_REPO}:${ARCH}
 
 .PHONY: release
 release:	build test push
+
+.PHONY: manifest
+manifest:
+	sed "s/{VERSION}/${VERSION}/g" manifest.yml > tmp.yml
+	manifest-tool push from-spec tmp.yml
+	rm tmp.yml
+
+.PHONY: all
+all:
+	make release ARCH=amd64
+	make release ARCH=arm32v6
+	make release ARCH=arm64v8
 
 .PHONY: lint
 lint:
