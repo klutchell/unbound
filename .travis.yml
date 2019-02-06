@@ -15,6 +15,7 @@ env:
 
 jobs:
   include:
+
     - &build
       stage: build and test and push
       env: ARCH=amd64
@@ -29,10 +30,13 @@ jobs:
         - docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
         - docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
         - docker-compose -p ci push unbound
+
     - <<: *build
       env: ARCH=arm
+
     - <<: *build
       env: ARCH=arm64
+
     - &test
       stage: pull and re-test
       env: ARCH=amd64
@@ -41,10 +45,13 @@ jobs:
         - docker-compose -p ci pull unbound
         - docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
         - docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
+
     - <<: *test
       env: ARCH=arm
+
     - <<: *test
       env: ARCH=arm64
+
     - &manifest
       stage: push manifest
       env: TARGET=${DOCKER_REPO}:${VERSION}
@@ -55,5 +62,6 @@ jobs:
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
           --target ${TARGET}
+
     - <<: *manifest
       env: TARGET=${DOCKER_REPO}:latest
