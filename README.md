@@ -1,4 +1,4 @@
-# unbound-docker
+# unbound-docker [![Build Status](https://travis-ci.org/klutchell/unbound.svg?branch=master)](https://travis-ci.org/klutchell/unbound)
 
 unofficial [Unbound](https://unbound.net) docker image
 
