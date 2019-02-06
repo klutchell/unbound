@@ -9,31 +9,36 @@ branches:
     - /^[0-9.]+/
 
 env:
-  - DOCKER_REPO=klutchell/unbound
-  - VERSION=1.9.0
-  - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+  global:
+    - DOCKER_REPO=klutchell/unbound
+    - VERSION=1.9.0
+    - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
 
 jobs:
   include:
-    - stage: build
-      env:
-        - ARCH=amd64
-        - ARCH=arm
-        - ARCH=arm64
+    - env: ARCH=amd64
+      &build
+      stage: build
       script:
+        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
         - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-    - stage: test
-      env:
-        - ARCH=amd64
-        - ARCH=arm
-        - ARCH=arm64
+    - env: ARCH=arm
+      <<: *build
+    - env: ARCH=arm64
+      <<: *build
+    - env: ARCH=amd64
+      &test
+      stage: test
       script:
         - docker pull ${DOCKER_REPO}:${ARCH}-${VERSION}
         - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
         - docker inspect ${DOCKER_REPO}:${ARCH}-${VERSION} | grep ${VERSION}-${BUILD_NUMBER}
+    - env: ARCH=arm
+      <<: *test
+    - env: ARCH=arm64
+      <<: *test
     - stage: deploy
       install: go get -v github.com/estesp/manifest-tool
       script:
