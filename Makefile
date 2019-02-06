@@ -19,14 +19,11 @@ VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 .EXPORT_ALL_VARIABLES:
 
 .PHONY: build
-build: ${ARCH}
-	sed "s/amd64/${ARCH}/g" Dockerfile > ${ARCH}/Dockerfile
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
+build:
 	docker-compose -p ci build ${BUILD_OPTS}
 
 .PHONY: test
-test: ${ARCH}
-	sed "s/amd64/${ARCH}/g" Dockerfile > ${ARCH}/Dockerfile
+test:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 	docker-compose -p ci run sigfail
 	docker-compose -p ci run sigok
