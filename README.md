@@ -27,15 +27,17 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 ## Building
 
 ```bash
-# usage: make build ARCH=[amd64|arm|arm64]
+# examples
 make build ARCH=arm
+make build ARCH=arm64 BUILD_OPTS=--no-cache
 ```
 
 ## Testing
 
 ```bash
-# usage: make test ARCH=[amd64|arm|arm64]
+# examples
 make test ARCH=arm
+make test ARCH=arm64
 ```
 
 ## Usage

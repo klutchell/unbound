@@ -1,14 +1,17 @@
+# variables are exported for all subprocesses
+# override variables at runtime as needed
+# eg. make build ARCH=arm BUILD_OPTS=--no-cache
 
+# used by all targets
 DOCKER_REPO := klutchell/unbound
-ARCH := amd64
-BUILD_OPTS :=
 VERSION := 1.9.0
+ARCH := amd64
 
-BUILD_NUMBER := $(strip $(shell git describe --all --long --dirty --always))
+# used by build target only
+BUILD_OPTS :=
 BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
+BUILD_VERSION := ${VERSION}-$(strip $(shell git describe --all --long --dirty --always))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
-
-BUILD_VERSION := ${VERSION}-${BUILD_NUMBER}
 
 .DEFAULT_GOAL := build
 
@@ -19,8 +22,7 @@ build:
 	docker-compose -p ci build ${BUILD_OPTS}
 
 .PHONY: test
-test:
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
+test: qemu-user-static
 	docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
 	docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
 
@@ -47,6 +49,10 @@ manifest-tool:
 ifeq (, $(shell which manifest-tool))
 	go get -v github.com/estesp/manifest-tool
 endif
+
+.PHONY: qemu-user-static
+qemu-user-static:
+	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 .PHONY: lint
 lint:
