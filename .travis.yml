@@ -35,7 +35,6 @@ jobs:
         - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
         - docker inspect ${DOCKER_REPO}:${ARCH}-${VERSION} | grep ${VERSION}-${BUILD_NUMBER}
     - stage: deploy
-      env: ARCH=amd64
       install: go get -v github.com/estesp/manifest-tool
       script:
         - |
