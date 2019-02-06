@@ -9,22 +9,32 @@ branches:
     - /^[0-9.]+/
 
 env:
-  - ARCH=amd64
-  - ARCH=arm32v6
-  - ARCH=arm64v8
+  global:
+    - VERSION=1.9.0
+    - BUILD=${TRAVIS_BUILD_NUMBER}
+  matrix:
+    - ARCH=amd64
+    - ARCH=arm32v6
+    - ARCH=arm64v8
 
 before_script:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 script:
-  - make build ARCH=${ARCH} VERSION=1.9.0
-  - make test ARCH=${ARCH} VERSION=1.9.0
-  - make push ARCH=${ARCH} VERSION=1.9.0
+  - make build ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
+  - make test ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
+  - make push ARCH=${ARCH} VERSION=${VERSION} BUILD=${BUILD}
 
 jobs:
   include:
     - stage: deploy
       env: ARCH=amd64
-      install: curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool && chmod +x manifest-tool
-      before_script: docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-      script: ./manifest-tool push from-spec manifest.yml
+      install:
+        - curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool
+        - chmod +x manifest-tool
+      before_script:
+        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+      script:
+        - sed "s/{VERSION}/${VERSION}/g" -i manifest.yml
+        - sed "s/{BUILD}/${BUILD}/g" -i manifest.yml
+        - ./manifest-tool push from-spec manifest.yml
