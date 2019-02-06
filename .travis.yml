@@ -13,11 +13,11 @@ jobs:
       script:
         - make build ARCH=${ARCH}
         - make test ARCH=${ARCH}
-    - env: ARCH=armhf
+    - env: ARCH=arm32v6
       script:
         - make build ARCH=${ARCH}
         - make test ARCH=${ARCH}
-    - env: ARCH=arm64
+    - env: ARCH=arm64v8
       script:
         - make build ARCH=${ARCH}
         - make test ARCH=${ARCH}
@@ -25,7 +25,7 @@ jobs:
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - make push ARCH=amd64
-        - make push ARCH=armhf
-        - make push ARCH=arm64
+        - make push ARCH=arm32v6
+        - make push ARCH=arm64v8
         - curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool && chmod +x manifest-tool
         - ./manifest-tool push from-spec manifest.yml
