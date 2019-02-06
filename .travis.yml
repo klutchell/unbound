@@ -12,18 +12,24 @@ env:
   global:
     - DOCKER_REPO=klutchell/unbound
     - VERSION=1.9.0
-    - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
 
 jobs:
   include:
     - env: ARCH=amd64
       &build
       stage: build
+      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+      before_script:
+        - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+        - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
+        - VCS_REF=${TRAVIS_COMMIT}
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-        - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-        - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-        - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+        - docker-compose -p ci build
+      after_success:
+        - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
+	      - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
+        - docker-compose -p ci push unbound
     - env: ARCH=arm
       <<: *build
     - env: ARCH=arm64
@@ -31,10 +37,11 @@ jobs:
     - env: ARCH=amd64
       &test
       stage: test
+      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
-        - docker pull ${DOCKER_REPO}:${ARCH}-${VERSION}
-        - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-        - docker inspect ${DOCKER_REPO}:${ARCH}-${VERSION} | grep ${VERSION}-${BUILD_NUMBER}
+        - docker-compose -p ci pull unbound
+        - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
+	      - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
     - env: ARCH=arm
       <<: *test
     - env: ARCH=arm64
@@ -47,10 +54,8 @@ jobs:
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
           --target ${DOCKER_REPO}:${VERSION}
-        - manifest-tool inspect ${DOCKER_REPO}:${VERSION}
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
           --target ${DOCKER_REPO}:latest
-        - manifest-tool inspect ${DOCKER_REPO}:latest

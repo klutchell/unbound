@@ -8,9 +8,7 @@ BUILD_NUMBER := $(strip $(shell git describe --all --long --dirty --always))
 BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
-IMAGE_NAME := ${DOCKER_REPO}:${ARCH}-${VERSION}
 BUILD_VERSION := ${VERSION}-${BUILD_NUMBER}
-
 
 .DEFAULT_GOAL := build
 
@@ -28,7 +26,7 @@ test:
 
 .PHONY: push
 push:
-	docker push ${IMAGE_NAME}
+	docker-compose -p ci push unbound
 
 .PHONY: release
 release:	build test push
