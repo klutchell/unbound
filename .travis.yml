@@ -1,31 +1,27 @@
+language: minimal
+
 services:
   - docker
 
-language: minimal
+branches:
+  only:
+    - master
+    - /^[0-9.]+/
 
-sudo: required
+env:
+  - ARCH=amd64
+  - ARCH=arm32v6
+  - ARCH=arm64v8
 
-# if: branch =~ /^[0-9.]+/
+script:
+  - VERSION="$(sed -r -n 's/UNBOUND_VERSION="(.+)"/\1/p' Dockerfile.${ARCH})"
+  - make build ARCH=${ARCH} VERSION=${VERSION}
+  - make test ARCH=${ARCH} VERSION=${VERSION}
+  - make push ARCH=${ARCH} VERSION=${VERSION}
 
 jobs:
   include:
-    - env: ARCH=amd64
-      script:
-        - make build ARCH=${ARCH}
-        - make test ARCH=${ARCH}
-    - env: ARCH=arm32v6
-      script:
-        - make build ARCH=${ARCH}
-        - make test ARCH=${ARCH}
-    - env: ARCH=arm64v8
-      script:
-        - make build ARCH=${ARCH}
-        - make test ARCH=${ARCH}
     - stage: deploy
-      script:
-        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-        - make push ARCH=amd64
-        - make push ARCH=arm32v6
-        - make push ARCH=arm64v8
-        - curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool && chmod +x manifest-tool
-        - ./manifest-tool push from-spec manifest.yml
+      env: ARCH=amd64
+      install: curl -sSL https://github.com/estesp/manifest-tool/releases/download/v1.0.0-rc/manifest-tool-linux-amd64 -o manifest-tool && chmod +x manifest-tool
+      script: ./manifest-tool push from-spec manifest.yml

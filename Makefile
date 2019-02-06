@@ -4,6 +4,8 @@ ARCH := amd64
 VERSION := dev
 BUILD_OPTS :=
 
+VERSION=$(sed -r -n 's/ENV UNBOUND_VERSION="(.+)"/\1/p' "${DOCKERFILE_PATH}")
+
 ifeq "${VERSION}" "latest"
 IMAGE_NAME := ${DOCKER_REPO}:${ARCH}
 else
@@ -28,17 +30,17 @@ test:
 	docker-compose -p ci run sigfail
 	docker-compose -p ci run sigok
 
-.PHONY: lint
-lint:
-	docker-compose -p ci config -q
-	docker run -v $(CURDIR):/project --rm skandyla/travis-cli lint .travis.yml
-
 .PHONY: push
 push:
 	docker push ${IMAGE_NAME}
 
 .PHONY: release
 release:	build test push
+
+.PHONY: lint
+lint:
+	docker-compose -p ci config -q
+	docker run -v $(CURDIR):/project --rm skandyla/travis-cli lint .travis.yml
 
 ${ARCH}:
 	mkdir ${ARCH}

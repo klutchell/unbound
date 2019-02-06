@@ -1,18 +1,19 @@
-image: klutchell/unbound:latest
+image: klutchell/unbound:1.9.0
+tags: ['latest']
 manifests:
   - 
-    image: klutchell/unbound:amd64
+    image: klutchell/unbound:amd64-1.9.0
     platform:
       architecture: amd64
       os: linux
   - 
-    image: klutchell/unbound:arm32v6
+    image: klutchell/unbound:arm32v6-1.9.0
     platform:
       architecture: arm
       variant: v6
       os: linux
   - 
-    image: klutchell/unbound:arm64v8
+    image: klutchell/unbound:arm64v8-1.9.0
     platform:
       architecture: arm64
       variant: v8
