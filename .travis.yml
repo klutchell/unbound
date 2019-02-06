@@ -18,16 +18,19 @@ env:
     - ARCH=arm
     - ARCH=arm64
 
-before_script:
-  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
-
-script:
-  - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-  - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-  - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
-
 jobs:
   include:
+    - stage: build
+      script:
+        - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+        - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+    - stage: test
+      script:
+        - docker pull ${DOCKER_REPO}:${ARCH}-${VERSION}
+        - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
+        - docker inspect ${DOCKER_REPO}:${ARCH}-${VERSION} | grep ${VERSION}-${BUILD_NUMBER}
     - stage: deploy
       env: ARCH=amd64
       install: go get -v github.com/estesp/manifest-tool
