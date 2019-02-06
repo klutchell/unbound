@@ -23,8 +23,8 @@ build:
 
 .PHONY: test
 test: qemu-user-static
-	docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
-	docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
+	docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
+	docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
 
 .PHONY: push
 push:
