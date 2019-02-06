@@ -16,7 +16,7 @@ env:
 jobs:
   include:
     - &build
-      stage: build
+      stage: build, test, and push
       env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       before_script:
@@ -26,7 +26,6 @@ jobs:
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
-      after_success:
         - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
         - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
         - docker-compose -p ci push unbound
@@ -35,7 +34,7 @@ jobs:
     - <<: *build
       env: ARCH=arm64
     - &test
-      stage: test
+      stage: pull and re-test
       env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
@@ -46,16 +45,15 @@ jobs:
       env: ARCH=arm
     - <<: *test
       env: ARCH=arm64
-    - stage: deploy
+    - &manifest
+      stage: push manifest
+      env: TARGET=${DOCKER_REPO}:${VERSION}
       install: go get -v github.com/estesp/manifest-tool
       script:
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
-          --target ${DOCKER_REPO}:${VERSION}
-        - |
-          manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
-          --platforms linux/amd64,linux/arm,linux/arm64 \
-          --template ${DOCKER_REPO}:ARCH-${VERSION} \
-          --target ${DOCKER_REPO}:latest
+          --target ${TARGET}
+    - <<: *manifest
+      env: TARGET=${DOCKER_REPO}:latest
