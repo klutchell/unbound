@@ -11,16 +11,16 @@ jobs:
   include:
     - env: ARCH=amd64
       script:
-        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
-        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make build ARCH=${ARCH}
+        - make test ARCH=${ARCH}
     - env: ARCH=armhf
       script:
-        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
-        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make build ARCH=${ARCH}
+        - make test ARCH=${ARCH}
     - env: ARCH=arm64
       script:
-        - make build ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
-        - make test ARCH=${ARCH} VERSION=${TRAVIS_BRANCH}
+        - make build ARCH=${ARCH}
+        - make test ARCH=${ARCH}
     - stage: deploy
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
