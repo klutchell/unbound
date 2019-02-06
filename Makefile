@@ -50,17 +50,7 @@ ifeq (, $(shell which manifest-tool))
 	go get -v github.com/estesp/manifest-tool
 endif
 
-.PHONY: all
-all:
-	make release ARCH=amd64
-	make release ARCH=arm
-	make release ARCH=arm64
-
 .PHONY: lint
 lint:
 	docker-compose -p ci config -q
 	docker run -v $(CURDIR):/project --rm skandyla/travis-cli lint .travis.yml
-	docker run -v $(CURDIR):/project --rm skandyla/travis-cli status
-
-${ARCH}:
-	mkdir ${ARCH}

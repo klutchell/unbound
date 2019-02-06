@@ -37,8 +37,10 @@ jobs:
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
           --target ${DOCKER_REPO}:${VERSION}
+        - manifest-tool inspect ${DOCKER_REPO}:${VERSION}
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:ARCH-${VERSION} \
           --target ${DOCKER_REPO}:latest
+        - manifest-tool inspect ${DOCKER_REPO}:latest
