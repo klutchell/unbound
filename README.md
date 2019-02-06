@@ -24,11 +24,18 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 * `-p 5353:53/udp` - expose udp port 53 on the container to udp port 5353 on the host
 * `-e TZ=America/Toronto` - (optional) provide desired timezone from [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
+## Building
+
+```bash
+# ARCH can be amd64|arm32v6|arm64v8
+make build ARCH=arm32v6
+```
+
 ## Testing
 
-Testing is only supported on amd64 for now.
 ```bash
-docker-compose -f docker-compose.test.yml -p ci up --build --abort-on-container-exit
+# ARCH can be amd64|arm32v6|arm64v8
+make test ARCH=arm32v6
 ```
 
 ## Usage
