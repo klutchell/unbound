@@ -16,7 +16,7 @@ env:
 jobs:
   include:
     - &build
-      stage: build, test, and push
+      stage: build and test and push
       env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       before_script:
