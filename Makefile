@@ -45,11 +45,8 @@ manifest: manifest-tool
 	--target ${DOCKER_REPO}:latest
 
 .PHONY: manifest-tool
-manifest-tool: golang
-	@manifest-tool --version || go get -v github.com/estesp/manifest-tool
-
-.PHONY: golang
-golang: ; @go version
+manifest-tool:
+	@manifest-tool --version
 
 .PHONY: qemu-user-static
 qemu-user-static:
