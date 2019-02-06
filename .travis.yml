@@ -9,24 +9,27 @@ branches:
     - /^[0-9.]+/
 
 env:
-  global:
-    - DOCKER_REPO=klutchell/unbound
-    - VERSION=1.9.0
-    - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
-  matrix:
-    - ARCH=amd64
-    - ARCH=arm
-    - ARCH=arm64
+  - DOCKER_REPO=klutchell/unbound
+  - VERSION=1.9.0
+  - BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
 
 jobs:
   include:
     - stage: build
+      env:
+        - ARCH=amd64
+        - ARCH=arm
+        - ARCH=arm64
       script:
         - make build ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
         - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - make push ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
     - stage: test
+      env:
+        - ARCH=amd64
+        - ARCH=arm
+        - ARCH=arm64
       script:
         - docker pull ${DOCKER_REPO}:${ARCH}-${VERSION}
         - make test ARCH=${ARCH} VERSION=${VERSION} BUILD_NUMBER=${BUILD_NUMBER}
