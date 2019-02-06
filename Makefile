@@ -4,8 +4,6 @@ ARCH := amd64
 VERSION := dev
 BUILD_OPTS :=
 
-VERSION=$(sed -r -n 's/ENV UNBOUND_VERSION="(.+)"/\1/p' "${DOCKERFILE_PATH}")
-
 ifeq "${VERSION}" "latest"
 IMAGE_NAME := ${DOCKER_REPO}:${ARCH}
 else
