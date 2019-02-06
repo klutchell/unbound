@@ -36,17 +36,17 @@ release:	build test push
 .PHONY: manifest
 manifest: manifest-tool
 	manifest-tool push from-args \
-    --platforms linux/amd64,linux/arm,linux/arm64 \
-    --template ${DOCKER_REPO}:ARCH-${VERSION} \
-    --target ${DOCKER_REPO}:${VERSION}
+	--platforms linux/amd64,linux/arm,linux/arm64 \
+	--template ${DOCKER_REPO}:ARCH-${VERSION} \
+	--target ${DOCKER_REPO}:${VERSION}
 	manifest-tool push from-args \
-    --platforms linux/amd64,linux/arm,linux/arm64 \
-    --template ${DOCKER_REPO}:ARCH-${VERSION} \
-    --target ${DOCKER_REPO}:latest
+	--platforms linux/amd64,linux/arm,linux/arm64 \
+	--template ${DOCKER_REPO}:ARCH-${VERSION} \
+	--target ${DOCKER_REPO}:latest
 
 .PHONY: manifest-tool
 manifest-tool:
-ifeq (, $(shell which manifest-tool))
+ifeq ($(shell which manifest-tool),)
 	go get -v github.com/estesp/manifest-tool
 endif
 

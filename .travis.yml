@@ -15,9 +15,9 @@ env:
 
 jobs:
   include:
-    - env: ARCH=amd64
-      &build
+    - &build
       stage: build
+      env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       before_script:
         - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
@@ -30,22 +30,22 @@ jobs:
         - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
         - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
         - docker-compose -p ci push unbound
-    - env: ARCH=arm
-      <<: *build
-    - env: ARCH=arm64
-      <<: *build
-    - env: ARCH=amd64
-      &test
+    - <<: *build
+      env: ARCH=arm
+    - <<: *build
+      env: ARCH=arm64
+    - &test
       stage: test
+      env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
         - docker-compose -p ci pull unbound
         - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
         - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
-    - env: ARCH=arm
-      <<: *test
-    - env: ARCH=arm64
-      <<: *test
+    - <<: *test
+      env: ARCH=arm
+    - <<: *test
+      env: ARCH=arm64
     - stage: deploy
       install: go get -v github.com/estesp/manifest-tool
       script:
