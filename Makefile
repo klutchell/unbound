@@ -4,11 +4,7 @@ ARCH := amd64
 VERSION := dev
 BUILD_OPTS :=
 
-ifeq "${VERSION}" "latest"
-IMAGE_NAME := ${DOCKER_REPO}:${ARCH}
-else
 IMAGE_NAME := ${DOCKER_REPO}:${ARCH}-${VERSION}
-endif
 
 BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := $(strip $(shell git describe --all --long --dirty --always))

@@ -9,6 +9,7 @@ branches:
     - /^[0-9.]+/
 
 env:
+  - VERSION=1.9.0
   - ARCH=amd64
   - ARCH=arm32v6
   - ARCH=arm64v8
@@ -17,7 +18,6 @@ before_script:
   - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 script:
-  - VERSION="$(sed -r -n 's/UNBOUND_VERSION="(.+)"/\1/p' Dockerfile.${ARCH})"
   - make build ARCH=${ARCH} VERSION=${VERSION}
   - make test ARCH=${ARCH} VERSION=${VERSION}
   - make push ARCH=${ARCH} VERSION=${VERSION}
