@@ -28,7 +28,7 @@ jobs:
         - docker-compose -p ci build
       after_success:
         - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
-	      - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
+        - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
         - docker-compose -p ci push unbound
     - env: ARCH=arm
       <<: *build
@@ -41,7 +41,7 @@ jobs:
       script:
         - docker-compose -p ci pull unbound
         - docker-compose -p ci run test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep -q SERVFAIL'
-	      - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
+        - docker-compose -p ci run test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep -q NOERROR'
     - env: ARCH=arm
       <<: *test
     - env: ARCH=arm64
