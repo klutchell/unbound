@@ -14,6 +14,6 @@ services:
     test:
         build:
             context: .
-            dockerfile: Dockerfile.ci
+            dockerfile: Dockerfile.test
         links:
             - unbound

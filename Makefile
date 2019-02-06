@@ -29,28 +29,38 @@ test:
 .PHONY: push
 push:
 	docker push ${IMAGE_NAME}
-	docker tag ${IMAGE_NAME} ${DOCKER_REPO}:${ARCH}
-	docker push ${DOCKER_REPO}:${ARCH}
 
 .PHONY: release
 release:	build test push
 
 .PHONY: manifest
-manifest:
-	sed "s/{VERSION}/${VERSION}/g" manifest.yml > tmp.yml
-	manifest-tool push from-spec tmp.yml
-	rm tmp.yml
+manifest: manifest-tool
+	manifest-tool push from-args \
+    --platforms linux/amd64,linux/arm,linux/arm64 \
+    --template ${DOCKER_REPO}:ARCH-${VERSION} \
+    --target ${DOCKER_REPO}:${VERSION}
+	manifest-tool push from-args \
+    --platforms linux/amd64,linux/arm,linux/arm64 \
+    --template ${DOCKER_REPO}:ARCH-${VERSION} \
+    --target ${DOCKER_REPO}:latest
+
+.PHONY: manifest-tool
+manifest-tool:
+ifeq (, $(shell which manifest-tool))
+	go get -v github.com/estesp/manifest-tool
+endif
 
 .PHONY: all
 all:
 	make release ARCH=amd64
-	make release ARCH=arm32v6
-	make release ARCH=arm64v8
+	make release ARCH=arm
+	make release ARCH=arm64
 
 .PHONY: lint
 lint:
 	docker-compose -p ci config -q
 	docker run -v $(CURDIR):/project --rm skandyla/travis-cli lint .travis.yml
+	docker run -v $(CURDIR):/project --rm skandyla/travis-cli status
 
 ${ARCH}:
 	mkdir ${ARCH}

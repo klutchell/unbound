@@ -9,8 +9,8 @@ unofficial [Unbound](https://unbound.net) docker image
 |`latest`|latest multi-arch|
 |`1.9.0`|unbound 1.9.0 multi-arch|
 |`amd64-1.9.0`|unbound 1.9.0 for amd64|
-|`arm32v6-1.9.0`|unbound 1.9.0 for arm32v6|
-|`arm64v8-1.9.0`|unbound 1.9.0 for arm64v8|
+|`arm-1.9.0`|unbound 1.9.0 for arm32v6|
+|`arm64-1.9.0`|unbound 1.9.0 for arm64v8|
 
 ## Deployment
 
@@ -27,15 +27,21 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 ## Building
 
 ```bash
-# ARCH can be amd64|arm32v6|arm64v8
-make build ARCH=arm32v6
+# usage:
+make build ARCH=[amd64|arm|arm64]
+
+# example:
+make build ARCH=arm
 ```
 
 ## Testing
 
 ```bash
-# ARCH can be amd64|arm32v6|arm64v8
-make test ARCH=arm32v6
+# usage:
+make test ARCH=[amd64|arm|arm64]
+
+# example:
+make test ARCH=arm
 ```
 
 ## Usage
