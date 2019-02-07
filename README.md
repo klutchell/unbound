@@ -7,13 +7,13 @@ unofficial [Unbound](https://unbound.net) docker image
 
 ## Tags
 
-|tag|description|size|
-|---|---|---|
-|`latest`|latest multi-arch|[![latest](https://images.microbadger.com/badges/image/klutchell/unbound:latest.svg)](https://microbadger.com/images/klutchell/unbound:latest)|
-|`1.9.0`|unbound 1.9.0 multi-arch|[![1.9.0](https://images.microbadger.com/badges/image/klutchell/unbound:1.9.0.svg)](https://microbadger.com/images/klutchell/unbound:1.9.0)|
-|`amd64-1.9.0`|unbound 1.9.0 amd64|[![amd64-1.9.0](https://images.microbadger.com/badges/image/klutchell/unbound:amd64-1.9.0.svg)](https://microbadger.com/images/klutchell/unbound:amd64-1.9.0)|
-|`arm-1.9.0`|unbound 1.9.0 arm32v6|[![arm-1.9.0](https://images.microbadger.com/badges/image/klutchell/unbound:arm-1.9.0.svg)](https://microbadger.com/images/klutchell/unbound:arm-1.9.0)|
-|`arm64-1.9.0`|unbound 1.9.0 arm64v8|[![arm64-1.9.0](https://images.microbadger.com/badges/image/klutchell/unbound:arm64-1.9.0.svg)](https://microbadger.com/images/klutchell/unbound:arm64-1.9.0)|
+|tag|description|
+|---|---|
+|`latest`|latest multi-arch|
+|`1.9.0`|unbound 1.9.0 multi-arch|
+|`amd64-1.9.0`|unbound 1.9.0 amd64|
+|`arm-1.9.0`|unbound 1.9.0 arm32v6|
+|`arm64-1.9.0`|unbound 1.9.0 arm64v8|
 
 ## Deployment
 
