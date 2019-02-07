@@ -11,9 +11,7 @@ services:
                 - BUILD_VERSION
                 - VCS_REF
 
-    test:
-        build:
-            context: .
-            dockerfile: Dockerfile.test
+    tests:
+        build: tests
         links:
             - unbound

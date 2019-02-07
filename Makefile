@@ -19,12 +19,12 @@ VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
 .PHONY: build
 build:
-	docker-compose -p ci build ${BUILD_OPTS}
+	docker-compose -p ci build ${BUILD_OPTS} unbound
 
 .PHONY: test
 test: qemu-user-static
-	docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
-	docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
+	docker-compose -p ci build tests
+	docker-compose -p ci run --rm tests
 
 .PHONY: push
 push:
@@ -33,8 +33,8 @@ push:
 .PHONY: release
 release:	build test push
 
-.PHONY: manifest
-manifest: manifest-tool
+.PHONY: latest
+latest: manifest-tool
 	manifest-tool push from-args \
 	--platforms linux/amd64,linux/arm,linux/arm64 \
 	--template ${DOCKER_REPO}:ARCH-${VERSION} \

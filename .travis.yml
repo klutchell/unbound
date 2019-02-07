@@ -25,8 +25,7 @@ jobs:
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
-        - &sigfail-test docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
-        - &sigok-test docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
+	      - docker-compose -p ci run tests
         - docker-compose -p ci push unbound
 
     - <<: *build
@@ -40,17 +39,18 @@ jobs:
     - &retest
       stage: pull and re-test
       env: ARCH=amd64
-      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
         - docker-compose -p ci pull unbound
-        - *sigfail-test
-        - *sigok-test
+        - docker-compose -p ci build tests
+        - docker-compose -p ci run tests
 
     - <<: *retest
       env: ARCH=arm
+      install: *qemu-user-static
 
     - <<: *retest
       env: ARCH=arm64
+      install: *qemu-user-static
 
     - &manifest
       stage: push manifest
