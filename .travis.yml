@@ -6,7 +6,7 @@ services:
 branches:
   only:
     - master
-    - /^[0-9.]+/
+    - /^v\d+\.\d+\.\d+.*$/
 
 env:
   global:
@@ -17,9 +17,8 @@ jobs:
   include:
 
     - &build
-      stage: build and test and push
+      stage: 'build, test, and push'
       env: ARCH=amd64
-      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       before_script:
         - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
         - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
@@ -27,29 +26,31 @@ jobs:
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
-        - docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
-        - docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
+        - &sigfail-test docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
+        - &sigok-test docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
         - docker-compose -p ci push unbound
 
     - <<: *build
       env: ARCH=arm
+      install: &qemu-user-static docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
     - <<: *build
       env: ARCH=arm64
+      install: *qemu-user-static
 
-    - &test
+    - &retest
       stage: pull and re-test
       env: ARCH=amd64
       install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
         - docker-compose -p ci pull unbound
-        - docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
-        - docker-compose -p ci run --rm test sh -c 'dig sigok.verteiltesysteme.net @unbound -p 53 | grep NOERROR'
+        - *sigfail-test
+        - *sigok-test
 
-    - <<: *test
+    - <<: *retest
       env: ARCH=arm
 
-    - <<: *test
+    - <<: *retest
       env: ARCH=arm64
 
     - &manifest
