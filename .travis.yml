@@ -19,11 +19,10 @@ jobs:
     - &build
       stage: 'build, test, and push'
       env: ARCH=amd64
-      before_script:
+      script:
         - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
         - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
         - VCS_REF=${TRAVIS_COMMIT}
-      script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
         - &sigfail-test docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'
