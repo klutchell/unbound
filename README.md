@@ -32,7 +32,7 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 ```bash
 # examples
 make build ARCH=arm
-make build ARCH=arm64 BUILD_OPTS=--no-cache
+make build ARCH=arm64 BUILD_OPTIONS=--no-cache
 ```
 
 ## Testing
