@@ -12,6 +12,9 @@ env:
   global:
     - DOCKER_REPO=klutchell/unbound
     - VERSION=1.9.0
+    - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+    - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
+    - VCS_REF=${TRAVIS_COMMIT}
 
 jobs:
   include:
@@ -20,9 +23,6 @@ jobs:
       stage: 'build, test, and push'
       env: ARCH=amd64
       script:
-        - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-        - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
-        - VCS_REF=${TRAVIS_COMMIT}
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
         - &sigfail-test docker-compose -p ci run --rm test sh -c 'dig sigfail.verteiltesysteme.net @unbound -p 53 | grep SERVFAIL'

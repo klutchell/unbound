@@ -7,7 +7,7 @@ unofficial [Unbound](https://unbound.net) docker image
 
 ## Tags
 
-|tag|description||
+|tag|description|size|
 |---|---|---|
 |`latest`|latest multi-arch|[![latest](https://images.microbadger.com/badges/image/klutchell/unbound:latest.svg)](https://microbadger.com/images/klutchell/unbound:latest)|
 |`1.9.0`|unbound 1.9.0 multi-arch|[![1.9.0](https://images.microbadger.com/badges/image/klutchell/unbound:1.9.0.svg)](https://microbadger.com/images/klutchell/unbound:1.9.0)|
