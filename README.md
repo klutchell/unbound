@@ -2,7 +2,7 @@
 
 unofficial [Unbound](https://unbound.net) docker image
 
-[![Build Status](https://travis-ci.org/klutchell/unbound.svg?branch=master)](https://travis-ci.org/klutchell/unbound)
+[![Build Status](https://travis-ci.com/klutchell/unbound.svg?branch=master)](https://travis-ci.com/klutchell/unbound)
 [![Docker Pulls](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=flat)](https://hub.docker.com/r/klutchell/unbound/)
 
 ## Tags
