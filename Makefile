@@ -35,24 +35,26 @@ release:	build test push
 
 .PHONY: latest
 latest: manifest-tool
-	manifest-tool push from-args \
-	--platforms linux/amd64,linux/arm,linux/arm64 \
+	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
 	--template ${DOCKER_REPO}:ARCH-${VERSION} \
 	--target ${DOCKER_REPO}:${VERSION}
-	manifest-tool push from-args \
-	--platforms linux/amd64,linux/arm,linux/arm64 \
+	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
 	--template ${DOCKER_REPO}:ARCH-${VERSION} \
 	--target ${DOCKER_REPO}:latest
 
-.PHONY: manifest-tool
-manifest-tool:
-	@manifest-tool --version
+.PHONY: lint
+lint: travis
+	docker-compose -p ci config -q
+	travis lint .travis.yml
 
 .PHONY: qemu-user-static
 qemu-user-static:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
-.PHONY: lint
-lint:
-	docker-compose -p ci config -q
-	docker run -v $(CURDIR):/project --rm skandyla/travis-cli lint .travis.yml
+.PHONY: manifest-tool
+manifest-tool:
+	@manifest-tool --version
+
+.PHONY: travis
+travis:
+	@travis --version

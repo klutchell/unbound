@@ -25,7 +25,7 @@ jobs:
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         - docker-compose -p ci build
-	      - docker-compose -p ci run tests
+        - docker-compose -p ci run tests
         - docker-compose -p ci push unbound
 
     - <<: *build
