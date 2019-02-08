@@ -9,11 +9,11 @@ unofficial [Unbound](https://unbound.net) docker image
 
 |tag|unbound|libressl|base|
 |---|---|---|---|
-|`latest`|1.9.0|2.8.3|(multiarch)|
-|`1.9.0`|1.9.0|2.8.3|(multiarch)|
-|`1.9.0-amd64`|1.9.0|2.8.3|`multiarch/alpine:amd64-v3.8`|
-|`1.9.0-arm`|1.9.0|2.8.3|`multiarch/alpine:armhf-v3.8`|
-|`1.9.0-arm64`|1.9.0|2.8.3|`multiarch/alpine:aarch64-v3.8`|
+|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[multiarch manifest](https://docs.docker.com/registry/spec/manifest-v2-2/)|
+|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[multiarch manifest](https://docs.docker.com/registry/spec/manifest-v2-2/)|
+|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:amd64-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
+|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:armhf-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
+|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:aarch64-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
 
 ## Deployment
 
@@ -31,6 +31,7 @@ docker run -p 5353:53/tcp -p 5353:53/udp -e TZ=America/Toronto klutchell/unbound
 
 ```bash
 # examples
+make build
 make build ARCH=arm
 make build ARCH=arm64 BUILD_OPTIONS=--no-cache
 ```
@@ -39,6 +40,7 @@ make build ARCH=arm64 BUILD_OPTIONS=--no-cache
 
 ```bash
 # examples
+make test
 make test ARCH=arm
 make test ARCH=arm64
 ```
