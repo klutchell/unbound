@@ -24,6 +24,7 @@ jobs:
       env: ARCH=amd64
       script:
         - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        - make Dockerfile.${ARCH} ARCH=${ARCH}
         - docker-compose -p ci build
         - docker-compose -p ci run tests
         - docker-compose -p ci push unbound

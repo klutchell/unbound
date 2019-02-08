@@ -20,8 +20,23 @@ BUILD_OPTIONS :=
 
 .DEFAULT_GOAL := build
 
+# https://hub.docker.com/r/multiarch/alpine/tags
+.PHONY: Dockerfile.amd64
+Dockerfile.amd64:
+	sed 's/:.+-/:amd64-/g' Dockerfile > Dockerfile.amd64
+
+# https://hub.docker.com/r/multiarch/alpine/tags
+.PHONY: Dockerfile.arm
+Dockerfile.amd64:
+	sed 's/:.+-/:armhf-/g' Dockerfile > Dockerfile.arm
+
+# https://hub.docker.com/r/multiarch/alpine/tags
+.PHONY: Dockerfile.arm64
+Dockerfile.arm64:
+	sed 's/:.+-/:aarch64-/g' Dockerfile > Dockerfile.arm64
+
 .PHONY: build
-build:
+build: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci build ${BUILD_OPTIONS} unbound
 
 .PHONY: test
