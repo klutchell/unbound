@@ -2,7 +2,7 @@ version: '3'
 services:
 
     unbound:
-        image: ${DOCKER_REPO}:${VERSION}-${ARCH}
+        image: ${DOCKER_REPO}:${APP_VERSION}-${ARCH}
         build:
             context: .
             dockerfile: Dockerfile.${ARCH}

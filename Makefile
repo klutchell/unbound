@@ -6,16 +6,16 @@
 
 # used by all targets
 DOCKER_REPO := klutchell/unbound
-VERSION := 1.9.0
+APP_VERSION := 1.9.0
 ARCH := amd64
 
 # used by build target only
-BUILD_DATE := $(strip $(shell docker run --rm alpine date -u +'%Y-%m-%dT%H:%M:%SZ'))
-BUILD_VERSION := ${VERSION}-$(strip $(shell git describe --all --long --dirty --always))
+BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
+BUILD_VERSION := ${APP_VERSION}-$(strip $(shell git describe --all --long --dirty --always))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
 # set these vars in compose_options in case docker-compose is executed in a container
-COMPOSE_OPTIONS := -e DOCKER_REPO -e VERSION -e ARCH -e BUILD_DATE -e BUILD_VERSION -e VCS_REF
+COMPOSE_OPTIONS := -e DOCKER_REPO -e APP_VERSION -e ARCH -e BUILD_DATE -e BUILD_VERSION -e VCS_REF
 BUILD_OPTIONS :=
 
 .DEFAULT_GOAL := build
@@ -36,13 +36,13 @@ push:
 .PHONY: release
 release:	build test push
 
-.PHONY: latest
-latest: manifest-tool
+.PHONY: manifest
+manifest: manifest-tool
 	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:${VERSION}-ARCH \
-	--target ${DOCKER_REPO}:${VERSION}
+	--template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
+	--target ${DOCKER_REPO}:${APP_VERSION}
 	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:${VERSION}-ARCH \
+	--template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
 	--target ${DOCKER_REPO}:latest
 
 .PHONY: lint

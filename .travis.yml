@@ -11,9 +11,9 @@ branches:
 env:
   global:
     - DOCKER_REPO=klutchell/unbound
-    - VERSION=1.9.0
+    - APP_VERSION=1.9.0
     - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-    - BUILD_VERSION=${VERSION}-${TRAVIS_BUILD_NUMBER}
+    - BUILD_VERSION=${APP_VERSION}-${TRAVIS_BUILD_NUMBER}
     - VCS_REF=${TRAVIS_COMMIT}
 
 jobs:
@@ -54,13 +54,13 @@ jobs:
 
     - &manifest
       stage: push manifest
-      env: TARGET=${DOCKER_REPO}:${VERSION}
+      env: TARGET=${DOCKER_REPO}:${APP_VERSION}
       install: go get -v github.com/estesp/manifest-tool
       script:
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
-          --template ${DOCKER_REPO}:${VERSION}-ARCH \
+          --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
           --target ${TARGET}
 
     - <<: *manifest
