@@ -34,8 +34,8 @@ Dockerfile.arm64: Dockerfile ; sed "s/amd64/aarch64/g" Dockerfile > Dockerfile.a
 build: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci build ${BUILD_OPTIONS}
 
-.PHONY: test
-test: Dockerfile.${ARCH} qemu-user-static
+.PHONY: tests
+tests: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci up --abort-on-container-exit
 
 .PHONY: push
@@ -43,7 +43,7 @@ push: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci push unbound
 
 .PHONY: release
-release: build test push
+release: build tests push
 
 .PHONY: manifest
 manifest:

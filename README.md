@@ -40,9 +40,9 @@ make build ARCH=arm64 BUILD_OPTIONS=--no-cache
 
 ```bash
 # examples
-make test
-make test ARCH=arm
-make test ARCH=arm64
+make tests
+make tests ARCH=arm
+make tests ARCH=arm64
 ```
 
 ## Usage
