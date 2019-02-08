@@ -6,4 +6,4 @@ WORKDIR /app
 
 COPY test.sh .
 
-CMD [ "/bin/sh", "test.sh" ]
+CMD [ "./test.sh" ]
