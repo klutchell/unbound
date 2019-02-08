@@ -39,10 +39,10 @@ release:	build test push
 .PHONY: latest
 latest: manifest-tool
 	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:ARCH-${VERSION} \
+	--template ${DOCKER_REPO}:${VERSION}-ARCH \
 	--target ${DOCKER_REPO}:${VERSION}
 	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:ARCH-${VERSION} \
+	--template ${DOCKER_REPO}:${VERSION}-ARCH \
 	--target ${DOCKER_REPO}:latest
 
 .PHONY: lint

@@ -60,7 +60,7 @@ jobs:
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
-          --template ${DOCKER_REPO}:ARCH-${VERSION} \
+          --template ${DOCKER_REPO}:${VERSION}-ARCH \
           --target ${TARGET}
 
     - <<: *manifest
