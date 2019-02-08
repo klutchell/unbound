@@ -15,8 +15,8 @@ BUILD_VERSION := ${APP_VERSION}-$(strip $(shell git describe --all --long --dirt
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
 # set these vars in compose_options in case docker-compose is executed in a container
-COMPOSE_OPTIONS := -e DOCKER_REPO -e APP_VERSION -e ARCH -e BUILD_DATE -e BUILD_VERSION -e VCS_REF
-BUILD_OPTIONS :=
+COMPOSE_OPTIONS += -e DOCKER_REPO -e APP_VERSION -e ARCH -e BUILD_DATE -e BUILD_VERSION -e VCS_REF
+BUILD_OPTIONS +=
 
 .DEFAULT_GOAL := build
 
@@ -35,12 +35,12 @@ build: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci build ${BUILD_OPTIONS} unbound
 
 .PHONY: test
-test: qemu-user-static
-	docker-compose -p ci build tests
+test: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci run --rm tests
 
 .PHONY: push
-push: ; docker-compose -p ci push unbound
+push: Dockerfile.${ARCH} qemu-user-static
+	docker-compose -p ci push unbound
 
 .PHONY: release
 release: build test push

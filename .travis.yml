@@ -37,9 +37,9 @@ jobs:
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-          --target TARGET=${DOCKER_REPO}:${APP_VERSION}
+          --target ${DOCKER_REPO}:${APP_VERSION}
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-          --target TARGET=${DOCKER_REPO}:latest
+          --target ${DOCKER_REPO}:latest
