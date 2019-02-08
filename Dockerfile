@@ -89,7 +89,7 @@ LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 # install runtime dependencies
-RUN apk add --no-cache libevent expat
+RUN apk add --no-cache libevent expat curl
 
 # create unbound group and user
 RUN addgroup -S -g 88 unbound \

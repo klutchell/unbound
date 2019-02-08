@@ -25,7 +25,7 @@ script:
   - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
   - make Dockerfile.${ARCH}
   - docker-compose -p ci build
-  - docker-compose -p ci run tests
+  - docker-compose -p ci up --abort-on-container-exit
   - docker-compose -p ci push unbound
 
 jobs:

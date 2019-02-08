@@ -32,11 +32,11 @@ Dockerfile.arm64: Dockerfile ; sed "s/alpine:amd64-/alpine:aarch64-/g" Dockerfil
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci build ${BUILD_OPTIONS} unbound
+	docker-compose -p ci build ${BUILD_OPTIONS}
 
 .PHONY: test
 test: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci run --rm tests
+	docker-compose -p ci up --abort-on-container-exit
 
 .PHONY: push
 push: Dockerfile.${ARCH} qemu-user-static
