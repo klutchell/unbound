@@ -22,6 +22,7 @@ jobs:
     - &build
       stage: 'build, test, and push'
       env: ARCH=amd64
+      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
       script:
         - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
         - make Dockerfile.${ARCH} ARCH=${ARCH}
@@ -31,11 +32,9 @@ jobs:
 
     - <<: *build
       env: ARCH=arm
-      install: &qemu-user-static docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
     - <<: *build
       env: ARCH=arm64
-      install: *qemu-user-static
 
     - &retest
       stage: pull and re-test
