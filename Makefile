@@ -10,7 +10,7 @@ APP_VERSION := 1.9.0
 ARCH := amd64
 
 # used by build target only
-BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
+BUILD_DATE := $(strip $(shell busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := ${APP_VERSION}-$(strip $(shell git describe --all --long --dirty --always))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
@@ -24,11 +24,11 @@ BUILD_OPTIONS +=
 # supported FROM tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
 # supported TARGET tags can be found here: https://golang.org/doc/install/source#environment
 .PHONY: Dockerfile.amd64
-Dockerfile.amd64: Dockerfile ; sed -r "s/:[^-]+-/:amd64-/g" Dockerfile > Dockerfile.amd64
+Dockerfile.amd64: Dockerfile ; sed "s/alpine:amd64-/alpine:amd64-/g" Dockerfile > Dockerfile.amd64
 .PHONY: Dockerfile.arm
-Dockerfile.arm: Dockerfile ; sed -r "s/:[^-]+-/:armhf-/g" Dockerfile > Dockerfile.arm
+Dockerfile.arm: Dockerfile ; sed "s/alpine:amd64-/alpine:armhf-/g" Dockerfile > Dockerfile.arm
 .PHONY: Dockerfile.arm64
-Dockerfile.arm64: Dockerfile ; sed -r "s/:[^-]+-/:aarch64-/g" Dockerfile > Dockerfile.arm64
+Dockerfile.arm64: Dockerfile ; sed "s/alpine:amd64-/alpine:aarch64-/g" Dockerfile > Dockerfile.arm64
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
