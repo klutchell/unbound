@@ -23,7 +23,7 @@ jobs:
       stage: 'build, test, and push'
       env: ARCH=amd64
       script:
-        - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
         - make Dockerfile.${ARCH} ARCH=${ARCH}
         - docker-compose -p ci build
         - docker-compose -p ci run tests

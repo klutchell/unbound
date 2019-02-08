@@ -104,7 +104,7 @@ COPY unbound.conf .
 
 # run start script on boot
 COPY start.sh /
-CMD ["/bin/bash", "/start.sh"]
+CMD ["/bin/sh", "/start.sh"]
 
 # expose dns ports
 EXPOSE 53/tcp 53/udp

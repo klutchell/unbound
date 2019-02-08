@@ -20,20 +20,17 @@ BUILD_OPTIONS :=
 
 .DEFAULT_GOAL := build
 
-# https://hub.docker.com/r/multiarch/alpine/tags
+# create dockerfile.arch by substituting the FROM multiarch image tag
+# supported tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
 .PHONY: Dockerfile.amd64
 Dockerfile.amd64:
-	sed 's/:.+-/:amd64-/g' Dockerfile > Dockerfile.amd64
-
-# https://hub.docker.com/r/multiarch/alpine/tags
+	sed "s/:[^-]+-/:amd64-/g" Dockerfile > Dockerfile.amd64
 .PHONY: Dockerfile.arm
 Dockerfile.arm:
-	sed 's/:.+-/:armhf-/g' Dockerfile > Dockerfile.arm
-
-# https://hub.docker.com/r/multiarch/alpine/tags
+	sed "s/:[^-]+-/:armhf-/g" Dockerfile > Dockerfile.arm
 .PHONY: Dockerfile.arm64
 Dockerfile.arm64:
-	sed 's/:.+-/:aarch64-/g' Dockerfile > Dockerfile.arm64
+	sed "s/:[^-]+-/:aarch64-/g" Dockerfile > Dockerfile.arm64
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
