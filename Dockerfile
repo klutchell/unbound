@@ -72,12 +72,12 @@ RUN RANLIB="gcc-ranlib" \
 # ----------------------------------------------------------------------------
 
 FROM multiarch/alpine:amd64-v3.8
-LABEL maintainer="kylemharding@gmail.com"
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
 ARG VCS_REF
 
+LABEL maintainer="kylemharding@gmail.com"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.name="klutchell/unbound"
 LABEL org.label-schema.description="Unbound is a validating, recursive, caching DNS resolver"

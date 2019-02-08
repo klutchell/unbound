@@ -24,11 +24,11 @@ BUILD_OPTIONS +=
 # supported FROM tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
 # supported TARGET tags can be found here: https://golang.org/doc/install/source#environment
 .PHONY: Dockerfile.amd64
-Dockerfile.amd64: Dockerfile ; sed "s/alpine:amd64-/alpine:amd64-/g" Dockerfile > Dockerfile.amd64
+Dockerfile.amd64: Dockerfile ; sed "s/amd64/amd64/g" Dockerfile > Dockerfile.amd64
 .PHONY: Dockerfile.arm
-Dockerfile.arm: Dockerfile ; sed "s/alpine:amd64-/alpine:armhf-/g" Dockerfile > Dockerfile.arm
+Dockerfile.arm: Dockerfile ; sed "s/amd64/armhf/g" Dockerfile > Dockerfile.arm
 .PHONY: Dockerfile.arm64
-Dockerfile.arm64: Dockerfile ; sed "s/alpine:amd64-/alpine:aarch64-/g" Dockerfile > Dockerfile.arm64
+Dockerfile.arm64: Dockerfile ; sed "s/amd64/aarch64/g" Dockerfile > Dockerfile.arm64
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
