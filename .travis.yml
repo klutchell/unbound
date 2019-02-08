@@ -15,53 +15,31 @@ env:
     - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
     - BUILD_VERSION=${APP_VERSION}-${TRAVIS_BUILD_NUMBER}
     - VCS_REF=${TRAVIS_COMMIT}
+  matrix:
+    - ARCH=amd64
+    - ARCH=arm
+    - ARCH=arm64
+
+install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+script:
+  - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
+  - make Dockerfile.${ARCH}
+  - docker-compose -p ci build
+  - docker-compose -p ci run tests
+  - docker-compose -p ci push unbound
 
 jobs:
   include:
-
-    - &build
-      stage: 'build, test, and push'
-      env: ARCH=amd64
-      install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
-      script:
-        - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
-        - make Dockerfile.${ARCH} ARCH=${ARCH}
-        - docker-compose -p ci build
-        - docker-compose -p ci run tests
-        - docker-compose -p ci push unbound
-
-    - <<: *build
-      env: ARCH=arm
-
-    - <<: *build
-      env: ARCH=arm64
-
-    - &retest
-      stage: pull and re-test
-      env: ARCH=amd64
-      script:
-        - docker-compose -p ci pull unbound
-        - docker-compose -p ci build tests
-        - docker-compose -p ci run tests
-
-    - <<: *retest
-      env: ARCH=arm
-      install: *qemu-user-static
-
-    - <<: *retest
-      env: ARCH=arm64
-      install: *qemu-user-static
-
-    - &manifest
-      stage: push manifest
-      env: TARGET=${DOCKER_REPO}:${APP_VERSION}
+    - stage: deploy
       install: go get -v github.com/estesp/manifest-tool
       script:
         - |
           manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
           --platforms linux/amd64,linux/arm,linux/arm64 \
           --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-          --target ${TARGET}
-
-    - <<: *manifest
-      env: TARGET=${DOCKER_REPO}:latest
+          --target TARGET=${DOCKER_REPO}:${APP_VERSION}
+        - |
+          manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
+          --platforms linux/amd64,linux/arm,linux/arm64 \
+          --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
+          --target TARGET=${DOCKER_REPO}:latest

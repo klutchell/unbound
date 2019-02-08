@@ -21,16 +21,14 @@ BUILD_OPTIONS :=
 .DEFAULT_GOAL := build
 
 # create dockerfile.arch by substituting the FROM multiarch image tag
-# supported tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
+# supported FROM tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
+# supported TARGET tags can be found here: https://golang.org/doc/install/source#environment
 .PHONY: Dockerfile.amd64
-Dockerfile.amd64:
-	sed "s/:[^-]+-/:amd64-/g" Dockerfile > Dockerfile.amd64
+Dockerfile.amd64: Dockerfile ; sed "s/:[^-]+-/:amd64-/g" Dockerfile > Dockerfile.amd64
 .PHONY: Dockerfile.arm
-Dockerfile.arm:
-	sed "s/:[^-]+-/:armhf-/g" Dockerfile > Dockerfile.arm
+Dockerfile.arm: Dockerfile ; sed "s/:[^-]+-/:armhf-/g" Dockerfile > Dockerfile.arm
 .PHONY: Dockerfile.arm64
-Dockerfile.arm64:
-	sed "s/:[^-]+-/:aarch64-/g" Dockerfile > Dockerfile.arm64
+Dockerfile.arm64: Dockerfile ; sed "s/:[^-]+-/:aarch64-/g" Dockerfile > Dockerfile.arm64
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
@@ -42,14 +40,13 @@ test: qemu-user-static
 	docker-compose -p ci run --rm tests
 
 .PHONY: push
-push:
-	docker-compose -p ci push unbound
+push: ; docker-compose -p ci push unbound
 
 .PHONY: release
-release:	build test push
+release: build test push
 
 .PHONY: manifest
-manifest: manifest-tool
+manifest:
 	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
 	--template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
 	--target ${DOCKER_REPO}:${APP_VERSION}
@@ -58,7 +55,7 @@ manifest: manifest-tool
 	--target ${DOCKER_REPO}:latest
 
 .PHONY: lint
-lint: travis
+lint:
 	docker-compose -p ci config -q
 	travis lint .travis.yml
 
@@ -66,10 +63,3 @@ lint: travis
 qemu-user-static:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
-.PHONY: manifest-tool
-manifest-tool:
-	@manifest-tool --version
-
-.PHONY: travis
-travis:
-	@travis --version
