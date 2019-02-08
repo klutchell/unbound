@@ -7,13 +7,13 @@ unofficial [Unbound](https://unbound.net) docker image
 
 ## Tags
 
-|tag|description|
-|---|---|
-|`latest`|latest multi-arch|
-|`1.9.0`|unbound 1.9.0 multi-arch|
-|`1.9.0-amd64`|unbound 1.9.0 amd64|
-|`1.9.0-arm`|unbound 1.9.0 arm32v6|
-|`1.9.0-arm64`|unbound 1.9.0 arm64v8|
+|tag|unbound|libressl|base|
+|---|---|---|---|
+|`latest`|1.9.0|2.8.3|(multiarch)|
+|`1.9.0`|1.9.0|2.8.3|(multiarch)|
+|`1.9.0-amd64`|1.9.0|2.8.3|`multiarch/alpine:amd64-v3.8`|
+|`1.9.0-arm`|1.9.0|2.8.3|`multiarch/alpine:armhf-v3.8`|
+|`1.9.0-arm64`|1.9.0|2.8.3|`multiarch/alpine:aarch64-v3.8`|
 
 ## Deployment
 
