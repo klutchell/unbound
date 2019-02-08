@@ -27,7 +27,7 @@ Dockerfile.amd64:
 
 # https://hub.docker.com/r/multiarch/alpine/tags
 .PHONY: Dockerfile.arm
-Dockerfile.amd64:
+Dockerfile.arm:
 	sed 's/:.+-/:armhf-/g' Dockerfile > Dockerfile.arm
 
 # https://hub.docker.com/r/multiarch/alpine/tags
