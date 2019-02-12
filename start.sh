@@ -12,8 +12,12 @@ fi
 # note: there is no point in doing it more often then every 6 months.
 curl -fsSL https://www.internic.net/domain/named.root -o "/opt/unbound/etc/unbound/root.hints"
 
-# update the root trust anchor for DNSSEC validation
-/opt/unbound/sbin/unbound-anchor -a "/opt/unbound/etc/unbound/root.key"
+# update the root trust anchor for DNSSEC validation.
+# this  tool  exits with value 1 if the root anchor was updated using the
+# certificate or if the builtin root-anchor was used.  It exits with code
+# 0 if no update was necessary, if the update was possible with RFC5011
+# tracking, or if an error occurred.
+/opt/unbound/sbin/unbound-anchor -a "/opt/unbound/etc/unbound/root.key" || true
 
 # take ownership of the working directory
 chown -R unbound:unbound "/opt/unbound/etc/unbound"
