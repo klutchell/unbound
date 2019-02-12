@@ -56,6 +56,7 @@ RUN RANLIB="gcc-ranlib" \
 		--enable-event-api --enable-static=no --enable-pie  --enable-relro-now \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install \
+	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/unbound.conf.example \
 	&& rm -rf \
 		/opt/unbound/share \
 		/opt/unbound/include \
@@ -104,7 +105,7 @@ COPY unbound.conf .
 
 # run start script on boot
 COPY start.sh /
-CMD ["/bin/sh", "/start.sh"]
+CMD [ "/start.sh" ]
 
 # expose dns ports
 EXPOSE 53/tcp 53/udp
