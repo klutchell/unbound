@@ -48,7 +48,7 @@ make tests ARCH=arm64
 
 ## Usage
 
-Check out the following guide for usage with [Pi-hole](https://pi-hole.net/)
+Check out the following guide for usage with Pi-hole
 
 * https://docs.pi-hole.net/guides/unbound/
 
