@@ -26,7 +26,7 @@ docker run -p 53:53/tcp -p 53:53/udp -e TZ=America/Toronto klutchell/unbound
 * `-p 53:53/tcp` - expose tcp port 53 on the container to tcp port 53 on the host
 * `-p 53:53/udp` - expose udp port 53 on the container to udp port 53 on the host
 * `-e TZ=America/Toronto` - (optional) provide desired timezone from [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-* `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a local configuration directory with `unbound.conf` and `a-records.conf` at the root
+* `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
 
 ## Building
 

@@ -112,6 +112,9 @@ COPY a-records.conf unbound.conf ./
 # copy unbound script
 COPY unbound.sh /
 
+# set execute bit
+RUN chmod +x /unbound.sh
+
 # add unbound binaries to path
 ENV PATH /opt/unbound/sbin:"${PATH}"
 
