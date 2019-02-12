@@ -98,7 +98,7 @@ LABEL org.label-schema.vcs-ref="${VCS_REF}"
 RUN addgroup unbound && adduser -D -H -s /sbin/nologin -G unbound unbound
 
 # install runtime dependencies
-RUN apk add --no-cache libevent expat curl bind-tools
+RUN apk add --no-cache libevent expat curl bind-tools ca-certificates
 
 # copy libressl and unbound
 COPY --from=unbound /opt/ /opt/
