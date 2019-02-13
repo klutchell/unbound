@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add --no-cache bind-tools
+RUN apk add --no-cache drill
 
 WORKDIR /app
 
