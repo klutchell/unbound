@@ -1,7 +1,5 @@
+services: docker
 language: go
-
-services:
-  - docker
 
 branches:
   only:
@@ -19,18 +17,26 @@ env:
     - ARCH=amd64
     - ARCH=arm
     - ARCH=arm64
+    - ARCH=i386
 
-install: docker run --rm --privileged multiarch/qemu-user-static:register --reset
-script:
+install:
   - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+before_script:
   - make Dockerfile.${ARCH}
+
+script:
   - docker-compose -p ci build
   - docker-compose -p ci up --abort-on-container-exit
-  - docker-compose -p ci push unbound
+
+deploy:
+  - provider: script
+    script: docker-compose -p ci push unbound
 
 jobs:
   include:
-    - stage: deploy
+    - stage: manifest
       install: go get -v github.com/estesp/manifest-tool
       script:
         - |
