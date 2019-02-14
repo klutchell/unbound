@@ -1,4 +1,4 @@
-FROM multiarch/alpine:amd64-v3.8 as libressl
+FROM multiarch/alpine:amd64-v3.9
 
 ENV LIBRESSL_VERSION="2.8.3"
 ENV LIBRESSL_SHA="3967e08b3dc2277bf77057ea1f11148df7f96a2203cd21cf841902f2a1ec11320384a001d01fa58154d35612f7981bf89d5b1a60a2387713d5657677f76cc682"
@@ -32,7 +32,7 @@ RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-FROM multiarch/alpine:amd64-v3.8 as unbound
+FROM multiarch/alpine:amd64-v3.8
 
 ENV UNBOUND_VERSION="1.9.0"
 ENV UNBOUND_SHA="7dfa8e078507fc24a2d0938eea590389453bacfcac023f1a41af19350ea1f7b87d0c82d7eead121a11068921292a96865e177274ff27ed8b8868445f80f7baf6"
@@ -48,7 +48,7 @@ RUN apk add --no-cache build-base curl file linux-headers libevent libevent-dev 
 WORKDIR /tmp/src
 
 # copy libressl
-COPY --from=libressl /opt/libressl /opt/libressl
+COPY --from=0 /opt/libressl /opt/libressl
 
 # download, verify, extract, build, clean, strip
 RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
@@ -101,7 +101,7 @@ RUN addgroup unbound && adduser -D -H -s /sbin/nologin -G unbound unbound
 RUN apk add --no-cache libevent expat curl drill ca-certificates
 
 # copy libressl and unbound
-COPY --from=unbound /opt/ /opt/
+COPY --from=1 /opt/ /opt/
 
 # work in unbound root directory
 WORKDIR /opt/unbound/etc/unbound

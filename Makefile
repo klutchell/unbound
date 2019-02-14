@@ -10,8 +10,9 @@ APP_VERSION := 1.9.0
 ARCH := amd64
 
 # used by build target only
+BUILD_NUMBER := $(strip $(shell git describe --all --long --dirty --always))
 BUILD_DATE := $(strip $(shell busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
-BUILD_VERSION := ${APP_VERSION}-$(strip $(shell git describe --all --long --dirty --always))
+BUILD_VERSION := ${APP_VERSION}-${BUILD_NUMBER}
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
 # set these vars in compose_options in case docker-compose is executed in a container
@@ -20,46 +21,42 @@ BUILD_OPTIONS +=
 
 .DEFAULT_GOAL := build
 
-# create dockerfile.arch by substituting the FROM multiarch image tag
-# supported FROM tags can be found here: https://hub.docker.com/r/multiarch/alpine/tags
-# supported TARGET tags can be found here: https://golang.org/doc/install/source#environment
-.PHONY: Dockerfile.amd64
-Dockerfile.amd64: Dockerfile ; sed "s/amd64/amd64/g" Dockerfile > Dockerfile.amd64
-.PHONY: Dockerfile.arm
-Dockerfile.arm: Dockerfile ; sed "s/amd64/armhf/g" Dockerfile > Dockerfile.arm
-.PHONY: Dockerfile.arm64
-Dockerfile.arm64: Dockerfile ; sed "s/amd64/aarch64/g" Dockerfile > Dockerfile.arm64
+# create dockerfile.arch by substituting the FROM multiarch image
+# supported FROM images can be found here: https://hub.docker.com/r/multiarch/alpine/tags
+# supported ARCH labels be found here: https://golang.org/doc/install/source#environment
+
+MULTIARCH_amd64 := multiarch/alpine:amd64-v3.9
+MULTIARCH_arm := multiarch/alpine:armhf-v3.9
+MULTIARCH_arm64 := multiarch/alpine:aarch64-v3.9
+
+.PHONY: Dockerfile.${ARCH}
+Dockerfile.${ARCH}: Dockerfile
+	sed -r "s|FROM .+|FROM ${MULTIARCH_${ARCH}}|g" Dockerfile > Dockerfile.${ARCH}
+
+.PHONY: qemu-user-static
+qemu-user-static:
+	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci build ${BUILD_OPTIONS}
+	docker-compose -p ci build ${BUILD_OPTIONS} unbound
 
 .PHONY: test
 test: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci up --abort-on-container-exit
+	docker-compose -p ci up --build --abort-on-container-exit
 
 .PHONY: push
 push: Dockerfile.${ARCH} qemu-user-static
 	docker-compose -p ci push unbound
 
-.PHONY: release
-release: build tests push
-
 .PHONY: manifest
 manifest:
-	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-	--target ${DOCKER_REPO}:${APP_VERSION}
-	manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64 \
-	--template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-	--target ${DOCKER_REPO}:latest
+	manifest-tool push from-spec manifest.yml
 
 .PHONY: lint
 lint:
 	docker-compose -p ci config -q
 	travis lint .travis.yml
 
-.PHONY: qemu-user-static
-qemu-user-static:
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
+.PHONY: release
+release: build test push

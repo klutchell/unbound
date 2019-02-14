@@ -7,45 +7,24 @@ branches:
     - /^v\d+\.\d+\.\d+.*$/
 
 env:
-  global:
-    - DOCKER_REPO=klutchell/unbound
-    - APP_VERSION=1.9.0
-    - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-    - BUILD_VERSION=${APP_VERSION}-${TRAVIS_BUILD_NUMBER}
-    - VCS_REF=${TRAVIS_COMMIT}
   matrix:
     - ARCH=amd64
     - ARCH=arm
     - ARCH=arm64
-    - ARCH=i386
 
 install:
   - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-before_script:
-  - make Dockerfile.${ARCH}
 
 script:
-  - docker-compose -p ci build
-  - docker-compose -p ci up --abort-on-container-exit
+  - make build ARCH=${ARCH} BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+  - make test ARCH=${ARCH}
 
 deploy:
   - provider: script
-    script: docker-compose -p ci push unbound
+    script: make push ARCH=${ARCH}
 
 jobs:
   include:
     - stage: manifest
       install: go get -v github.com/estesp/manifest-tool
-      script:
-        - |
-          manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
-          --platforms linux/amd64,linux/arm,linux/arm64 \
-          --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-          --target ${DOCKER_REPO}:${APP_VERSION}
-        - |
-          manifest-tool --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" push from-args \
-          --platforms linux/amd64,linux/arm,linux/arm64 \
-          --template ${DOCKER_REPO}:${APP_VERSION}-ARCH \
-          --target ${DOCKER_REPO}:latest
+      script: manifest-tool --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} push from-spec manifest.yml

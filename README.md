@@ -11,9 +11,9 @@
 |---|---|---|---|
 |`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
 |`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
-|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:amd64-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
-|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:armhf-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
-|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:aarch64-v3.8`](https://hub.docker.com/r/multiarch/alpine/)|
+|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:amd64-v3.9`](https://hub.docker.com/r/multiarch/alpine/)|
+|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:armhf-v3.9`](https://hub.docker.com/r/multiarch/alpine/)|
+|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:aarch64-v3.9`](https://hub.docker.com/r/multiarch/alpine/)|
 
 ## Deployment
 
