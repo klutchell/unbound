@@ -7,24 +7,14 @@ branches:
     - /^v\d+\.\d+\.\d+.*$/
 
 env:
-  matrix:
-    - ARCH=amd64
-    - ARCH=arm
-    - ARCH=arm64
+  - ARCH=amd64
+  - ARCH=arm
+  - ARCH=arm64
 
-install:
-  - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
+install: go get -v github.com/estesp/manifest-tool
 
-script:
-  - make build ARCH=${ARCH} BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
-  - make test ARCH=${ARCH}
+before_script: echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-deploy:
-  - provider: script
-    script: make push ARCH=${ARCH}
+script: make release ARCH=${ARCH} BUILD_LABEL=${TRAVIS_BUILD_NUMBER}
 
-jobs:
-  include:
-    - stage: manifest
-      install: go get -v github.com/estesp/manifest-tool
-      script: manifest-tool --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} push from-spec manifest.yml
+after_success: make manifest || true

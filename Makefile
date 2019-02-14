@@ -5,18 +5,15 @@
 .EXPORT_ALL_VARIABLES:
 
 # used by all targets
-DOCKER_REPO := klutchell/unbound
-APP_VERSION := 1.9.0
 ARCH := amd64
 
 # used by build target only
-BUILD_NUMBER := $(strip $(shell git describe --all --long --dirty --always))
+BUILD_LABEL := $(strip $(shell git describe --dirty --always))
 BUILD_DATE := $(strip $(shell busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
-BUILD_VERSION := ${APP_VERSION}-${BUILD_NUMBER}
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 
 # set these vars in compose_options in case docker-compose is executed in a container
-COMPOSE_OPTIONS += -e DOCKER_REPO -e APP_VERSION -e ARCH -e BUILD_DATE -e BUILD_VERSION -e VCS_REF
+COMPOSE_OPTIONS += -e ARCH -e BUILD_DATE -e BUILD_LABEL -e VCS_REF
 BUILD_OPTIONS +=
 
 .DEFAULT_GOAL := build
