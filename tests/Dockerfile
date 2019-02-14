@@ -2,8 +2,6 @@ FROM alpine
 
 RUN apk add --no-cache drill
 
-WORKDIR /app
+COPY test.sh /
 
-COPY test.sh .
-
-CMD [ "./test.sh" ]
+CMD [ "/test.sh" ]
