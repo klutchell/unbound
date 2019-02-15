@@ -122,7 +122,7 @@ ENV PATH /opt/unbound/sbin:"${PATH}"
 EXPOSE 53/tcp 53/udp
 
 # lookup url as healthcheck
-HEALTHCHECK --interval=5s --timeout=5s --start-period=5s CMD /drill.sh 127.0.0.1
+HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD /drill.sh 127.0.0.1
 
 # run startup script
 CMD [ "/unbound.sh" ]
