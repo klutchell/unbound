@@ -36,15 +36,15 @@ qemu-user-static:
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci build ${BUILD_OPTIONS} unbound
+	docker-compose -f docker-compose.ci.yml -p ci build ${BUILD_OPTIONS} unbound
 
 .PHONY: test
 test: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci up --build --abort-on-container-exit
+	docker-compose -f docker-compose.ci.yml -p ci up --build --abort-on-container-exit
 
 .PHONY: push
 push: Dockerfile.${ARCH} qemu-user-static
-	docker-compose -p ci push unbound
+	docker-compose -f docker-compose.ci.yml -p ci push unbound
 
 .PHONY: manifest
 manifest:
@@ -52,7 +52,7 @@ manifest:
 
 .PHONY: lint
 lint:
-	docker-compose -p ci config -q
+	docker-compose -f docker-compose.ci.yml -p ci config
 	travis lint .travis.yml
 
 .PHONY: release

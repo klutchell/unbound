@@ -2,16 +2,8 @@ version: '3'
 services:
 
     unbound:
-        image: klutchell/unbound:1.9.0-${ARCH}
-        build:
-            context: .
-            dockerfile: Dockerfile.${ARCH}
-            args:
-                - BUILD_DATE
-                - BUILD_VERSION=1.9.0-${BUILD_LABEL}
-                - VCS_REF
-
-    tests:
-        build: tests
-        links:
-            - unbound
+        image: klutchell/unbound
+        container_name: unbound
+        ports:
+            - '53:53/tcp'
+            - '53:53/udp'

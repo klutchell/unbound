@@ -110,10 +110,10 @@ WORKDIR /opt/unbound/etc/unbound
 COPY a-records.conf unbound.conf ./
 
 # copy unbound script
-COPY unbound.sh /
+COPY unbound.sh drill.sh /
 
 # set execute bit
-RUN chmod +x /unbound.sh
+RUN chmod +x /unbound.sh /drill.sh
 
 # add unbound binaries to path
 ENV PATH /opt/unbound/sbin:"${PATH}"
@@ -122,7 +122,7 @@ ENV PATH /opt/unbound/sbin:"${PATH}"
 EXPOSE 53/tcp 53/udp
 
 # lookup url as healthcheck
-HEALTHCHECK --interval=5s --timeout=3s --start-period=5s CMD drill -D @127.0.0.1 sigok.verteiltesysteme.net || exit 1
+HEALTHCHECK --interval=5s --timeout=5s --start-period=5s CMD /drill.sh 127.0.0.1
 
 # run startup script
 CMD [ "/unbound.sh" ]
