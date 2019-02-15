@@ -1,4 +1,6 @@
-#!/bin/sh -xe
+#!/bin/sh
+
+set -xe
 
 # set timezone with TZ (eg. TZ=America/Toronto)
 if [ -n "${TZ}" ]
