@@ -3,3 +3,5 @@ FROM alpine
 RUN apk add --no-cache drill
 
 COPY drill.sh /
+
+RUN chmod +x /drill.sh
