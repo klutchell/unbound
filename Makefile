@@ -32,11 +32,11 @@ MULTIARCH_arm64 := multiarch/alpine:aarch64-v3.9
 
 .PHONY: Dockerfile.${ARCH}
 Dockerfile.${ARCH}: Dockerfile
-	sed -r "s|FROM .+|FROM ${MULTIARCH_${ARCH}}|g" Dockerfile > Dockerfile.${ARCH}
+	@sed -r "s|FROM .+|FROM ${MULTIARCH_${ARCH}}|g" Dockerfile > Dockerfile.${ARCH}
 
 .PHONY: qemu-user-static
 qemu-user-static:
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
+	@docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
@@ -57,7 +57,7 @@ manifest:
 .PHONY: lint
 lint:
 	docker-compose config -q
-	travis lint .travis.yml
+	travis lint
 
 .PHONY: release
 release: build test push
