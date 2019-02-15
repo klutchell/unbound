@@ -32,7 +32,7 @@ RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-FROM multiarch/alpine:amd64-v3.8
+FROM multiarch/alpine:amd64-v3.9
 
 ENV UNBOUND_VERSION="1.9.0"
 ENV UNBOUND_SHA="7dfa8e078507fc24a2d0938eea590389453bacfcac023f1a41af19350ea1f7b87d0c82d7eead121a11068921292a96865e177274ff27ed8b8868445f80f7baf6"
@@ -77,7 +77,7 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-FROM multiarch/alpine:amd64-v3.8
+FROM multiarch/alpine:amd64-v3.9
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
