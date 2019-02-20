@@ -40,24 +40,25 @@ qemu-user-static:
 
 .PHONY: build
 build: Dockerfile.${ARCH} qemu-user-static
-	docker-compose build ${BUILD_OPTIONS} unbound
+	docker-compose build ${BUILD_OPTIONS}
 
 .PHONY: test
-test: Dockerfile.${ARCH} qemu-user-static
-	docker-compose up --build --abort-on-container-exit
+test: build
+	docker-compose up --abort-on-container-exit
 
 .PHONY: push
-push: Dockerfile.${ARCH} qemu-user-static
+push: build
 	docker-compose push unbound
+
+.PHONY: lint
+lint: build
+	docker-compose config -q
+	docker-compose run --rm --no-deps unbound unbound-checkconf
+	docker-compose run --rm --no-deps test travis lint
 
 .PHONY: manifest
 manifest:
 	manifest-tool push from-spec manifest.yml
-
-.PHONY: lint
-lint:
-	docker-compose config -q
-	travis lint
 
 .PHONY: release
 release: build test push

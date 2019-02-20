@@ -125,4 +125,4 @@ EXPOSE 53/tcp 53/udp
 HEALTHCHECK --interval=10s --timeout=10s --start-period=10s CMD /drill.sh 127.0.0.1
 
 # run startup script
-CMD [ "/unbound.sh" ]
+ENTRYPOINT [ "/unbound.sh" ]

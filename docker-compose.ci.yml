@@ -11,10 +11,9 @@ services:
                 - BUILD_VERSION=1.9.0-${BUILD_LABEL}
                 - VCS_REF
 
-    drill:
+    test:
         build:
             context: .
-            dockerfile: Dockerfile.drill
+            dockerfile: Dockerfile.test
         links:
             - unbound
-        command: sh -c 'sleep 10 && /drill.sh unbound'

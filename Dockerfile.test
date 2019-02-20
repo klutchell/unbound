@@ -1,0 +1,13 @@
+FROM alpine
+
+RUN apk add --no-cache ruby-dev build-base drill
+
+RUN gem install travis --no-rdoc --no-ri
+
+WORKDIR /app
+
+COPY . /app/
+
+RUN chmod +x drill.sh
+
+CMD sh -c 'sleep 10 && ./drill.sh unbound'

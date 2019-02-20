@@ -28,4 +28,9 @@ fi
 # possible with RFC5011 tracking, or if an error occurred.
 /opt/unbound/sbin/unbound-anchor -a /opt/unbound/etc/unbound/var/root.key || true
 
-exec /opt/unbound/sbin/unbound -d -c /opt/unbound/etc/unbound/unbound.conf
+if [ $# -eq 0 ]
+then
+	exec /opt/unbound/sbin/unbound -d -c /opt/unbound/etc/unbound/unbound.conf
+else
+	exec "$@"
+fi
