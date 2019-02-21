@@ -126,7 +126,7 @@ EXPOSE 53/tcp 53/udp
 # lookup url as healthcheck
 HEALTHCHECK --interval=5s --timeout=5s --start-period=5s \
 	CMD '/bin/sh' -ecx \
-	'drill -D @127.0.0.1 sigfail.verteiltesysteme.net | grep NOERROR && \
+	'drill -D @127.0.0.1 sigfail.verteiltesysteme.net | grep SERVFAIL && \
 	drill -D @127.0.0.1 sigok.verteiltesysteme.net | grep NOERROR'
 
 # run startup script
