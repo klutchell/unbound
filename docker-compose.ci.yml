@@ -2,13 +2,14 @@ version: '3'
 services:
 
     unbound:
-        image: klutchell/unbound:1.9.0-${ARCH}
+        image: klutchell/unbound:1.9.0-${GOARCH}
         build:
             context: .
-            dockerfile: Dockerfile.${ARCH}
+            dockerfile: Dockerfile
             args:
+                - ARCH
                 - BUILD_DATE
-                - BUILD_VERSION=1.9.0-${BUILD_LABEL}
+                - BUILD_VERSION=1.9.0-${BUILD_TAG}
                 - VCS_REF
 
     test:

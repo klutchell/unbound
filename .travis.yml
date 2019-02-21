@@ -15,6 +15,6 @@ install: go get -v github.com/estesp/manifest-tool
 
 before_script: echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-script: make release ARCH=${ARCH} BUILD_LABEL=${TRAVIS_BUILD_NUMBER}
+script: make release ARCH=${ARCH} BUILD_TAG=${TRAVIS_BUILD_NUMBER}
 
 after_success: make manifest || true
