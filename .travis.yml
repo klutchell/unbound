@@ -11,10 +11,14 @@ env:
   - ARCH=armhf
   - ARCH=arm64
 
-install: go get -v github.com/estesp/manifest-tool
+install:
+  - go get -v github.com/estesp/manifest-tool
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
-before_script: echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
+script:
+  - make test ARCH=${ARCH} BUILD_VERSION=1.9.0-${TRAVIS_BUILD_NUMBER}
 
-script: make release ARCH=${ARCH} BUILD_TAG=${TRAVIS_BUILD_NUMBER}
-
-after_success: make manifest || true
+after_success:
+  - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin
+  - make push ARCH=${ARCH}
+  - make manifest || true

@@ -2,14 +2,14 @@ version: '3'
 services:
 
     unbound:
-        image: klutchell/unbound:1.9.0-${GOARCH}
+        image: klutchell/unbound:${IMAGE_TAG}
         build:
             context: .
             dockerfile: Dockerfile
             args:
                 - ARCH
                 - BUILD_DATE
-                - BUILD_VERSION=1.9.0-${BUILD_TAG}
+                - BUILD_VERSION
                 - VCS_REF
 
     test:
@@ -18,4 +18,10 @@ services:
             dockerfile: Dockerfile.test
         links:
             - unbound
-        command: sh -c 'sleep 5 && /drill.sh unbound'
+        command:
+            - "/bin/sh"
+            - -ecx
+            - |
+                sleep 5 && \
+                drill -D @unbound sigfail.verteiltesysteme.net | grep SERVFAIL && \
+                drill -D @unbound sigok.verteiltesysteme.net | grep NOERROR
