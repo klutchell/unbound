@@ -8,7 +8,7 @@ branches:
 
 env:
   - ARCH=amd64
-  - ARCH=arm
+  - ARCH=armhf
   - ARCH=arm64
 
 install: go get -v github.com/estesp/manifest-tool

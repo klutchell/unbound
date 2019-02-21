@@ -1,6 +1,6 @@
 # variables are exported for all subprocesses
 # override variables at runtime as needed
-# eg. make build ARCH=arm BUILD_OPTIONS=--no-cache
+# eg. make build ARCH=armhf BUILD_OPTIONS=--no-cache
 
 .EXPORT_ALL_VARIABLES:
 
@@ -13,7 +13,6 @@ ARCH := amd64
 amd64_GOARCH = amd64
 armhf_GOARCH = arm
 arm64_GOARCH = arm64
-
 GOARCH := ${${ARCH}_GOARCH}
 
 # used by build target only
