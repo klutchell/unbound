@@ -82,7 +82,7 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 FROM multiarch/alpine:${ARCH}-v3.9
 
 ARG BUILD_DATE
-ARG BUILD_VERSION
+ARG BUILD_VERSION=1.9.0-dev
 ARG VCS_REF
 
 LABEL maintainer="kylemharding@gmail.com"
