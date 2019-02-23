@@ -12,7 +12,8 @@ env:
   - ARCH=arm64
 
 script:
-  - make test ARCH=${ARCH} BUILD_VERSION=1.9.0-${TRAVIS_BUILD_NUMBER}
+  - make build ARCH=${ARCH} BUILD_VERSION=1.9.0-${TRAVIS_BUILD_NUMBER}
+  - make test ARCH=${ARCH}
 
 after_success:
   - echo ${DOCKER_PASSWORD} | docker login -u "${DOCKER_USERNAME}" --password-stdin

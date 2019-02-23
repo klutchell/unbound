@@ -82,7 +82,7 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 FROM multiarch/alpine:${ARCH}-v3.9
 
 ARG BUILD_DATE
-ARG BUILD_VERSION=1.9.0-dev
+ARG BUILD_VERSION
 ARG VCS_REF
 
 LABEL maintainer="kylemharding@gmail.com"
@@ -111,11 +111,11 @@ WORKDIR /opt/unbound/etc/unbound
 # copy default config file
 COPY a-records.conf unbound.conf ./
 
-# copy unbound script
-COPY unbound.sh /
+# copy startup and healthcheck scripts
+COPY startup.sh healthcheck.sh /
 
 # set execute bit
-RUN chmod +x /unbound.sh
+RUN chmod +x /startup.sh /healthcheck.sh
 
 # add unbound binaries to path
 ENV PATH /opt/unbound/sbin:"${PATH}"
@@ -125,9 +125,7 @@ EXPOSE 53/tcp 53/udp
 
 # lookup url as healthcheck
 HEALTHCHECK --interval=5s --timeout=5s --start-period=5s \
-	CMD '/bin/sh' -ecx \
-	'drill -D @127.0.0.1 sigfail.verteiltesysteme.net | grep SERVFAIL && \
-	drill -D @127.0.0.1 sigok.verteiltesysteme.net | grep NOERROR'
+	CMD [ "/bin/sh", "-xe", "/healthcheck.sh" ]
 
 # run startup script
-ENTRYPOINT [ "/unbound.sh" ]
+CMD [ "/bin/sh", "-xe", "/startup.sh" ]

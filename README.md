@@ -7,25 +7,24 @@
 
 ## Tags
 
-|tag|unbound|libressl|base|
+|tag|unbound|libressl|image|
 |---|---|---|---|
-|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
-|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
-|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:amd64-v3.9`](https://hub.docker.com/r/multiarch/alpine/tags)|
-|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:armhf-v3.9`](https://hub.docker.com/r/multiarch/alpine/tags)|
-|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`multiarch/alpine:arm64-v3.9`](https://hub.docker.com/r/multiarch/alpine/tags)|
+|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|multi-arch manifest|
+|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|multi-arch manifest|
+|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-amd64.svg)|
+|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-arm.svg)|
+|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-arm64.svg)|
 
 ## Deployment
 
 ```bash
-docker run -p 53:53/tcp -p 53:53/udp -e TZ=America/Toronto klutchell/unbound
+docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 ```
 
 ## Parameters
 
 * `-p 53:53/tcp` - expose tcp port 53 on the container to tcp port 53 on the host
 * `-p 53:53/udp` - expose udp port 53 on the container to udp port 53 on the host
-* `-e TZ=America/Toronto` - (optional) provide desired timezone from [this list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 * `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
 
 ## Building
@@ -71,7 +70,5 @@ Feel free to send an email or submit a pull request with any features, fixes, or
 ## License
 
 [MIT License](./LICENSE)
-
-__Components__
 * LibreSSL: [dual-licensed](https://raw.githubusercontent.com/libressl/libressl/master/src/LICENSE)
 * Unbound: [BSD License](https://nlnetlabs.nl/svn/unbound/trunk/LICENSE)

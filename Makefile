@@ -1,26 +1,23 @@
-# override these values at runtime as desired
-# eg. make build ARCH=armhf BUILD_OPTIONS=--no-cache
-ARCH := amd64
-BUILD_OPTIONS +=
-
-# static arch-to-goarch mapping
+# static arch-to-goarch mapping (don't change these)
 # supported ARCH values can be found here: https://hub.docker.com/r/multiarch/alpine/tags
 # supported GOARCH values can be found here: https://golang.org/doc/install/source#environment
 amd64_GOARCH = amd64
 armhf_GOARCH = arm
 arm64_GOARCH = arm64
 
-# travis-ci will override the BUILD_VERSION but everything else should be left as-is
-IMAGE_TAG := 1.9.0-${${ARCH}_GOARCH}
-BUILD_VERSION := 1.9.0-dev
+# override these values at runtime as desired
+# eg. make build ARCH=armhf BUILD_OPTIONS=--no-cache
+ARCH := amd64
+BUILD_OPTIONS +=
+DOCKER_REPO := klutchell/unbound
+APP_VERSION := 1.9.0
+
+# these are used for labels in the container at build time
+# travis-ci will override the BUILD_VERSION but everything else should be left as-is for consistency
+IMAGE_TAG := ${APP_VERSION}-${${ARCH}_GOARCH}
+BUILD_VERSION := ${APP_VERSION}-$(strip $(shell git describe --always --dirty))
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
-
-# export these vars via COMPOSE_OPTIONS in case docker-compose is executed in a container
-# https://docs.docker.com/compose/reference/envvars/
-COMPOSE_PROJECT_NAME := ci
-COMPOSE_FILE += docker-compose.ci.yml
-COMPOSE_OPTIONS += -e ARCH -e IMAGE_TAG -e BUILD_VERSION -e BUILD_DATE -e VCS_REF -e COMPOSE_PROJECT_NAME -e COMPOSE_FILE
 
 .DEFAULT_GOAL := build
 
@@ -32,20 +29,15 @@ qemu-user-static:
 
 .PHONY: build
 build: qemu-user-static
-	@docker-compose build ${BUILD_OPTIONS}
+	@docker build ${BUILD_OPTIONS} --build-arg ARCH --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF -t ${DOCKER_REPO}:${IMAGE_TAG} .
 
 .PHONY: test
 test: qemu-user-static
-	@docker-compose up --build --abort-on-container-exit
+	@docker run --rm ${DOCKER_REPO}:${IMAGE_TAG} /bin/sh -xec "/startup.sh & sleep 5 && /healthcheck.sh"
 
 .PHONY: push
 push:
-	@docker-compose push unbound
-
-.PHONY: lint
-lint:
-	@docker-compose config -q
-	@travis lint
+	@docker push ${DOCKER_REPO}:${IMAGE_TAG}
 
 .PHONY: manifest
 manifest:
