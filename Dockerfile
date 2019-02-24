@@ -1,6 +1,19 @@
 ARG ARCH=amd64
+FROM alpine as qemu
 
-FROM multiarch/alpine:${ARCH}-v3.9 as libressl
+RUN apk add --no-cache curl
+
+RUN curl -fsSL https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-arm-static -O \
+	&& chmod +x qemu-arm-static
+
+RUN curl -fsSL https://github.com/multiarch/qemu-user-static/releases/download/v3.1.0-2/qemu-aarch64-static -O \
+	&& chmod +x qemu-aarch64-static
+
+# ----------------------------------------------------------------------------
+
+ARG ARCH
+FROM ${ARCH}/alpine:3.9 as libressl
+COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV LIBRESSL_VERSION="2.8.3"
 ENV LIBRESSL_SHA="3967e08b3dc2277bf77057ea1f11148df7f96a2203cd21cf841902f2a1ec11320384a001d01fa58154d35612f7981bf89d5b1a60a2387713d5657677f76cc682"
@@ -34,7 +47,9 @@ RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-FROM multiarch/alpine:${ARCH}-v3.9 as unbound
+ARG ARCH
+FROM ${ARCH}/alpine:3.9 as unbound
+COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV UNBOUND_VERSION="1.9.0"
 ENV UNBOUND_SHA="7dfa8e078507fc24a2d0938eea590389453bacfcac023f1a41af19350ea1f7b87d0c82d7eead121a11068921292a96865e177274ff27ed8b8868445f80f7baf6"
@@ -79,7 +94,9 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-FROM multiarch/alpine:${ARCH}-v3.9
+ARG ARCH
+FROM ${ARCH}/alpine:3.9
+COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -90,7 +107,7 @@ LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.name="klutchell/unbound"
 LABEL org.label-schema.description="Unbound is a validating, recursive, caching DNS resolver"
 LABEL org.label-schema.url="https://unbound.net/"
-LABEL org.label-schema.vcs-url="https://github.com/klutchell/unbound-docker"
+LABEL org.label-schema.vcs-url="https://github.com/klutchell/unbound"
 LABEL org.label-schema.docker.cmd="docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound"
 LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
@@ -111,21 +128,17 @@ WORKDIR /opt/unbound/etc/unbound
 # copy default config file
 COPY a-records.conf unbound.conf ./
 
-# copy startup and healthcheck scripts
-COPY startup.sh healthcheck.sh /
+# copy startup script
+COPY startup.sh /
 
 # set execute bit
-RUN chmod +x /startup.sh /healthcheck.sh
+RUN chmod +x /startup.sh
 
 # add unbound binaries to path
 ENV PATH /opt/unbound/sbin:"${PATH}"
 
 # expose dns ports
 EXPOSE 53/tcp 53/udp
-
-# lookup url as healthcheck
-HEALTHCHECK --interval=5s --timeout=5s --start-period=5s \
-	CMD [ "/bin/sh", "-xe", "/healthcheck.sh" ]
 
 # run startup script
 CMD [ "/bin/sh", "-xe", "/startup.sh" ]

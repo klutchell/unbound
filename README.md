@@ -30,15 +30,15 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 ## Building
 
 ```bash
-# ARCH can be 'amd64', 'armhf', or 'arm64'
-make build ARCH=armhf
+# GOARCH can be 'amd64', 'arm', or 'arm64'
+make build GOARCH=arm
 ```
 
 ## Testing
 
 ```bash
-# ARCH can be 'amd64', 'armhf', or 'arm64'
-make test ARCH=armhf
+# GOARCH can be 'amd64', 'arm', or 'arm64'
+make test GOARCH=arm
 ```
 
 ## Usage
