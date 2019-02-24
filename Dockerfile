@@ -1,4 +1,4 @@
-ARG ARCH=amd64
+ARG FROM_ARCH=amd64
 FROM alpine as qemu
 
 RUN apk add --no-cache curl
@@ -11,8 +11,8 @@ RUN curl -fsSL https://github.com/multiarch/qemu-user-static/releases/download/v
 
 # ----------------------------------------------------------------------------
 
-ARG ARCH
-FROM ${ARCH}/alpine:3.9 as libressl
+ARG FROM_ARCH
+FROM ${FROM_ARCH}/alpine:3.9 as libressl
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV LIBRESSL_VERSION="2.8.3"
@@ -47,8 +47,8 @@ RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-ARG ARCH
-FROM ${ARCH}/alpine:3.9 as unbound
+ARG FROM_ARCH
+FROM ${FROM_ARCH}/alpine:3.9 as unbound
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV UNBOUND_VERSION="1.9.0"
@@ -94,8 +94,8 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-ARG ARCH
-FROM ${ARCH}/alpine:3.9
+ARG FROM_ARCH
+FROM ${FROM_ARCH}/alpine:3.9
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ARG BUILD_DATE

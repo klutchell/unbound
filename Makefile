@@ -1,6 +1,6 @@
 # override these values at runtime as desired
-# eg. make build GOARCH=arm BUILD_OPTIONS=--no-cache
-GOARCH := amd64
+# eg. make build ARCH=arm BUILD_OPTIONS=--no-cache
+ARCH := amd64
 DOCKER_REPO := klutchell/unbound
 BUILD_OPTIONS +=
 
@@ -10,15 +10,15 @@ BUILD_VERSION := $(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 # VSC_TAG := $(strip $(shell git describe --abbrev=0 --tags))
 VCS_TAG := v1.9.0
-DOCKER_TAG := ${VCS_TAG}-${GOARCH}
+DOCKER_TAG := ${VCS_TAG}-${ARCH}
 
-# GOARCH to ARCH mapping (don't change these)
-# supported GOARCH values can be found here: https://golang.org/doc/install/source#environment
-# supported ARCH values can be found here: https://github.com/docker-library/official-images#architectures-other-than-amd64
-amd64_ARCH := amd64
-arm_ARCH := arm32v6
-arm64_ARCH := arm64v8
-ARCH := ${${GOARCH}_ARCH}
+# ARCH to FROM_ARCH mapping (don't change these)
+# supported ARCH values: https://golang.org/doc/install/source#environment
+# supported FROM_ARCH values: https://github.com/docker-library/official-images#architectures-other-than-amd64
+amd64_FROM_ARCH = amd64
+arm_FROM_ARCH = arm32v6
+arm64_FROM_ARCH = arm64v8
+FROM_ARCH = ${${ARCH}_FROM_ARCH}
 
 .DEFAULT_GOAL := build
 
@@ -69,14 +69,14 @@ qemu-user-static:
 ## Usage:
 ##    make build [PARAM1=] [PARAM2=] [PARAM3=]
 ## Optional parameters:
-##    GOARCH             eg. amd64 or arm or arm64
+##    ARCH               eg. amd64 or arm or arm64
 ##    BUILD_OPTIONS      eg. --no-cache
 ##    DOCKER_REPO        eg. myrepo/myapp
 ##
 .PHONY: build
 build: qemu-user-static
 	@docker build ${BUILD_OPTIONS} \
-		--build-arg ARCH \
+		--build-arg FROM_ARCH \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
@@ -86,7 +86,7 @@ build: qemu-user-static
 ## Usage:
 ##    make test [PARAM1=] [PARAM2=] [PARAM3=]
 ## Optional parameters:
-##    GOARCH             eg. amd64 or arm or arm64
+##    ARCH               eg. amd64 or arm or arm64
 ##    DOCKER_REPO        eg. myrepo/myapp
 ##
 .PHONY: test
@@ -100,7 +100,7 @@ test: qemu-user-static
 ## Usage:
 ##    make push [PARAM1=] [PARAM2=] [PARAM3=]
 ## Optional parameters:
-##    GOARCH             eg. amd64 or arm or arm64
+##    ARCH               eg. amd64 or arm or arm64
 ##    DOCKER_REPO        eg. myrepo/myapp
 ##
 .PHONY: push
@@ -130,7 +130,7 @@ manifest:
 ## Usage:
 ##    make release [PARAM1=] [PARAM2=] [PARAM3=]
 ## Optional parameters:
-##    GOARCH             eg. amd64 or arm or arm64
+##    ARCH               eg. amd64 or arm or arm64
 ##    BUILD_OPTIONS      eg. --no-cache
 ##    DOCKER_REPO        eg. myrepo/myapp
 ##
