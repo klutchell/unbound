@@ -9,7 +9,7 @@ BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%
 BUILD_VERSION := $(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse --short HEAD))
 # VSC_TAG := $(strip $(shell git describe --abbrev=0 --tags))
-VCS_TAG := v1.9.0
+VCS_TAG := 1.9.0
 DOCKER_TAG := ${VCS_TAG}-${ARCH}
 
 # ARCH to FROM_ARCH mapping (don't change these)
