@@ -1,4 +1,4 @@
-ARG FROM_ARCH=amd64
+ARG ARCH=amd64
 FROM alpine as qemu
 
 RUN apk add --no-cache curl
@@ -11,8 +11,8 @@ RUN curl -fsSL https://github.com/multiarch/qemu-user-static/releases/download/v
 
 # ----------------------------------------------------------------------------
 
-ARG FROM_ARCH
-FROM ${FROM_ARCH}/alpine:3.9 as libressl
+FROM ${ARCH}/alpine:3.9 as libressl
+
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV LIBRESSL_VERSION="2.8.3"
@@ -47,8 +47,8 @@ RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-ARG FROM_ARCH
-FROM ${FROM_ARCH}/alpine:3.9 as unbound
+FROM ${ARCH}/alpine:3.9 as unbound
+
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ENV UNBOUND_VERSION="1.9.0"
@@ -94,8 +94,8 @@ RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
 
 # ----------------------------------------------------------------------------
 
-ARG FROM_ARCH
-FROM ${FROM_ARCH}/alpine:3.9
+FROM ${ARCH}/alpine:3.9
+
 COPY --from=qemu qemu-arm-static qemu-aarch64-static /usr/bin/
 
 ARG BUILD_DATE
@@ -108,7 +108,7 @@ LABEL org.label-schema.name="klutchell/unbound"
 LABEL org.label-schema.description="Unbound is a validating, recursive, caching DNS resolver"
 LABEL org.label-schema.url="https://unbound.net/"
 LABEL org.label-schema.vcs-url="https://github.com/klutchell/unbound"
-LABEL org.label-schema.docker.cmd="docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound"
+LABEL org.label-schema.docker.cmd="docker run -p 53:53/udp klutchell/unbound"
 LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"

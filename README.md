@@ -9,8 +9,8 @@
 
 |tag|unbound|libressl|image|
 |---|---|---|---|
-|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|multi-arch manifest|
-|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|multi-arch manifest|
+|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[manifest-v2-2](https://docs.docker.com/registry/spec/manifest-v2-2/)|
+|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[manifest-v2-2](https://docs.docker.com/registry/spec/manifest-v2-2/)|
 |`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-amd64.svg)|
 |`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-arm.svg)|
 |`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|![Image Size](https://img.shields.io/microbadger/image-size/klutchell/unbound/1.9.0-arm64.svg)|
@@ -30,15 +30,15 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 ## Building
 
 ```bash
-# ARCH can be 'amd64', 'arm', or 'arm64'
-make build ARCH=arm
+# ARCH can be 'amd64', 'arm32v6', or 'arm64v8'
+make build ARCH=arm32v6
 ```
 
 ## Testing
 
 ```bash
-# ARCH can be 'amd64', 'arm', or 'arm64'
-make test ARCH=arm
+# ARCH can be 'amd64', 'arm32v6', or 'arm64v8'
+make test ARCH=arm32v6
 ```
 
 ## Usage
@@ -69,6 +69,6 @@ Feel free to send an email or submit a pull request with any features, fixes, or
 
 ## License
 
-[MIT License](./LICENSE)
+* klutchell/unbound: [MIT License](./LICENSE)
 * LibreSSL: [dual-licensed](https://raw.githubusercontent.com/libressl/libressl/master/src/LICENSE)
 * Unbound: [BSD License](https://nlnetlabs.nl/svn/unbound/trunk/LICENSE)
