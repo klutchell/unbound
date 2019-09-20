@@ -7,9 +7,11 @@
 
 ## Tags
 
-`latest`,
-`1.9.3`,
-`1.9.0`
+* `latest`, `1.9.3`
+* `amd64-latest`, `amd64-1.9.3`
+* `arm32v6-latest`, `arm32v6-1.9.3`
+* `arm32v7-latest`, `arm32v7-1.9.3`
+* `arm64v8-latest`, `arm64v8-1.9.3`
 
 ## Deployment
 
