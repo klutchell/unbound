@@ -18,7 +18,7 @@ env:
 
 before_install:
   - mkdir -p ${HOME}/.docker
-  # the experimental flags is required to use docker manifest commands
+  # the experimental flag is required to use docker manifest commands
   - echo '{"experimental":"enabled"}' | tee ${HOME}/.docker/config.json
 
 install:
@@ -34,7 +34,7 @@ script:
   - make all ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
 
 after_success:
-  # uncomment this condition in order to only push to docker repo on new git version tags
+  # uncomment this condition in order to restrict pushing to docker repo on new git version tags
   # - if [[ ${TRAVIS_TAG} =~ ^v\d+\.\d+\.\d+.*$ ]] ; then echo deploying tag ${TRAVIS_TAG} ; else exit 0 ; fi
   - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
   - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
