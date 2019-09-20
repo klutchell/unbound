@@ -3,6 +3,8 @@
 # - DOCKER_USERNAME
 # - DOCKER_PASSWORD
 
+language: minimal
+
 services: docker
 
 branches:
