@@ -45,11 +45,11 @@ make all ARCH=arm64v8
 
 ## Usage
 
-Official NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
+Official NLnet Labs documentation: https://nlnetlabs.nl/documentation/unbound/
 
 ## Author
 
-Kyle Harding: <https://klutchell.dev>
+Kyle Harding: https://klutchell.dev
 
 ## Contributing
 
@@ -57,7 +57,7 @@ Please open an issue or submit a pull request with any features, fixes, or chang
 
 ## Acknowledgments
 
-This image is mostly based on MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
+This image is mostly based on MatthewVance's work: https://github.com/MatthewVance/unbound-docker
 
 ## License
 
