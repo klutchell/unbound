@@ -1,5 +1,6 @@
 # override these values at runtime as desired
 # eg. make build ARCH=arm32v6 BUILD_OPTIONS=--no-cache
+# ARCH can be amd64, arm32v6, arm32v7, or arm64v8
 ARCH := amd64
 DOCKER_REPO := klutchell/unbound
 BUILD_OPTIONS +=
@@ -37,8 +38,6 @@ endif
 
 all: build test ## Build and test image
 
-release: clean build test push ## Clean, build, test, and push image
-
 build: qemu-user-static ## Build and tag image
 	docker build ${BUILD_OPTIONS} \
 		--build-arg ARCH=${ARCH} \
@@ -59,6 +58,8 @@ clean: ## Remove existing image
 push: ## Push existing image to docker repo
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	docker push ${DOCKER_REPO}:${ARCH}-latest
+
+release: clean build test push ## Clean, build, test, and push image
 
 manifest: ## Push multi-arch manifest to docker repo
 	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}

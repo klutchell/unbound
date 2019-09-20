@@ -7,13 +7,9 @@
 
 ## Tags
 
-|tag|unbound|libressl|image|
-|---|---|---|---|
-|`latest`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
-|`1.9.0`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[`manifest-v2-2`](https://docs.docker.com/registry/spec/manifest-v2-2/#manifest-list)|
-|`1.9.0-amd64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[![](https://images.microbadger.com/badges/image/klutchell/unbound:1.9.0-amd64.svg)](https://microbadger.com/images/klutchell/unbound:1.9.0-amd64)|
-|`1.9.0-arm`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[![](https://images.microbadger.com/badges/image/klutchell/unbound:1.9.0-arm.svg)](https://microbadger.com/images/klutchell/unbound:1.9.0-arm)|
-|`1.9.0-arm64`|[`1.9.0`](https://nlnetlabs.nl/downloads/unbound/)|[`2.8.3`](https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/)|[![](https://images.microbadger.com/badges/image/klutchell/unbound:1.9.0-arm64.svg)](https://microbadger.com/images/klutchell/unbound:1.9.0-arm64)|
+`latest`,
+`1.9.3`,
+`1.9.0`
 
 ## Deployment
 
@@ -25,50 +21,46 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 
 * `-p 53:53/tcp` - expose tcp port 53 on the container to tcp port 53 on the host
 * `-p 53:53/udp` - expose udp port 53 on the container to udp port 53 on the host
-* `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
+* `-v /path/to/config:/opt/unbound/etc/unbound/conf.d` - (optional) mount a custom configuration directory
 
 ## Building
 
 ```bash
 make help
+make build ARCH=amd64
 make build ARCH=arm32v6
+make build ARCH=arm32v7
+make build ARCH=arm64v8
 ```
 
 ## Testing
 
 ```bash
 make help
-make test ARCH=arm32v6
+make all ARCH=amd64
+make all ARCH=arm32v6
+make all ARCH=arm32v7
+make all ARCH=arm64v8
 ```
 
 ## Usage
 
-Check out the following guide for usage with Pi-hole
-
-* https://docs.pi-hole.net/guides/unbound/
-
-Also check out MatthewVance's README for more detail since this image is based on his work
-
-* https://github.com/MatthewVance/unbound-docker
+Official NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/unbound/>
 
 ## Author
 
-Kyle Harding <kylemharding@gmail.com>
+Kyle Harding: <https://klutchell.dev>
 
 ## Contributing
 
-Feel free to send an email or submit a pull request with any features, fixes, or changes!
+Please open an issue or submit a pull request with any features, fixes, or changes.
 
 ## Acknowledgments
 
-* https://github.com/MatthewVance/unbound-docker
-* https://github.com/folhabranca/docker-unbound
-* https://docs.pi-hole.net/guides/unbound/
-* https://nlnetlabs.nl/documentation/unbound/howto-anchor/
-* https://nlnetlabs.nl/documentation/unbound/howto-setup/
+This image is mostly based on MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
 
 ## License
 
 * klutchell/unbound: [MIT License](./LICENSE)
-* LibreSSL: [dual-licensed](https://raw.githubusercontent.com/libressl/libressl/master/src/LICENSE)
+* OpenSSL: [OpenSSL & SSLeay](https://www.openssl.org/source/license-openssl-ssleay.txt)
 * Unbound: [BSD License](https://nlnetlabs.nl/svn/unbound/trunk/LICENSE)
