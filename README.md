@@ -45,7 +45,7 @@ make all ARCH=arm64v8
 
 ## Usage
 
-Official NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/unbound/>
+Official NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
 
 ## Author
 
@@ -63,4 +63,4 @@ This image is mostly based on MatthewVance's work: <https://github.com/MatthewVa
 
 * klutchell/unbound: [MIT License](./LICENSE)
 * OpenSSL: [OpenSSL & SSLeay](https://www.openssl.org/source/license-openssl-ssleay.txt)
-* Unbound: [BSD License](https://nlnetlabs.nl/svn/unbound/trunk/LICENSE)
+* Unbound: [BSD License](https://github.com/NLnetLabs/unbound/blob/master/LICENSE)
