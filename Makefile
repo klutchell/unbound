@@ -59,10 +59,13 @@ push: ## Push existing image to docker repo
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	docker push ${DOCKER_REPO}:${ARCH}-latest
 
+pull: ## Pull existing image from docker repo
+	docker pull ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
+	docker pull ${DOCKER_REPO}:${ARCH}-latest
+
 release: clean build test push ## Clean, build, test, and push image
 
-manifest: ## Push multi-arch manifest to docker repo
-	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
+manifest: ## Create and push multi-arch manifest to docker repo
 	docker manifest create ${DOCKER_REPO}:${VCS_TAG} \
 		${DOCKER_REPO}:amd64-${VCS_TAG} \
 		${DOCKER_REPO}:arm32v6-${VCS_TAG} \
@@ -72,7 +75,6 @@ manifest: ## Push multi-arch manifest to docker repo
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm32v7-${VCS_TAG} --os linux --arch arm --variant v7
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm64v8-${VCS_TAG} --os linux --arch arm64 --variant v8
 	docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
-	-docker manifest push --purge ${DOCKER_REPO}:latest
 	docker manifest create ${DOCKER_REPO}:latest \
 		${DOCKER_REPO}:amd64-latest \
 		${DOCKER_REPO}:arm32v6-latest \

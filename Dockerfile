@@ -24,7 +24,7 @@ RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0
 	
 WORKDIR /tmp/src/openssl-${OPENSSL_VERSION}
 
-RUN ./config --prefix=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-shared enable-ec_nistp_64_gcc_128 -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
+RUN ./config --prefix=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-shared -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
     && make depend \
 	&& make \
 	&& make install_sw \
