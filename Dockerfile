@@ -1,113 +1,73 @@
 ARG ARCH=amd64
+ARG QEMU_BINARY=qemu-x86_64-static
 
-FROM alpine as qemu
-
-RUN apk add --no-cache curl
-
-ARG QEMU_VERSION=3.1.0-2
-ARG QEMU_ARCHS="arm aarch64"
-
-RUN for i in ${QEMU_ARCHS}; \
-	do \
-	curl -fsSL https://github.com/multiarch/qemu-user-static/releases/download/v${QEMU_VERSION}/qemu-${i}-static.tar.gz \
-	| tar zxvf - -C /usr/bin; \
-	done \
-	&& chmod +x /usr/bin/qemu-*
+FROM multiarch/qemu-user-static:4.1.0-1 as qemu
 
 # ----------------------------------------------------------------------------
 
-FROM ${ARCH}/alpine:3.9 as libressl
+FROM ${ARCH}/alpine:3.10.2 as openssl
 
-ENV LIBRESSL_VERSION="2.8.3"
-ENV LIBRESSL_SHA="3967e08b3dc2277bf77057ea1f11148df7f96a2203cd21cf841902f2a1ec11320384a001d01fa58154d35612f7981bf89d5b1a60a2387713d5657677f76cc682"
-ENV LIBRESSL_DOWNLOAD_URL="https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-${LIBRESSL_VERSION}.tar.gz"
+ENV OPENSSL_VERSION="1.1.1d"
+ENV OPENSSL_SHA="056057782325134b76d1931c48f2c7e6595d7ef4"
 
-# install qemu binaries used for cross-compiling
-COPY --from=qemu /usr/bin/qemu-* /usr/bin/
+COPY --from=qemu /usr/bin/${QEMU_BINARY} /usr/bin/
 
-# install build dependencies
-RUN apk add --no-cache build-base curl file linux-headers
-
-# work in temp dir
 WORKDIR /tmp/src
 
-# download, verify, extract, build, clean, strip
-RUN curl -fsSL "${LIBRESSL_DOWNLOAD_URL}" -o libressl.tar.gz \
-	&& echo "${LIBRESSL_SHA} *libressl.tar.gz" | sha512sum -c - \
-	&& tar xzf libressl.tar.gz --strip-components=1 \
-	&& rm -f libressl.tar.gz \
-	&& CFLAGS="-DLIBRESSL_APPS=off -DLIBRESSL_TESTS=off" \
-		./configure --prefix=/opt/libressl --enable-static=no \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
-	&& rm -rf \
-		/opt/libressl/share \
-		/opt/libressl/include\* \
-		/opt/libressl/lib/libtls.* \
-		/opt/libressl/bin/ocspcheck \
-		/opt/libressl/lib/pkgconfig \
-		/opt/libressl/lib/*.la \
-	&& strip --strip-all \
-		/opt/libressl/bin/* \
-		/opt/libressl/lib/lib*
+# https://github.com/hadolint/hadolint/wiki/DL4006
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0 perl=5.28.2-r1 \
+	&& curl -fsSL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -o openssl.tar.gz \
+	&& echo "${OPENSSL_SHA}  ./openssl.tar.gz" | sha1sum -c - \
+	&& tar xzf openssl.tar.gz
+	
+WORKDIR /tmp/src/openssl-${OPENSSL_VERSION}
+
+RUN ./config --prefix=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-shared enable-ec_nistp_64_gcc_128 -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
+    && make depend \
+	&& make \
+	&& make install_sw \
+	&& rm -rf /tmp/*
 
 # ----------------------------------------------------------------------------
 
-FROM ${ARCH}/alpine:3.9 as unbound
+FROM ${ARCH}/alpine:3.10.2 as unbound
 
-ENV UNBOUND_VERSION="1.9.0"
-ENV UNBOUND_SHA="7dfa8e078507fc24a2d0938eea590389453bacfcac023f1a41af19350ea1f7b87d0c82d7eead121a11068921292a96865e177274ff27ed8b8868445f80f7baf6"
-ENV UNBOUND_DOWNLOAD_URL="https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz"
+ENV UNBOUND_VERSION="1.9.3"
+ENV UNBOUND_SHA="cc3081c042511468177e36897f0c7f0a155493fa"
 
-# install qemu binaries used for cross-compiling
-COPY --from=qemu /usr/bin/qemu-* /usr/bin/
+COPY --from=openssl /usr/bin/qemu-* /usr/bin/
+COPY --from=openssl /opt/openssl /opt/openssl
 
-# create unbound group and user
-RUN addgroup unbound && adduser -D -H -s /sbin/nologin -G unbound unbound
-
-# install build dependencies
-RUN apk add --no-cache build-base curl file linux-headers libevent libevent-dev expat expat-dev
-
-# work in temp dir
 WORKDIR /tmp/src
 
-# copy libressl
-COPY --from=libressl /opt/libressl /opt/libressl
+# https://github.com/hadolint/hadolint/wiki/DL4006
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-# download, verify, extract, build, clean, strip
-RUN curl -fsSL "${UNBOUND_DOWNLOAD_URL}" -o unbound.tar.gz \
-	&& echo "${UNBOUND_SHA} *unbound.tar.gz" | sha512sum -c - \
-	&& tar xzf unbound.tar.gz --strip-components=1 \
-	&& rm -f unbound.tar.gz \
-	&& RANLIB="gcc-ranlib" \
-		./configure --prefix=/opt/unbound --with-pthreads \
-		--with-username=unbound --with-ssl=/opt/libressl --with-libevent \
-		--enable-event-api --enable-static=no --enable-pie  --enable-relro-now \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
-	&& make install \
-	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/unbound.conf.example \
-	&& rm -rf \
-		/opt/unbound/share \
-		/opt/unbound/include \
-		/opt/unbound/lib/pkgconfig \
-		/opt/unbound/lib/*.la \
-	&& strip --strip-all \
-		/opt/unbound/lib/lib* \
-		/opt/unbound/sbin/unbound \
-		/opt/unbound/sbin/unbound-anchor \
-		/opt/unbound/sbin/unbound-checkconf \
-		/opt/unbound/sbin/unbound-control \
-		/opt/unbound/sbin/unbound-host
+RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0 libevent=2.1.10-r0 libevent-dev=2.1.10-r0 expat=2.2.8-r0 expat-dev=2.2.8-r0 \
+	&& curl -fsSL https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz -o unbound.tar.gz \
+	&& echo "${UNBOUND_SHA}  ./unbound.tar.gz" | sha1sum -c - \
+	&& tar xzf unbound.tar.gz
+
+WORKDIR /tmp/src/unbound-${UNBOUND_VERSION}
+
+RUN addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
+	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-ssl=/opt/openssl --with-libevent --enable-event-api --disable-flto \
+    && make install \
+	&& rm -rf /opt/unbound/share \
+	&& rm -rf /tmp/* \
+	&& echo 'include: /opt/unbound/etc/unbound/conf.d/*.conf' >> /opt/unbound/etc/unbound/unbound.conf
 
 # ----------------------------------------------------------------------------
 
-FROM ${ARCH}/alpine:3.9
+FROM ${ARCH}/alpine:3.10.2
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
 ARG VCS_REF
 
-LABEL maintainer="kylemharding@gmail.com"
+LABEL maintainer="Kyle Harding <https://klutchell.dev>"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.name="klutchell/unbound"
 LABEL org.label-schema.description="Unbound is a validating, recursive, caching DNS resolver"
@@ -118,38 +78,24 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-# copy libressl and unbound
+COPY --from=unbound /usr/bin/qemu-* /usr/bin/
 COPY --from=unbound /opt/ /opt/
 
-# work in unbound root directory
-WORKDIR /opt/unbound/etc/unbound
+WORKDIR /opt/unbound/etc/unbound/conf.d/
 
-# copy default config file
-COPY a-records.conf unbound.conf ./
+COPY a-records.conf default.conf ./
+COPY start.sh test.sh /
 
-# copy startup script
-COPY startup.sh /
+RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 drill=1.7.0-r2 \
+	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
+	&& chmod +x /start.sh /test.sh
 
-# install qemu binaries used for cross-compiling
-COPY --from=qemu /usr/bin/qemu-* /usr/bin/
+WORKDIR /opt/unbound/
 
-# create unbound group and user
-RUN addgroup unbound && adduser -D -H -s /sbin/nologin -G unbound unbound
+ENV PATH /opt/unbound/sbin:"$PATH"
 
-# install runtime dependencies
-RUN apk add --no-cache libevent expat curl drill ca-certificates
+EXPOSE 53
 
-# set execute bit
-RUN chmod +x /startup.sh
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5s CMD drill @127.0.0.1 cloudflare.com || exit 1
 
-# remove qemu binaries used for cross-compiling
-RUN rm /usr/bin/qemu-*
-
-# add unbound binaries to path
-ENV PATH /opt/unbound/sbin:"${PATH}"
-
-# expose dns ports
-EXPOSE 53/tcp 53/udp
-
-# run startup script
-CMD [ "/bin/sh", "-xe", "/startup.sh" ]
+CMD ["/start.sh"]
