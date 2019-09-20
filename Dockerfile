@@ -25,8 +25,8 @@ RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0
 WORKDIR /tmp/src/openssl-${OPENSSL_VERSION}
 
 RUN ./config --prefix=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-shared -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
-    && make depend \
-	&& make \
+    && make depend -j$(getconf _NPROCESSORS_ONLN) \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
 	&& make install_sw \
 	&& rm -rf /tmp/*
 
@@ -54,6 +54,7 @@ WORKDIR /tmp/src/unbound-${UNBOUND_VERSION}
 
 RUN addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-ssl=/opt/openssl --with-libevent --enable-event-api --disable-flto \
+	&& make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
 	&& rm -rf /opt/unbound/share \
 	&& rm -rf /tmp/* \
