@@ -7,7 +7,7 @@
 
 ## Tags
 
-* `latest`, `1.9.3` <- automatic arch selection
+* `latest`, `1.9.3`
 * `amd64-latest`, `amd64-1.9.3`
 * `arm32v6-latest`, `arm32v6-1.9.3`
 * `arm32v7-latest`, `arm32v7-1.9.3`
