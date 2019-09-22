@@ -29,10 +29,10 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 
 ```bash
 make help
-make ARCH=amd64
-make ARCH=arm32v6
-make ARCH=arm32v7
-make ARCH=arm64v8
+make all ARCH=amd64
+make all ARCH=arm32v6
+make all ARCH=arm32v7
+make all ARCH=arm64v8
 ```
 
 ## Usage
