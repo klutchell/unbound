@@ -56,6 +56,7 @@ RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 openssl=
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv /opt/unbound/etc/unbound/unbound.conf /example.conf \
 	&& chmod +x /start.sh /test.sh \
+	&& chmod -x /a-records.conf /unbound.conf \
 	&& if [ "${RM_QEMU}" = "y" ]; then rm -v /usr/bin/qemu-*; fi
 
 ENV PATH /opt/unbound/sbin:"$PATH"
