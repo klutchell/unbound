@@ -14,56 +14,45 @@ VCS_TAG := 1.9.3
 
 IMAGE := ${DOCKER_REPO}:${VCS_TAG}
 
-ifeq "${ARCH}" "amd64"
-QEMU_BINARY := qemu-x86_64-static
-endif
-
-ifeq "${ARCH}" "arm32v6"
-QEMU_BINARY := qemu-arm-static
-endif
-
-ifeq "${ARCH}" "arm32v7"
-QEMU_BINARY := qemu-arm-static
-endif
-
-ifeq "${ARCH}" "arm64v8"
-QEMU_BINARY := qemu-aarch64-static
-endif
-
 .EXPORT_ALL_VARIABLES:
 
 .DEFAULT_GOAL := all
 
-.PHONY: all release build test clean push manifest help
+.PHONY: all clean test build push manifest help
 
-all: build test ## Build and test image
+all: test build ## Build and test dev images then build release images
 
-build: qemu-user-static ## Build and tag image
+build: qemu-user-static ## Build and tag release images
 	docker build ${BUILD_OPTIONS} \
-		--build-arg ARCH=${ARCH} \
-		--build-arg QEMU_BINARY=${QEMU_BINARY} \
+		--build-arg ARCH \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
 	docker tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} ${DOCKER_REPO}:${ARCH}-latest
 
-test: qemu-user-static ## Test existing image
-	docker run --rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG} /test.sh
+test: qemu-user-static ## Build and test dev images
+	docker build ${BUILD_OPTIONS} \
+		--build-arg ARCH \
+		--build-arg BUILD_VERSION \
+		--build-arg BUILD_DATE \
+		--build-arg VCS_REF \
+		--build-arg RM_QEMU=n \
+		--tag ${DOCKER_REPO}:${ARCH}-dev .
+	docker run --rm ${DOCKER_REPO}:${ARCH}-dev /test.sh
 
-clean: ## Remove existing image
+clean: ## Remove local release and dev images
 	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	-docker image rm ${DOCKER_REPO}:${ARCH}-latest
+	-docker image rm ${DOCKER_REPO}:${ARCH}-dev
 
-push: ## Push existing image to docker repo
+push: ## Push local release images to docker repo
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	docker push ${DOCKER_REPO}:${ARCH}-latest
 
 pull: ## Pull existing image from docker repo
 	docker pull ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	docker pull ${DOCKER_REPO}:${ARCH}-latest
-
-release: clean build test push ## Clean, build, test, and push image
 
 manifest: ## Create and push multi-arch manifest to docker repo
 	docker manifest create ${DOCKER_REPO}:${VCS_TAG} \

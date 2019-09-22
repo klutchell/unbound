@@ -33,7 +33,7 @@ install:
 
 script:
   # build and test for specified arch
-  - make all ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
+  - make all ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} BUILD_OPTIONS=--squash
 
 after_success:
   # uncomment this condition in order to restrict pushing to docker repo on new git version tags
