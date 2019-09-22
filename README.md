@@ -37,7 +37,7 @@ make all ARCH=arm64v8
 
 ## Usage
 
-Official NLnet Labs documentation: https://nlnetlabs.nl/documentation/unbound/
+NLnet Labs documentation: https://nlnetlabs.nl/documentation/unbound/
 
 ## Author
 

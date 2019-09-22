@@ -23,7 +23,6 @@ RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-libevent --enable-event-api --disable-flto \
     && make install -j$(getconf _NPROCESSORS_ONLN) \
-	&& echo 'include: /opt/unbound/etc/unbound/conf.d/*.conf' >> /opt/unbound/etc/unbound/unbound.conf \
 	&& rm -rf /opt/unbound/share && rm -rf /tmp/* && rm /usr/bin/qemu-*
 
 # ----------------------------------------------------------------------------
@@ -33,10 +32,7 @@ FROM ${ARCH}/alpine:3.10.2
 COPY --from=qemu /usr/bin/qemu-* /usr/bin/
 COPY --from=unbound /opt/ /opt/
 
-WORKDIR /opt/unbound/etc/unbound/conf.d/
-
-COPY a-records.conf default.conf ./
-COPY start.sh test.sh /
+COPY start.sh test.sh a-records.conf default.conf /
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -54,12 +50,18 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
+WORKDIR /opt/unbound/
+
 RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 openssl=1.1.1d-r0 drill=1.7.0-r2 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
+	&& mkdir /opt/unbound/etc/unbound/conf.d \
+	&& mkdir /opt/unbound/etc/unbound/dev \
+	&& mkdir -m 700 /opt/unbound/etc/unbound/var \
+	&& chown _unbound:_unbound /opt/unbound/etc/unbound/var \
+	&& echo 'include: /opt/unbound/etc/unbound/conf.d/*.conf' >> /opt/unbound/etc/unbound/unbound.conf \
+	&& cp /opt/unbound/etc/unbound/unbound.conf /unbound.conf \
 	&& chmod +x /start.sh /test.sh \
 	&& if [ "${RM_QEMU}" = "y" ]; then rm -v /usr/bin/qemu-*; fi
-
-WORKDIR /opt/unbound/
 
 ENV PATH /opt/unbound/sbin:"$PATH"
 
