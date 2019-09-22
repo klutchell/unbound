@@ -21,6 +21,7 @@ env:
 before_install:
   - mkdir -p ${HOME}/.docker
   # the experimental flag is required to use docker manifest and squash commands
+  - echo '{"experimental":"enabled"}' | tee ${HOME}/.docker/config.json
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
 
 install:
