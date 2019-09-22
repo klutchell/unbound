@@ -20,15 +20,12 @@ env:
 
 before_install:
   - mkdir -p ${HOME}/.docker
-  # the experimental flag is required to use docker manifest commands
-  - echo '{"experimental":"enabled"}' | tee ${HOME}/.docker/config.json
+  # the experimental flag is required to use docker manifest and squash commands
+  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
 
 install:
   # current travis-ci images ship with docker version 17.09.0-ce which does not support manifest commands
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - curl -fsSL get.docker.com | sh
   - docker --version
 
 script:
