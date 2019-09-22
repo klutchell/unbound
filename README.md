@@ -23,7 +23,7 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 
 * `-p 53:53/tcp` - expose tcp port 53 on the container to tcp port 53 on the host
 * `-p 53:53/udp` - expose udp port 53 on the container to udp port 53 on the host
-* `-v /path/to/config:/opt/unbound/etc/unbound/conf.d` - (optional) mount a custom configuration directory
+* `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
 
 ## Building
 
