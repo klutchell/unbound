@@ -23,7 +23,7 @@ RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-libevent --enable-event-api --disable-flto \
     && make install -j$(getconf _NPROCESSORS_ONLN) \
-	&& rm -rf /opt/unbound/share && rm -rf /tmp/* && rm /usr/bin/qemu-*
+	&& rm -rf /opt/unbound/share
 
 # ----------------------------------------------------------------------------
 
@@ -56,8 +56,9 @@ RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 openssl=
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv /opt/unbound/etc/unbound/unbound.conf /example.conf \
 	&& chmod +x /start.sh /test.sh \
-	&& chmod -x /a-records.conf /unbound.conf \
-	&& if [ "${RM_QEMU}" = "y" ]; then rm -v /usr/bin/qemu-*; fi
+	&& chmod -x /a-records.conf /unbound.conf
+
+RUN if [ "${RM_QEMU}" = "y" ]; then rm -v /usr/bin/qemu-*; fi
 
 ENV PATH /opt/unbound/sbin:"$PATH"
 
