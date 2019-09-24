@@ -63,7 +63,7 @@ release: qemu-user-static ## Build and push a release image to the docker repo (
 		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 
-manifest: ## Create and push multiarch manifests to the docker repo (requires docker login)
+manifest: ## Create and push a multiarch manifest to the docker repo (requires docker login)
 	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
 	docker manifest create ${DOCKER_REPO}:${VCS_TAG} \
 		${DOCKER_REPO}:amd64-${VCS_TAG} \
