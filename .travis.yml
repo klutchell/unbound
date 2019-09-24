@@ -17,6 +17,9 @@ env:
   - ARCH=arm32v6
   - ARCH=arm32v7
   - ARCH=arm64v8
+  - ARCH=i386
+  - ARCH=ppc64le
+  - ARCH=s390x
 
 before_install:
   - mkdir -p ${HOME}/.docker
@@ -30,17 +33,12 @@ install:
 
 script:
   # build and test for specified arch
-  - make all ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} BUILD_OPTIONS=--squash
+  - make release ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} BUILD_OPTIONS=--squash
 
 after_success:
   # uncomment this condition in order to restrict pushing to docker repo on new git version tags
   # - if [[ ${TRAVIS_TAG} =~ ^v\d+\.\d+\.\d+.*$ ]] ; then echo deploying tag ${TRAVIS_TAG} ; else exit 0 ; fi
   - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
   - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
-  # pull existing images for all platforms to create an updated manifest
   # this step will fail by design until all images are present on the docker repo
-  - make pull ARCH=amd64 DOCKER_REPO=${DOCKER_REPO}
-  - make pull ARCH=arm32v6 DOCKER_REPO=${DOCKER_REPO}
-  - make pull ARCH=arm32v7 DOCKER_REPO=${DOCKER_REPO}
-  - make pull ARCH=arm64v8 DOCKER_REPO=${DOCKER_REPO}
   - make manifest DOCKER_REPO=${DOCKER_REPO}

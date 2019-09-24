@@ -1,9 +1,19 @@
 # override these values at runtime as desired
-# eg. make build ARCH=arm32v6 BUILD_OPTIONS=--no-cache
-# ARCH can be amd64, arm32v6, arm32v7, or arm64v8
+# eg. make build ARCH=arm32v6 BUILD_OPTIONS=--squash PUSH=y
+
 ARCH := amd64
 DOCKER_REPO := klutchell/unbound
 BUILD_OPTIONS +=
+
+# ARCH can be amd64, arm32v6, arm32v7, arm64v8, i386, ppc64le, s390x
+# https://github.com/docker-library/official-images#architectures-other-than-amd64
+# https://hub.docker.com/r/amd64/alpine/
+# https://hub.docker.com/r/arm32v6/alpine/
+# https://hub.docker.com/r/arm32v7/alpine/
+# https://hub.docker.com/r/arm64v8/alpine/
+# https://hub.docker.com/r/i386/alpine/
+# https://hub.docker.com/r/ppc64le/alpine/
+# https://hub.docker.com/r/s390x/alpine/
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 # BUILD_VERSION := $(strip $(shell git describe --tags --always --dirty))
@@ -16,62 +26,73 @@ IMAGE := ${DOCKER_REPO}:${VCS_TAG}
 
 .EXPORT_ALL_VARIABLES:
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := build
 
-.PHONY: all clean test build push manifest help
+.PHONY: all build test release push clean manifest help
 
-all: test build ## Build and test dev images then build release images
+all: ## Build release images and manifests for all platforms
+	make release ARCH=amd64
+	make release ARCH=arm32v6
+	make release ARCH=arm32v7
+	make release ARCH=arm64v8
+	make release ARCH=i386
+	make release ARCH=ppc64le
+	make release ARCH=s390x
 
-build: qemu-user-static ## Build and tag release images
-	docker build ${BUILD_OPTIONS} \
-		--build-arg ARCH \
-		--build-arg BUILD_VERSION \
-		--build-arg BUILD_DATE \
-		--build-arg VCS_REF \
-		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
-	docker tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} ${DOCKER_REPO}:${ARCH}-latest
-
-test: qemu-user-static ## Build and test dev images
+build: qemu-user-static ## Build a development image for testing
 	docker build ${BUILD_OPTIONS} \
 		--build-arg ARCH \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--build-arg RM_QEMU=n \
-		--tag ${DOCKER_REPO}:${ARCH}-dev .
-	docker run --rm ${DOCKER_REPO}:${ARCH}-dev /test.sh
+		--tag ${DOCKER_REPO}:${ARCH}
 
-clean: ## Remove local release and dev images
-	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
-	-docker image rm ${DOCKER_REPO}:${ARCH}-latest
-	-docker image rm ${DOCKER_REPO}:${ARCH}-dev
+test: build ## Run tests on a development image
+	docker run --rm ${DOCKER_REPO}:${ARCH} /test.sh
 
-push: ## Push local release images to docker repo
+release: test ## Build a release image for the docker repo
+	docker build ${BUILD_OPTIONS} \
+		--build-arg ARCH \
+		--build-arg BUILD_VERSION \
+		--build-arg BUILD_DATE \
+		--build-arg VCS_REF \
+		--build-arg RM_QEMU=y \
+		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
+
+push: ## Push a release image to the docker repo (requires docker login)
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
-	docker push ${DOCKER_REPO}:${ARCH}-latest
 
-pull: ## Pull existing image from docker repo
-	docker pull ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
-	docker pull ${DOCKER_REPO}:${ARCH}-latest
+clean: ## Remove cached release and development images
+	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
+	-docker image rm ${DOCKER_REPO}:${ARCH}
 
-manifest: ## Create and push multi-arch manifest to docker repo
+manifest: ## Create multiarch manifests on the docker repo (requires docker login)
+	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
 	docker manifest create ${DOCKER_REPO}:${VCS_TAG} \
 		${DOCKER_REPO}:amd64-${VCS_TAG} \
 		${DOCKER_REPO}:arm32v6-${VCS_TAG} \
 		${DOCKER_REPO}:arm32v7-${VCS_TAG} \
-		${DOCKER_REPO}:arm64v8-${VCS_TAG}
+		${DOCKER_REPO}:arm64v8-${VCS_TAG} \
+		${DOCKER_REPO}:i386-${VCS_TAG} \
+		${DOCKER_REPO}:ppc64le-${VCS_TAG} \
+		${DOCKER_REPO}:s390x-${VCS_TAG}
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm32v6-${VCS_TAG} --os linux --arch arm --variant v6
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm32v7-${VCS_TAG} --os linux --arch arm --variant v7
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm64v8-${VCS_TAG} --os linux --arch arm64 --variant v8
 	docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
+	-docker manifest push --purge ${DOCKER_REPO}:latest
 	docker manifest create ${DOCKER_REPO}:latest \
-		${DOCKER_REPO}:amd64-latest \
-		${DOCKER_REPO}:arm32v6-latest \
-		${DOCKER_REPO}:arm32v7-latest \
-		${DOCKER_REPO}:arm64v8-latest
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-latest --os linux --arch arm --variant v6
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-latest --os linux --arch arm --variant v7
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-latest --os linux --arch arm64 --variant v8
+		${DOCKER_REPO}:amd64-${VCS_TAG} \
+		${DOCKER_REPO}:arm32v6-${VCS_TAG} \
+		${DOCKER_REPO}:arm32v7-${VCS_TAG} \
+		${DOCKER_REPO}:arm64v8-${VCS_TAG} \
+		${DOCKER_REPO}:i386-${VCS_TAG} \
+		${DOCKER_REPO}:ppc64le-${VCS_TAG} \
+		${DOCKER_REPO}:s390x-${VCS_TAG}
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-${VCS_TAG} --os linux --arch arm --variant v6
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-${VCS_TAG} --os linux --arch arm --variant v7
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-${VCS_TAG} --os linux --arch arm64 --variant v8
 	docker manifest push --purge ${DOCKER_REPO}:latest
 
 qemu-user-static:
