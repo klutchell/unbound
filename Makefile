@@ -1,5 +1,5 @@
 # override these values at runtime as desired
-# eg. make build ARCH=arm32v6 BUILD_OPTIONS=--squash PUSH=y
+# eg. make build ARCH=arm32v6 BUILD_OPTIONS=--no-cache
 
 ARCH := amd64
 DOCKER_REPO := klutchell/unbound
@@ -28,30 +28,32 @@ IMAGE := ${DOCKER_REPO}:${VCS_TAG}
 
 .DEFAULT_GOAL := build
 
-.PHONY: all build test release clean push manifest help
+.PHONY: all clean build release manifest help
 
 all: ## Build release images and manifests for all platforms
-	make release ARCH=amd64
-	make release ARCH=arm32v6
-	make release ARCH=arm32v7
-	make release ARCH=arm64v8
-	make release ARCH=i386
-	make release ARCH=ppc64le
-	make release ARCH=s390x
+	make build ARCH=amd64
+	make build ARCH=arm32v6
+	make build ARCH=arm32v7
+	make build ARCH=arm64v8
+	make build ARCH=i386
+	make build ARCH=ppc64le
+	make build ARCH=s390x
 
-build: qemu-user-static ## Build a development image for testing
+clean: ## Remove cached release and development images
+	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
+	-docker image rm ${DOCKER_REPO}:${ARCH}
+
+build: qemu-user-static ## Build and run tests with a development image
 	docker build ${BUILD_OPTIONS} \
 		--build-arg ARCH \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--build-arg RM_QEMU=n \
-		--tag ${DOCKER_REPO}:${ARCH}
-
-test: build ## Run tests on a development image
+		--tag ${DOCKER_REPO}:${ARCH} .
 	docker run --rm ${DOCKER_REPO}:${ARCH} /test.sh
 
-release: test ## Build a release image for the docker repo
+release: qemu-user-static ## Build and push a release image to the docker repo (requires docker login)
 	docker build ${BUILD_OPTIONS} \
 		--build-arg ARCH \
 		--build-arg BUILD_VERSION \
@@ -59,15 +61,9 @@ release: test ## Build a release image for the docker repo
 		--build-arg VCS_REF \
 		--build-arg RM_QEMU=y \
 		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
-
-clean: ## Remove cached release and development images
-	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
-	-docker image rm ${DOCKER_REPO}:${ARCH}
-
-push: ## Push a release image to the docker repo (requires docker login)
 	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 
-manifest: ## Create multiarch manifests on the docker repo (requires docker login)
+manifest: ## Create and push multiarch manifests to the docker repo (requires docker login)
 	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
 	docker manifest create ${DOCKER_REPO}:${VCS_TAG} \
 		${DOCKER_REPO}:amd64-${VCS_TAG} \
@@ -81,19 +77,6 @@ manifest: ## Create multiarch manifests on the docker repo (requires docker logi
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm32v7-${VCS_TAG} --os linux --arch arm --variant v7
 	docker manifest annotate ${DOCKER_REPO}:${VCS_TAG} ${DOCKER_REPO}:arm64v8-${VCS_TAG} --os linux --arch arm64 --variant v8
 	docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
-	-docker manifest push --purge ${DOCKER_REPO}:latest
-	docker manifest create ${DOCKER_REPO}:latest \
-		${DOCKER_REPO}:amd64-${VCS_TAG} \
-		${DOCKER_REPO}:arm32v6-${VCS_TAG} \
-		${DOCKER_REPO}:arm32v7-${VCS_TAG} \
-		${DOCKER_REPO}:arm64v8-${VCS_TAG} \
-		${DOCKER_REPO}:i386-${VCS_TAG} \
-		${DOCKER_REPO}:ppc64le-${VCS_TAG} \
-		${DOCKER_REPO}:s390x-${VCS_TAG}
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-${VCS_TAG} --os linux --arch arm --variant v6
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-${VCS_TAG} --os linux --arch arm --variant v7
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-${VCS_TAG} --os linux --arch arm64 --variant v8
-	docker manifest push --purge ${DOCKER_REPO}:latest
 
 qemu-user-static:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset

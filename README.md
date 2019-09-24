@@ -12,6 +12,9 @@
 * `arm32v6-latest`, `arm32v6-1.9.3`
 * `arm32v7-latest`, `arm32v7-1.9.3`
 * `arm64v8-latest`, `arm64v8-1.9.3`
+* `i386-latest`, `i386-1.9.3`
+* `ppc64le-latest`, `ppc64le-1.9.3`
+* `s390x-latest`, `s390x-1.9.3`
 
 ## Deployment
 
@@ -29,7 +32,7 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 
 ```bash
 make help
-make all
+make build
 ```
 
 ## Usage
