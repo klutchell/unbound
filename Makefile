@@ -28,7 +28,7 @@ IMAGE := ${DOCKER_REPO}:${VCS_TAG}
 
 .DEFAULT_GOAL := build
 
-.PHONY: all build test release push clean manifest help
+.PHONY: all build test release clean push manifest help
 
 all: ## Build release images and manifests for all platforms
 	make release ARCH=amd64
@@ -60,12 +60,12 @@ release: test ## Build a release image for the docker repo
 		--build-arg RM_QEMU=y \
 		--tag ${DOCKER_REPO}:${ARCH}-${VCS_TAG} .
 
-push: ## Push a release image to the docker repo (requires docker login)
-	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
-
 clean: ## Remove cached release and development images
 	-docker image rm ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 	-docker image rm ${DOCKER_REPO}:${ARCH}
+
+push: ## Push a release image to the docker repo (requires docker login)
+	docker push ${DOCKER_REPO}:${ARCH}-${VCS_TAG}
 
 manifest: ## Create multiarch manifests on the docker repo (requires docker login)
 	-docker manifest push --purge ${DOCKER_REPO}:${VCS_TAG}
