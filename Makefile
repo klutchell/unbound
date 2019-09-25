@@ -100,7 +100,7 @@ manifest: ## Create and push a multiarch manifest to the docker repo (requires d
 	docker manifest push --purge ${DOCKER_REPO}:${TAG}
 
 qemu-user-static:
-	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+	docker run --rm --privileged multiarch/qemu-user-static:4.1.0-1 --reset -p yes
 
 help: ## Display available commands
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
