@@ -100,7 +100,6 @@ manifest: ## Create and push a multiarch manifest to the docker repo (requires d
 	docker manifest push --purge ${DOCKER_REPO}:${TAG}
 
 qemu-user-static:
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 	docker run --rm --privileged multiarch/qemu-user-static:4.1.0-1 --reset -p yes
 
 help: ## Display available commands

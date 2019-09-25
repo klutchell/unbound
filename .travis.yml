@@ -30,6 +30,7 @@ before_install:
 install:
   # current travis-ci images ship with docker version 17.09.0-ce which does not support manifest commands
   - curl -fsSL get.docker.com | sh
+  - docker run --rm --privileged multiarch/qemu-user-static:4.1.0-1 -p yes
 
 script:
   # build and test an image with the provided ARCH
