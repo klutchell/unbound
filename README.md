@@ -31,8 +31,21 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 ## Building
 
 ```bash
-make help
-make build
+# ARCH can be amd64, arm32v6, arm32v7, arm64v8, i386, ppc64le, s390x
+# and is emulated on top of any host architechture with qemu
+make build ARCH=arm32v6
+
+# run `make help` for a complete list of make targets
+```
+
+## Testing
+
+```bash
+# appending -all to the make target will run the task
+# for all supported architectures and may take a long time
+make test-all
+
+# run `make help` for a complete list of make targets
 ```
 
 ## Usage
@@ -49,7 +62,7 @@ Please open an issue or submit a pull request with any features, fixes, or chang
 
 ## Acknowledgments
 
-This image is mostly based on MatthewVance's work: https://github.com/MatthewVance/unbound-docker
+This image is largely based on MatthewVance's work: https://github.com/MatthewVance/unbound-docker
 
 ## License
 
