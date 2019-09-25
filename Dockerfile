@@ -10,17 +10,19 @@ WORKDIR /tmp/src
 ENV UNBOUND_VERSION="1.9.3"
 ENV UNBOUND_SHA="cc3081c042511468177e36897f0c7f0a155493fa"
 
-# https://github.com/hadolint/hadolint/wiki/DL4006
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 linux-headers=4.19.36-r0 libevent=2.1.10-r0 libevent-dev=2.1.10-r0 expat=2.2.8-r0 expat-dev=2.2.8-r0 openssl=1.1.1d-r0 openssl-dev=1.1.1d-r0 \
 	&& curl -fsSL https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz -o unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  ./unbound.tar.gz" | sha1sum -c - \
-	&& tar xzf unbound.tar.gz && cd unbound-${UNBOUND_VERSION} \
-	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
+	&& tar xzf unbound.tar.gz
+	
+WORKDIR /tmp/src/unbound-${UNBOUND_VERSION}
+
+RUN addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-libevent --enable-event-api --disable-flto \
-    && make install -j$(getconf _NPROCESSORS_ONLN) \
-	&& rm -rf /opt/unbound/share
+    && make install \
+	&& rm -rf /opt/unbound/share /opt/unbound/include
 
 # ----------------------------------------------------------------------------
 
@@ -41,15 +43,15 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-WORKDIR /opt/unbound/
-
 COPY --from=unbound /opt/ /opt/
 
 COPY start.sh test.sh a-records.conf unbound.conf /
 
+WORKDIR /opt/unbound/etc/unbound
+
 RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 openssl=1.1.1d-r0 drill=1.7.0-r2 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
-	&& mv /opt/unbound/etc/unbound/unbound.conf /example.conf \
+	&& mv unbound.conf /example.conf \
 	&& chmod +x /start.sh /test.sh \
 	&& chmod -x /a-records.conf /unbound.conf
 
