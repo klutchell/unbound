@@ -29,7 +29,6 @@ FROM ${ARCH}/alpine:3.10.2
 ARG BUILD_DATE
 ARG BUILD_VERSION
 ARG VCS_REF
-ARG RM_QEMU=y
 
 LABEL maintainer="Kyle Harding <https://klutchell.dev>"
 LABEL org.label-schema.schema-version="1.0"
@@ -43,6 +42,7 @@ LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 WORKDIR /opt/unbound/
+
 COPY --from=unbound /opt/ /opt/
 
 COPY start.sh test.sh a-records.conf unbound.conf /
