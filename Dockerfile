@@ -1,12 +1,9 @@
-ARG ARCH=amd64
 
-FROM multiarch/qemu-user-static:4.1.0-1 as qemu
+ARG ARCH=amd64
 
 # ----------------------------------------------------------------------------
 
 FROM ${ARCH}/alpine:3.10.2 as unbound
-
-COPY --from=qemu /usr/bin/qemu-* /usr/bin/
 
 WORKDIR /tmp/src
 
@@ -46,8 +43,6 @@ LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 WORKDIR /opt/unbound/
-
-COPY --from=qemu /usr/bin/qemu-* /usr/bin/
 COPY --from=unbound /opt/ /opt/
 
 COPY start.sh test.sh a-records.conf unbound.conf /
@@ -56,8 +51,7 @@ RUN apk add --no-cache libevent=2.1.10-r0 expat=2.2.8-r0 curl=7.66.0-r0 openssl=
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv /opt/unbound/etc/unbound/unbound.conf /example.conf \
 	&& chmod +x /start.sh /test.sh \
-	&& chmod -x /a-records.conf /unbound.conf \
-	&& rm /usr/bin/qemu-*
+	&& chmod -x /a-records.conf /unbound.conf
 
 ENV PATH /opt/unbound/sbin:"$PATH"
 

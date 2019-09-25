@@ -3,9 +3,11 @@
 # - DOCKER_USERNAME
 # - DOCKER_PASSWORD
 
+# xenial is required to run "multiarch/qemu-user-static -p yes"
+dist: xenial
 language: minimal
-
 services: docker
+os: linux
 
 branches:
   only:
@@ -22,15 +24,16 @@ env:
   - ARCH=s390x
 
 before_install:
+  
+  # the experimental flag for the docker cli is required to use docker manifest commands
   - mkdir -p ${HOME}/.docker
-  # the experimental flag is required to use docker manifest and squash commands
   - echo '{"experimental":"enabled"}' | tee ${HOME}/.docker/config.json
+  # the experimental flag for the docker daemon is required to use the docker --squash flag
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
 
 install:
   # current travis-ci images ship with docker version 17.09.0-ce which does not support manifest commands
   - curl -fsSL get.docker.com | sh
-  - docker run --rm --privileged multiarch/qemu-user-static:4.1.0-1 -p yes
 
 script:
   # build and test an image with the provided ARCH
@@ -40,8 +43,8 @@ after_success:
   # uncomment this condition in order to restrict pushing to docker repo on new git version tags
   # - if [[ ${TRAVIS_TAG} =~ ^v\d+\.\d+\.\d+.*$ ]] ; then echo deploying tag ${TRAVIS_TAG} ; else exit 0 ; fi
   - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-  - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} BUILD_OPTIONS=--squash
-  - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} BUILD_OPTIONS=--squash TAG=latest
+  - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
+  - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} TAG=latest
   # the manifest steps will fail by design until all images are present on the docker repo
   - make manifest DOCKER_REPO=${DOCKER_REPO}
   - make manifest DOCKER_REPO=${DOCKER_REPO} TAG=latest
