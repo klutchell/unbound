@@ -38,8 +38,6 @@ script:
   - make test ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
 
 after_success:
-  # uncomment this condition in order to restrict pushing to docker repo on new git version tags
-  # - if [[ ${TRAVIS_TAG} =~ ^v\d+\.\d+\.\d+.*$ ]] ; then echo deploying tag ${TRAVIS_TAG} ; else exit 0 ; fi
   - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
   - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO}
   - make push ARCH=${ARCH} DOCKER_REPO=${DOCKER_REPO} TAG=latest
