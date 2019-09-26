@@ -35,15 +35,9 @@ docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
 # and is emulated on top of any host architechture with qemu
 make build ARCH=arm32v6
 
-# run `make help` for a complete list of make targets
-```
-
-## Testing
-
-```bash
 # appending -all to the make target will run the task
 # for all supported architectures and may take a long time
-make test-all
+make build-all BUILD_OPTIONS=--no-cache
 
 # run `make help` for a complete list of make targets
 ```

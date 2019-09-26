@@ -1,14 +1,3 @@
-# override these variables at runtime as desired
-# eg. make build ARCH=arm32v6 BUILD_OPTIONS=--no-cache TAG=latest
-
-# ARCH can be amd64, arm32v6, arm32v7, arm64v8, i386, ppc64le, s390x
-# https://hub.docker.com/r/amd64/alpine/
-# https://hub.docker.com/r/arm32v6/alpine/
-# https://hub.docker.com/r/arm32v7/alpine/
-# https://hub.docker.com/r/arm64v8/alpine/
-# https://hub.docker.com/r/i386/alpine/
-# https://hub.docker.com/r/ppc64le/alpine/
-# https://hub.docker.com/r/s390x/alpine/
 
 DOCKER_REPO := klutchell/unbound
 ARCH := amd64
@@ -21,28 +10,29 @@ VCS_REF := $(strip $(shell git rev-parse HEAD))
 
 .EXPORT_ALL_VARIABLES:
 
-.DEFAULT_GOAL := test
+.DEFAULT_GOAL := build
 
-.PHONY: build test push clean all build-all test-all push-all clean-all manifest help
+.PHONY: build push clean all build-all push-all clean-all manifest help
 
-build: qemu-user-static ## Build an image with the provided ARCH and TAG
+build: qemu-user-static ## Build an image with the provided ARCH
 	docker build ${BUILD_OPTIONS} \
 		--build-arg ARCH \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--tag ${DOCKER_REPO}:${ARCH}-${TAG} .
-
-test: build ## Build and test an image with the provided ARCH and TAG
+	docker tag ${DOCKER_REPO}:${ARCH}-${TAG} ${DOCKER_REPO}:${ARCH}-latest
 	docker run --rm ${DOCKER_REPO}:${ARCH}-${TAG} /test.sh
 
-push: test ## Build, test, and push an image with the provided ARCH and TAG (requires docker login)
+push: ## Push an image with the provided ARCH (requires docker login)
 	docker push ${DOCKER_REPO}:${ARCH}-${TAG}
+	docker push ${DOCKER_REPO}:${ARCH}-latest
 
-clean: ## Remove cached images with the provided ARCH and TAG
+clean: ## Remove cached image with the provided ARCH
 	-docker image rm ${DOCKER_REPO}:${ARCH}-${TAG}
+	-docker image rm ${DOCKER_REPO}:${ARCH}-latest
 
-all: test-all
+all: build-all
 
 build-all: ## Build images for all supported architectures
 	make build ARCH=amd64
@@ -53,16 +43,7 @@ build-all: ## Build images for all supported architectures
 	make build ARCH=ppc64le
 	make build ARCH=s390x
 
-test-all: ## Build and test images for all supported architectures
-	make test ARCH=amd64
-	make test ARCH=arm32v6
-	make test ARCH=arm32v7
-	make test ARCH=arm64v8
-	make test ARCH=i386
-	make test ARCH=ppc64le
-	make test ARCH=s390x
-
-push-all: ## Build, test, and push images for all supported architectures (requires docker login)
+push-all: ## Push images for all supported architectures (requires docker login)
 	make push ARCH=amd64
 	make push ARCH=arm32v6
 	make push ARCH=arm32v7
@@ -98,6 +79,23 @@ manifest: ## Create and push a multiarch manifest to the docker repo (requires d
 	docker manifest annotate ${DOCKER_REPO}:${TAG} ${DOCKER_REPO}:ppc64le-${TAG} --os linux --arch ppc64le
 	docker manifest annotate ${DOCKER_REPO}:${TAG} ${DOCKER_REPO}:s390x-${TAG} --os linux --arch s390x
 	docker manifest push --purge ${DOCKER_REPO}:${TAG}
+	-docker manifest push --purge ${DOCKER_REPO}:latest
+	docker manifest create ${DOCKER_REPO}:latest \
+		${DOCKER_REPO}:amd64-latest \
+		${DOCKER_REPO}:arm32v6-latest \
+		${DOCKER_REPO}:arm32v7-latest \
+		${DOCKER_REPO}:arm64v8-latest \
+		${DOCKER_REPO}:i386-latest \
+		${DOCKER_REPO}:ppc64le-latest \
+		${DOCKER_REPO}:s390x-latest
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:amd64-latest --os linux --arch amd64
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-latest --os linux --arch arm --variant v6
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-latest --os linux --arch arm --variant v7
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-latest --os linux --arch arm64 --variant v8
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:i386-latest --os linux --arch 386
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:ppc64le-latest --os linux --arch ppc64le
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:s390x-latest --os linux --arch s390x
+	docker manifest push --purge ${DOCKER_REPO}:latest
 
 qemu-user-static:
 	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
