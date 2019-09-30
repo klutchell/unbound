@@ -8,6 +8,8 @@ BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%
 BUILD_VERSION := ${ARCH}-${TAG}-$(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse HEAD))
 
+TEST_CMD := -c '(nohup sh -c "/start.sh" &) && sleep 5 && drill @127.0.0.1 cloudflare.com || exit 1'
+
 .EXPORT_ALL_VARIABLES:
 
 .DEFAULT_GOAL := build
@@ -22,7 +24,7 @@ build: qemu-user-static ## Build an image with the provided ARCH
 		--build-arg VCS_REF \
 		--tag ${DOCKER_REPO}:${ARCH}-${TAG} .
 	docker tag ${DOCKER_REPO}:${ARCH}-${TAG} ${DOCKER_REPO}:${ARCH}-latest
-	docker run --rm ${DOCKER_REPO}:${ARCH}-${TAG} /test.sh
+	docker run --rm --entrypoint /bin/sh ${DOCKER_REPO}:${ARCH}-${TAG} ${TEST_CMD}
 
 push: ## Push an image with the provided ARCH (requires docker login)
 	docker push ${DOCKER_REPO}:${ARCH}-${TAG}
