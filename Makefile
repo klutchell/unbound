@@ -8,7 +8,7 @@ BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%
 BUILD_VERSION := ${ARCH}-${TAG}-$(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse HEAD))
 
-TEST_CMD := -c '(nohup sh -c "/start.sh" &) && sleep 5 && dig @127.0.0.1 -p 5053 cloudflare.com A || exit 1'
+TEST_CMD := -c '(nohup sh -c "/unbound.sh" &) && sleep 5 && dig @127.0.0.1 -p 5053 cloudflare.com A || exit 1'
 
 .EXPORT_ALL_VARIABLES:
 

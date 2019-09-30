@@ -45,14 +45,14 @@ LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 COPY --from=unbound /opt/ /opt/
 
-COPY start.sh a-records.conf unbound.conf /
+COPY unbound.sh a-records.conf unbound.conf /
 
 WORKDIR /opt/unbound/etc/unbound
 
 RUN apk add --no-cache bind-tools=9.14.3-r0 expat=2.2.8-r0 curl=7.66.0-r0 libressl=2.7.5-r0 libevent=2.1.10-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv unbound.conf /example.conf \
-	&& chmod +x /start.sh \
+	&& chmod +x /unbound.sh \
 	&& chmod -x /a-records.conf /unbound.conf
 
 ENV PATH /opt/unbound/sbin:"$PATH"
@@ -62,4 +62,4 @@ EXPOSE 5053/udp
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
 	CMD dig +short @127.0.0.1 -p 5053 cloudflare.com A || exit 1
 
-CMD ["/start.sh"]
+CMD ["/unbound.sh"]
