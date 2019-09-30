@@ -49,7 +49,7 @@ COPY unbound.sh a-records.conf unbound.conf /
 
 WORKDIR /opt/unbound/etc/unbound
 
-RUN apk add --no-cache bind-tools=9.14.3-r0 expat=2.2.8-r0 curl=7.66.0-r0 libressl=2.7.5-r0 libevent=2.1.10-r0 \
+RUN apk add --no-cache drill=1.7.0-r2 expat=2.2.8-r0 curl=7.66.0-r0 libressl=2.7.5-r0 libevent=2.1.10-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv unbound.conf /example.conf \
 	&& chmod +x /unbound.sh \
@@ -60,6 +60,6 @@ ENV PATH /opt/unbound/sbin:"$PATH"
 EXPOSE 5053/udp
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
-	CMD dig +short @127.0.0.1 -p 5053 cloudflare.com A || exit 1
+	CMD drill -p 5053 cloudflare.com @127.0.0.1 || exit 1
 
 CMD ["/unbound.sh"]
