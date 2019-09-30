@@ -12,7 +12,7 @@ ENV UNBOUND_SHA="cc3081c042511468177e36897f0c7f0a155493fa"
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 expat=2.2.8-r0 expat-dev=2.2.8-r0 libevent=2.1.10-r0 libevent-dev=2.1.10-r0 libressl=2.7.5-r0 libressl-dev=2.7.5-r0 linux-headers=4.19.36-r0 \
+RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 expat=2.2.8-r0 expat-dev=2.2.8-r0 libevent=2.1.10-r0 libevent-dev=2.1.10-r0 linux-headers=4.19.36-r0 openssl=1.1.1d-r0 openssl-dev=1.1.1d-r0 \
 	&& curl -fsSL https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz -o unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  ./unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf unbound.tar.gz
@@ -49,7 +49,7 @@ COPY unbound.sh a-records.conf unbound.conf /
 
 WORKDIR /opt/unbound/etc/unbound
 
-RUN apk add --no-cache drill=1.7.0-r2 expat=2.2.8-r0 curl=7.66.0-r0 libressl=2.7.5-r0 libevent=2.1.10-r0 \
+RUN apk add --no-cache drill=1.7.0-r2 expat=2.2.8-r0 curl=7.66.0-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv unbound.conf /example.conf \
 	&& chmod +x /unbound.sh \
