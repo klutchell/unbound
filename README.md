@@ -1,36 +1,39 @@
 # unofficial unbound docker image
 
-[![Build Status](https://travis-ci.com/klutchell/unbound.svg?branch=master)](https://travis-ci.com/klutchell/unbound)
-[![Docker Pulls](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=flat)](https://hub.docker.com/r/klutchell/unbound/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/klutchell/unbound.svg?style=flat-square)](https://hub.docker.com/r/klutchell/unbound/)
+[![Docker Stars](https://img.shields.io/docker/stars/klutchell/unbound.svg?style=flat-square)](https://hub.docker.com/r/klutchell/unbound/)
 
 [Unbound](https://unbound.net/) is a validating, recursive, and caching DNS resolver.
 
 ## Tags
 
-* `latest`, `1.9.3`
-* `amd64-latest`, `amd64-1.9.3`
-* `arm32v6-latest`, `arm32v6-1.9.3`
-* `arm32v7-latest`, `arm32v7-1.9.3`
-* `arm64v8-latest`, `arm64v8-1.9.3`
-* `i386-latest`, `i386-1.9.3`
-* `ppc64le-latest`, `ppc64le-1.9.3`
-* `s390x-latest`, `s390x-1.9.3`
+- `latest`, `1.9.3`
+- `amd64-latest`, `amd64-1.9.3`
+- `arm32v6-latest`, `arm32v6-1.9.3`
+- `arm32v7-latest`, `arm32v7-1.9.3`
+- `arm64v8-latest`, `arm64v8-1.9.3`
+- `i386-latest`, `i386-1.9.3`
+- `ppc64le-latest`, `ppc64le-1.9.3`
+- `s390x-latest`, `s390x-1.9.3`
 
 ## Deployment
 
 ```bash
-docker run -p 53:53/tcp -p 53:53/udp klutchell/unbound
+# run a recursive DNS server on port 53
+docker run -p 53:5053/udp klutchell/unbound
 ```
 
 ## Parameters
 
-* `-p 53:53/tcp` - expose tcp port 53 on the container to tcp port 53 on the host
-* `-p 53:53/udp` - expose udp port 53 on the container to udp port 53 on the host
-* `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
+- `-p 53:5053/udp` - publish udp port 5053 on the container to udp port 53 on the host
+- `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
 
 ## Building
 
 ```bash
+# print makefile usage
+make help
+
 # ARCH can be amd64, arm32v6, arm32v7, arm64v8, i386, ppc64le, s390x
 # and is emulated on top of any host architechture with qemu
 make build ARCH=arm32v6
@@ -38,8 +41,6 @@ make build ARCH=arm32v6
 # appending -all to the make target will run the task
 # for all supported architectures and may take a long time
 make build-all BUILD_OPTIONS=--no-cache
-
-# run `make help` for a complete list of make targets
 ```
 
 ## Usage
@@ -60,6 +61,5 @@ This image is largely based on MatthewVance's work: https://github.com/MatthewVa
 
 ## License
 
-* klutchell/unbound: [MIT License](./LICENSE)
-* OpenSSL: [OpenSSL & SSLeay](https://www.openssl.org/source/license-openssl-ssleay.txt)
-* Unbound: [BSD License](https://github.com/NLnetLabs/unbound/blob/master/LICENSE)
+- klutchell/unbound: [MIT License](./LICENSE)
+- Unbound: [BSD License](https://github.com/NLnetLabs/unbound/blob/master/LICENSE)
