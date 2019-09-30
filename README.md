@@ -45,11 +45,11 @@ make build-all BUILD_OPTIONS=--no-cache
 
 ## Usage
 
-NLnet Labs documentation: https://nlnetlabs.nl/documentation/unbound/
+NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
 
 ## Author
 
-Kyle Harding: https://klutchell.dev
+Kyle Harding: <https://klutchell.dev>
 
 ## Contributing
 
@@ -57,7 +57,7 @@ Please open an issue or submit a pull request with any features, fixes, or chang
 
 ## Acknowledgments
 
-This image is largely based on MatthewVance's work: https://github.com/MatthewVance/unbound-docker
+This image is largely based on MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
 
 ## License
 
