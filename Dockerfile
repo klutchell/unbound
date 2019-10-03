@@ -45,14 +45,14 @@ LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 COPY --from=unbound /opt/ /opt/
 
-COPY unbound.sh a-records.conf unbound.conf /
+COPY entrypoint.sh a-records.conf unbound.conf /
 
 WORKDIR /opt/unbound/etc/unbound
 
 RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 tzdata=2019b-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv unbound.conf /example.conf \
-	&& chmod +x /unbound.sh \
+	&& chmod +x /entrypoint.sh \
 	&& chmod -x /a-records.conf /unbound.conf
 
 ENV PATH /opt/unbound/sbin:"$PATH"
@@ -62,4 +62,6 @@ EXPOSE 5053/udp
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
 	CMD drill -p 5053 cloudflare.com @127.0.0.1 || exit 1
 
-CMD ["/unbound.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD [""]
