@@ -21,16 +21,14 @@ build: qemu-user-static ## Build an image with the provided ARCH
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--tag ${DOCKER_REPO}:${ARCH}-${TAG} .
-	docker tag ${DOCKER_REPO}:${ARCH}-${TAG} ${DOCKER_REPO}:${ARCH}-latest
-	docker run --rm ${DOCKER_REPO}:${ARCH}-${TAG} test
+	docker run --rm --entrypoint /bin/sh ${DOCKER_REPO}:${ARCH}-${TAG} \
+		-c '(/entrypoint.sh &) && sleep 10 && drill -p 5053 cloudflare.com @127.0.0.1 || exit 1'
 
 push: ## Push an image with the provided ARCH (requires docker login)
 	docker push ${DOCKER_REPO}:${ARCH}-${TAG}
-	docker push ${DOCKER_REPO}:${ARCH}-latest
 
 clean: ## Remove cached image with the provided ARCH
 	-docker image rm ${DOCKER_REPO}:${ARCH}-${TAG}
-	-docker image rm ${DOCKER_REPO}:${ARCH}-latest
 
 all: build-all
 
@@ -81,20 +79,20 @@ manifest: ## Create and push a multiarch manifest to the docker repo (requires d
 	docker manifest push --purge ${DOCKER_REPO}:${TAG}
 	-docker manifest push --purge ${DOCKER_REPO}:latest
 	docker manifest create ${DOCKER_REPO}:latest \
-		${DOCKER_REPO}:amd64-latest \
-		${DOCKER_REPO}:arm32v6-latest \
-		${DOCKER_REPO}:arm32v7-latest \
-		${DOCKER_REPO}:arm64v8-latest \
-		${DOCKER_REPO}:i386-latest \
-		${DOCKER_REPO}:ppc64le-latest \
-		${DOCKER_REPO}:s390x-latest
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:amd64-latest --os linux --arch amd64
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-latest --os linux --arch arm --variant v6
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-latest --os linux --arch arm --variant v7
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-latest --os linux --arch arm64 --variant v8
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:i386-latest --os linux --arch 386
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:ppc64le-latest --os linux --arch ppc64le
-	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:s390x-latest --os linux --arch s390x
+		${DOCKER_REPO}:amd64-${TAG} \
+		${DOCKER_REPO}:arm32v6-${TAG} \
+		${DOCKER_REPO}:arm32v7-${TAG} \
+		${DOCKER_REPO}:arm64v8-${TAG} \
+		${DOCKER_REPO}:i386-${TAG} \
+		${DOCKER_REPO}:ppc64le-${TAG} \
+		${DOCKER_REPO}:s390x-${TAG}
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:amd64-${TAG} --os linux --arch amd64
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v6-${TAG} --os linux --arch arm --variant v6
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm32v7-${TAG} --os linux --arch arm --variant v7
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:arm64v8-${TAG} --os linux --arch arm64 --variant v8
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:i386-${TAG} --os linux --arch 386
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:ppc64le-${TAG} --os linux --arch ppc64le
+	docker manifest annotate ${DOCKER_REPO}:latest ${DOCKER_REPO}:s390x-${TAG} --os linux --arch s390x
 	docker manifest push --purge ${DOCKER_REPO}:latest
 
 qemu-user-static:

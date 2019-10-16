@@ -15,11 +15,5 @@ then
     cp -av /unbound.conf /a-records.conf /example.conf /opt/unbound/etc/unbound/
 fi
 
-if [ "$1" = "test" ]
-then
-    exec unbound -d -c /opt/unbound/etc/unbound/unbound.conf &
-    sleep 10 && drill -p 5053 cloudflare.com @127.0.0.1 || exit 1
-else
-    echo "unbound -d -c /opt/unbound/etc/unbound/unbound.conf $@"
-    exec unbound -d -c /opt/unbound/etc/unbound/unbound.conf $@
-fi
+set -x
+exec unbound -d -c /opt/unbound/etc/unbound/unbound.conf $@
