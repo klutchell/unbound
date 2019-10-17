@@ -56,8 +56,6 @@ make build-all BUILD_OPTIONS=--no-cache
 
 NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
 
-You can print the full command-line usage options by running the container.
-
 ```bash
 # print general usage
 docker run --rm klutchell/unbound --help
@@ -73,7 +71,9 @@ Please open an issue or submit a pull request with any features, fixes, or chang
 
 ## Acknowledgments
 
-This image is largely based on MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
+A number of build steps were borrowed from MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
+
+Original software is by NLnet Labs: <https://unbound.net>
 
 ## License
 
