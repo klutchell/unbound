@@ -13,17 +13,17 @@
 
 ## Architectures
 
-Simply pulling `klutchell/unbound:<version>` should retrieve the correct image for your arch, but you can also pull specific arch images via tags.
+Simply pulling `klutchell/unbound:1.9.4` should retrieve the correct image for your arch, but you can also pull specific arch images via tags.
 
 The architectures supported by this image are:
 
-- `amd64-<version>`
-- `arm32v6-<version>`
-- `arm32v7-<version>`
-- `arm64v8-<version>`
-- `i386-<version>`
-- `ppc64le-<version>`
-- `s390x-<version>`
+- `amd64-1.9.4`
+- `arm32v6-1.9.4`
+- `arm32v7-1.9.4`
+- `arm64v8-1.9.4`
+- `i386-1.9.4`
+- `ppc64le-1.9.4`
+- `s390x-1.9.4`
 
 ## Deployment
 
