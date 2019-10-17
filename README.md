@@ -7,7 +7,8 @@
 
 ## Tags
 
-- `1.9.3`, `latest`
+- `1.9.4`, `latest`
+- `1.9.3`
 - `1.9.0`
 
 ## Architectures

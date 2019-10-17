@@ -7,8 +7,8 @@ FROM ${ARCH}/alpine:3.10.2 as unbound
 
 WORKDIR /tmp/src
 
-ENV UNBOUND_VERSION="1.9.3"
-ENV UNBOUND_SHA="cc3081c042511468177e36897f0c7f0a155493fa"
+ENV UNBOUND_VERSION="1.9.4"
+ENV UNBOUND_SHA="364724dc2fe73cb7b45feeabdbfdff02271c5df7"
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 

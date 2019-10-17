@@ -1,7 +1,7 @@
 
 DOCKER_REPO := klutchell/unbound
 ARCH := amd64
-TAG := 1.9.3
+TAG := 1.9.4
 BUILD_OPTIONS +=
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
