@@ -57,8 +57,6 @@ RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0
 
 ENV PATH /opt/unbound/sbin:"$PATH"
 
-EXPOSE 5053/udp
-
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
 	CMD drill -p 5053 cloudflare.com @127.0.0.1 || exit 1
 
