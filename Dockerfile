@@ -49,7 +49,7 @@ COPY entrypoint.sh a-records.conf unbound.conf /
 
 WORKDIR /opt/unbound/etc/unbound
 
-RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 tzdata=2019b-r0 \
+RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 tzdata=2019c-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
 	&& mv unbound.conf /example.conf \
 	&& chmod +x /entrypoint.sh \
