@@ -5,10 +5,10 @@ ARG ARCH=amd64
 
 FROM ${ARCH}/alpine:3.10.2 as unbound
 
-WORKDIR /tmp/src
+ARG UNBOUND_VERSION="1.9.4"
+ARG UNBOUND_SHA="364724dc2fe73cb7b45feeabdbfdff02271c5df7"
 
-ENV UNBOUND_VERSION="1.9.4"
-ENV UNBOUND_SHA="364724dc2fe73cb7b45feeabdbfdff02271c5df7"
+WORKDIR /tmp/src
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
