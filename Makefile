@@ -1,11 +1,11 @@
 
 DOCKER_REPO := klutchell/unbound
 ARCH := amd64
-TAG := 1.9.4
+TAG := 1.9.3
 BUILD_OPTIONS +=
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
-BUILD_VERSION := ${ARCH}-${TAG}-$(strip $(shell git describe --tags --always --dirty))
+BUILD_VERSION := ${TAG}-$(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse HEAD))
 
 .EXPORT_ALL_VARIABLES:
