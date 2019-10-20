@@ -20,9 +20,9 @@ RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 expat=2.2.8-r0 expat-dev
 WORKDIR /tmp/src/unbound-${UNBOUND_VERSION}
 
 RUN addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
-	&& ./configure --prefix=/opt/unbound --with-pthreads --with-username=_unbound --with-libevent --enable-event-api --disable-flto \
+	&& ./configure --prefix=/app --with-pthreads --with-username=_unbound --with-libevent --enable-event-api --disable-flto \
 	&& make install \
-	&& rm -rf /opt/unbound/share /opt/unbound/include
+	&& rm -rf /app/share /app/include
 
 # ----------------------------------------------------------------------------
 
@@ -43,11 +43,11 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-COPY --from=unbound /opt/ /opt/
+COPY --from=unbound /app/ /app/
 
 COPY entrypoint.sh a-records.conf unbound.conf /
 
-WORKDIR /opt/unbound/etc/unbound
+WORKDIR /app/etc/unbound
 
 RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 tzdata=2019c-r0 \
 	&& addgroup _unbound && adduser -D -H -s /etc -h /dev/null -G _unbound _unbound \
@@ -55,10 +55,11 @@ RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0
 	&& chmod +x /entrypoint.sh \
 	&& chmod -x /a-records.conf /unbound.conf
 
-ENV PATH /opt/unbound/sbin:"$PATH"
+ENV PATH /app/sbin:"$PATH"
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=5s \
-	CMD drill -p 5053 cloudflare.com @127.0.0.1 || exit 1
+	CMD drill -D -p 5053 sigok.verteiltesysteme.net @127.0.0.1 | grep NOERROR \
+	&& drill -D -p 5053 sigfail.verteiltesysteme.net @127.0.0.1 | grep SERVFAIL
 
 ENTRYPOINT ["/entrypoint.sh"]
 

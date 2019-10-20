@@ -35,7 +35,7 @@ docker run -p 53:5053/udp klutchell/unbound
 ## Parameters
 
 - `-p 53:5053/udp` - publish udp port 5053 on the container to udp port 53 on the host
-- `-v /path/to/config:/opt/unbound/etc/unbound` - (optional) mount a custom configuration directory
+- `-v /path/to/config:/app/etc/unbound` - (optional) mount a custom configuration directory
 
 ## Building
 

@@ -2,16 +2,21 @@
 
 set -x
 
-mkdir -p /opt/unbound/etc/unbound/dev 2>/dev/null
-cp -a /dev/random /dev/urandom /opt/unbound/etc/unbound/dev/
+# link to the old config location for compatibility
+[ -d /opt/unbound/etc ] && ln -s /opt/unbound/etc /app/etc
 
-mkdir -p -m 700 /opt/unbound/etc/unbound/var 2>/dev/null
-chown _unbound:_unbound /opt/unbound/etc/unbound/var
+# running in chroot requires /dev/random and /dev/urandom
+mkdir -p /app/etc/unbound/dev 2>/dev/null
+cp -a /dev/random /dev/urandom /app/etc/unbound/dev/
+
+# create and take ownership of chroot var
+mkdir -p -m 700 /app/etc/unbound/var 2>/dev/null
+chown _unbound:_unbound /app/etc/unbound/var
 
 # update the root trust anchor for DNSSEC validation
-unbound-anchor -a /opt/unbound/etc/unbound/var/root.key
+unbound-anchor -a /app/etc/unbound/var/root.key
 
 # restore the default config files if unbound.conf does not exist
-[ -f /opt/unbound/etc/unbound/unbound.conf ] || cp -a /unbound.conf /a-records.conf /example.conf /opt/unbound/etc/unbound/
+[ -f /app/etc/unbound/unbound.conf ] || cp -a /unbound.conf /a-records.conf /example.conf /app/etc/unbound/
 
-exec unbound -d -c /opt/unbound/etc/unbound/unbound.conf $@
+exec unbound -d -c /app/etc/unbound/unbound.conf $@
