@@ -19,8 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& curl -fsSL "${UNBOUND_URL}" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --with-pthreads --with-libevent --enable-event-api --disable-flto --enable-static-exe --with-run-dir=/usr/local/run --with-username= --with-chroot-dir= \
+	&& ./configure --with-pthreads --with-libevent --enable-event-api --disable-flto --disable-static --with-run-dir=/usr/local/run --with-username= --with-chroot-dir= \
 	&& make install \
+	&& ldconfig -p | awk '{ print $4 }' | grep -e "libexpat.so.1" -e "libevent-2.1.so.6" -e "libssl.so.1.1" | xargs cp -Lvt /usr/local/lib/ \
 	&& mv /usr/local/etc/unbound/unbound.conf /usr/local/etc/unbound/example.conf \
 	&& mkdir /usr/local/run
 
@@ -43,18 +44,15 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-COPY --from=builder --chown=nonroot /usr/local/run /usr/local/run
-COPY --from=builder /usr/local/sbin /usr/local/sbin
 COPY --from=builder /usr/local/etc /usr/local/etc
-
-COPY --from=builder \
-	/lib/x86_64-linux-gnu/libexpat.so.1 \
-	/usr/lib/x86_64-linux-gnu/libevent-2.1.so.6 \
-	/usr/lib/x86_64-linux-gnu/libssl.so.1.1 \
-	/usr/lib/
+COPY --from=builder /usr/local/lib /usr/local/lib
+COPY --from=builder /usr/local/sbin /usr/local/sbin
+COPY --from=builder --chown=nonroot /usr/local/run /usr/local/run
 
 COPY a-records.conf unbound.conf /usr/local/etc/unbound/
 
 WORKDIR /usr/local/run
+
+ENV LD_LIBRARY_PATH=/usr/local/lib
 
 ENTRYPOINT ["unbound", "-d"]
