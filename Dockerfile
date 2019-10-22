@@ -10,8 +10,10 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN apk add --no-cache build-base=0.5-r1 curl=7.66.0-r0 expat=2.2.8-r0 expat-dev=2.2.8-r0 libevent=2.1.10-r0 libevent-dev=2.1.10-r0 linux-headers=4.19.36-r0 openssl=1.1.1d-r0 openssl-dev=1.1.1d-r0 \
 	&& curl -fsSL https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.tar.gz -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  /tmp/unbound.tar.gz" | sha1sum -c - && tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --prefix=/app --with-pthreads  --with-libevent --enable-event-api --disable-flto --disable-static \
+	&& ./configure --prefix=/app --with-pthreads  --with-libevent --enable-event-api --disable-flto --disable-static --with-run-dir=/app/var \
 	&& make install && mv /app/etc/unbound/unbound.conf /app/etc/unbound/example.conf && rm -rf /app/share /app/include
+
+RUN ./configure --help
 
 # ----------------------------------------------------------------------------
 
@@ -34,13 +36,12 @@ LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 COPY --from=builder /app /app
 
-WORKDIR /app/etc/unbound/
+COPY a-records.conf unbound.conf /app/etc/unbound/
 
-COPY a-records.conf unbound.conf ./
+WORKDIR /app/var
 
 RUN apk add --no-cache ca-certificates=20190108-r0 drill=1.7.0-r2 expat=2.2.8-r0 libevent=2.1.10-r0 openssl=1.1.1d-r0 tzdata=2019c-r0 \
-	&& addgroup unbound && adduser -D -H -s /etc -h /dev/null -G unbound unbound \
-	&& mkdir dev && cp -a /dev/random /dev/urandom dev/
+	&& addgroup unbound && adduser -D -H -s /etc -h /dev/null -G unbound unbound
 
 ENV PATH /app/sbin:"$PATH"
 
