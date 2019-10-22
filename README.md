@@ -15,7 +15,7 @@ These tags including rolling updates, so occasionally the associated image may c
 
 ## Architectures
 
-Simply pulling `klutchell/unbound:1.9.4` should retrieve the correct image for your arch, but you can also pull specific arch images via tags.
+Simply pulling `klutchell/unbound` should retrieve the correct image for your arch.
 
 The architectures supported by this image are:
 
