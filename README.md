@@ -7,6 +7,8 @@
 
 ## Tags
 
+These tags including rolling updates, so occasionally the associated image may change to include fixes.
+
 - `1.9.4`, `latest`
 - `1.9.3`
 - `1.9.0`
@@ -17,39 +19,27 @@ Simply pulling `klutchell/unbound:1.9.4` should retrieve the correct image for y
 
 The architectures supported by this image are:
 
-- `amd64-1.9.4`
-- `arm32v6-1.9.4`
-- `arm32v7-1.9.4`
-- `arm64v8-1.9.4`
-- `i386-1.9.4`
-- `ppc64le-1.9.4`
-- `s390x-1.9.4`
-
-## Deployment
-
-```bash
-# run a recursive DNS server on port 53
-docker run -p 53:5053/udp klutchell/unbound
-```
-
-## Parameters
-
-- `-p 53:5053/udp` - publish udp port 5053 on the container to udp port 53 on the host
-- `-v /path/to/config:/app/etc/unbound` - (optional) mount a custom configuration directory
+- `linux/amd64`
+- `linux/arm64`
+- `linux/ppc64le`
+- `linux/s390x`
+- `linux/386`
+- `linux/arm/v7`
 
 ## Building
 
 ```bash
-# print makefile usage
+# display available commands
 make help
 
-# ARCH can be amd64, arm32v6, arm32v7, arm64v8, i386, ppc64le, s390x
-# and is emulated on top of any host architechture with qemu
-make build ARCH=arm32v6
+# build and test on the host OS architecture
+make build BUILD_OPTIONS=--no-cache
 
-# appending -all to the make target will run the task
-# for all supported architectures and may take a long time
-make build-all BUILD_OPTIONS=--no-cache
+# cross-build multiarch manifest(s) with configured platforms
+make all BUILD_OPTIONS=--push
+
+# inspect manifest contents
+make inspect
 ```
 
 ## Usage
@@ -57,8 +47,25 @@ make build-all BUILD_OPTIONS=--no-cache
 NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
 
 ```bash
+# print version info
+docker run --rm klutchell/unbound -v
+
 # print general usage
-docker run --rm klutchell/unbound --help
+docker run --rm klutchell/unbound -h
+
+# run dns server on host port 53
+docker run -p 53:5053/tcp -p 53:5053/udp klutchell/unbound
+
+# mount external configuration directory
+docker run -v /path/to/config:/config klutchell/unbound -c /config/unbound.conf
+
+# validate external configuration file
+docker run --rm --entrypoint unbound-checkconf klutchell/unbound -h
+docker run -v /path/to/config:/config --entrypoint unbound-checkconf klutchell/unbound /config/unbound.conf
+
+# update the root trust anchor for DNSSEC validation
+docker run --rm --entrypoint unbound-anchor klutchell/unbound -h
+docker run -v /path/to/config:/config --entrypoint unbound-anchor klutchell/unbound -a /config/root.key
 ```
 
 ## Author
@@ -70,8 +77,6 @@ Kyle Harding: <https://klutchell.dev>
 Please open an issue or submit a pull request with any features, fixes, or changes.
 
 ## Acknowledgments
-
-A number of build steps were borrowed from MatthewVance's work: <https://github.com/MatthewVance/unbound-docker>
 
 Original software is by NLnet Labs: <https://unbound.net>
 
