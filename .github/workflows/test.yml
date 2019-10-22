@@ -1,8 +1,10 @@
+name: test
+
 on:
   pull_request:
 
 jobs:
-  test:
+  job-00:
     runs-on: ubuntu-latest
 
     steps:
