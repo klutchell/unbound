@@ -1,4 +1,3 @@
-# FROM alpine:3.10 as builder
 FROM debian:10 as builder
 
 ARG UNBOUND_VERSION="1.9.4"
@@ -9,13 +8,16 @@ WORKDIR /tmp/src
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && apt-get install -qq --no-install-recommends \
 	build-essential=12.6 \
 	ca-certificates=20190110 \
 	curl=7.64.0-4 \
 	libexpat1-dev=2.2.6-2+deb10u1 \
 	libevent-dev=2.1.8-stable-4 \
 	libssl-dev=1.1.1d-0+deb10u2 \
+	&& c_rehash \
 	&& curl -fsSL "${UNBOUND_URL}" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
