@@ -33,7 +33,7 @@ Simply pulling `klutchell/unbound` should retrieve the correct image for your ar
 make help
 
 # build and test on the host OS architecture
-make build BUILD_OPTIONS=--no-cache
+make build test BUILD_OPTIONS=--no-cache
 
 # cross-build multiarch manifest(s) with configured platforms
 make all BUILD_OPTIONS=--push

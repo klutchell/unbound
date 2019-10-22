@@ -14,9 +14,9 @@ DOCKER_CLI_EXPERIMENTAL := enabled
 
 .DEFAULT_GOAL := build
 
-.PHONY: build all inspect help
+.PHONY: build test all inspect help
 
-build: ## build and test on the host OS architecture
+build: ## build on the host OS architecture
 	docker build ${BUILD_OPTIONS} \
 		--build-arg BUILD_VERSION \
 		--build-arg BUILD_DATE \
@@ -24,6 +24,8 @@ build: ## build and test on the host OS architecture
 		--tag ${DOCKER_REPO} .
 	docker run --rm --entrypoint unbound-checkconf ${DOCKER_REPO}
 	docker run --rm --entrypoint unbound ${DOCKER_REPO} -V
+
+test: ## test on the host OS architecture
 	docker-compose -f test/docker-compose.yml up --force-recreate --abort-on-container-exit --remove-orphans || (docker-compose -f test/docker-compose.yml down && exit 1)
 	docker-compose -f test/docker-compose.yml down
 
