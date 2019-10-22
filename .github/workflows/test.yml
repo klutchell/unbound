@@ -17,5 +17,5 @@ jobs:
       - name: build
         run: make build
 
-      - name: buildx
-        run: make buildx
+      - name: all
+        run: make all

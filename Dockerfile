@@ -63,6 +63,6 @@ RUN apk add --no-cache \
 
 ENV PATH /app/sbin:"$PATH"
 
-ENTRYPOINT ["unbound"]
+ENTRYPOINT ["unbound", "-d"]
 
-CMD ["-d"]
+CMD [""]
