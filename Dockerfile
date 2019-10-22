@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -qq --no-install-recommends \
 	build-essential=12.6 \
 	ca-certificates=20190110 \
 	curl=7.64.0-4 \
+	ldnsutils=1.7.0-4 \
 	libexpat1-dev=2.2.6-2+deb10u1 \
 	libevent-dev=2.1.8-stable-4 \
 	libssl-dev=1.1.1d-0+deb10u2 \
@@ -23,7 +24,8 @@ RUN apt-get update && apt-get install -qq --no-install-recommends \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
 	&& ./configure --with-pthreads --with-libevent --enable-event-api --disable-flto --disable-static --with-run-dir=/usr/local/run --with-username= --with-chroot-dir= \
 	&& make install \
-	&& ldconfig -p | awk '{ print $4 }' | grep -e "libexpat.so.1" -e "libevent-2.1.so.6" -e "libssl.so.1.1" | xargs cp -Lvt /usr/local/lib/ \
+	&& ldconfig -p | awk '{ print $4 }' | grep -e "libexpat.so.1" -e "libevent-2.1.so.6" -e "libssl.so.1.1" -e "libldns.so.2" | xargs cp -Lvt /usr/local/lib/ \
+	&& command -v drill | xargs cp -Lvt /usr/local/sbin/ \
 	&& mv /usr/local/etc/unbound/unbound.conf /usr/local/etc/unbound/example.conf \
 	&& mkdir /usr/local/run
 
@@ -58,3 +60,6 @@ WORKDIR /usr/local/run
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
 ENTRYPOINT ["unbound", "-d"]
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+	CMD [ "drill", "-p", "5053", "nlnetlabs.nl", "@localhost" ]
