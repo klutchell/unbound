@@ -22,8 +22,9 @@ build: ## build and test on the host OS architecture
 		--build-arg BUILD_DATE \
 		--build-arg VCS_REF \
 		--tag ${DOCKER_REPO} .
-	docker run --rm ${DOCKER_REPO} -V
+	-docker run --rm --entrypoint unbound-anchor ${DOCKER_REPO} -v
 	docker run --rm --entrypoint unbound-checkconf ${DOCKER_REPO}
+	docker run --rm --entrypoint unbound ${DOCKER_REPO} -V
 
 all: bootstrap ## cross-build multiarch manifest(s) with configured platforms
 	docker buildx build ${BUILD_OPTIONS} \

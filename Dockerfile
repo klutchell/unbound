@@ -1,4 +1,5 @@
-FROM alpine:3.10 as builder
+# FROM alpine:3.10 as builder
+FROM debian:10 as builder
 
 ARG UNBOUND_VERSION="1.9.4"
 ARG UNBOUND_SHA="364724dc2fe73cb7b45feeabdbfdff02271c5df7"
@@ -6,29 +7,26 @@ ARG UNBOUND_URL="https://www.unbound.net/downloads/unbound-${UNBOUND_VERSION}.ta
 
 WORKDIR /tmp/src
 
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apk add --no-cache \
-	build-base=0.5-r1 \
-	curl=7.66.0-r0 \
-	expat=2.2.8-r0 \
-	expat-dev=2.2.8-r0 \
-	libevent=2.1.10-r0 \
-	libevent-dev=2.1.10-r0 \
-	linux-headers=4.19.36-r0 \
-	openssl=1.1.1d-r0 \
-	openssl-dev=1.1.1d-r0 \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	build-essential=12.6 \
+	ca-certificates=20190110 \
+	curl=7.64.0-4 \
+	libexpat1-dev=2.2.6-2+deb10u1 \
+	libevent-dev=2.1.8-stable-4 \
+	libssl-dev=1.1.1d-0+deb10u2 \
 	&& curl -fsSL "${UNBOUND_URL}" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --with-pthreads --with-libevent --enable-event-api --disable-flto --disable-static --prefix=/app --with-run-dir=/app/var \
+	&& ./configure --with-pthreads --with-libevent --enable-event-api --disable-flto --enable-static-exe --with-run-dir=/usr/local/run --with-username= --with-chroot-dir= \
 	&& make install \
-	&& mv /app/etc/unbound/unbound.conf /app/etc/unbound/example.conf \
-	&& rm -rf /app/share /app/include
+	&& mv /usr/local/etc/unbound/unbound.conf /usr/local/etc/unbound/example.conf \
+	&& mkdir /usr/local/run
 
 # ----------------------------------------------------------------------------
 
-FROM alpine:3.10
+FROM gcr.io/distroless/base-debian10:nonroot
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -45,24 +43,18 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-COPY --from=builder /app /app
+COPY --from=builder --chown=nonroot /usr/local/run /usr/local/run
+COPY --from=builder /usr/local/sbin /usr/local/sbin
+COPY --from=builder /usr/local/etc /usr/local/etc
 
-COPY a-records.conf unbound.conf /app/etc/unbound/
+COPY --from=builder \
+	/lib/x86_64-linux-gnu/libexpat.so.1 \
+	/usr/lib/x86_64-linux-gnu/libevent-2.1.so.6 \
+	/usr/lib/x86_64-linux-gnu/libssl.so.1.1 \
+	/usr/lib/
 
-WORKDIR /app/var
+COPY a-records.conf unbound.conf /usr/local/etc/unbound/
 
-RUN apk add --no-cache \
-	ca-certificates=20190108-r0 \
-	drill=1.7.0-r2 \
-	expat=2.2.8-r0 \
-	libevent=2.1.10-r0 \
-	openssl=1.1.1d-r0 \
-	tzdata=2019c-r0 \
-	&& addgroup unbound \
-	&& adduser -D -H -s /etc -h /dev/null -G unbound unbound
-
-ENV PATH /app/sbin:"$PATH"
+WORKDIR /usr/local/run
 
 ENTRYPOINT ["unbound", "-d"]
-
-CMD [""]
