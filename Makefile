@@ -24,7 +24,8 @@ build: ## build and test on the host OS architecture
 		--tag ${DOCKER_REPO} .
 	docker run --rm --entrypoint unbound-checkconf ${DOCKER_REPO}
 	docker run --rm --entrypoint unbound ${DOCKER_REPO} -V
-	docker-compose up --force-recreate --abort-on-container-exit --remove-orphans
+	docker-compose -f test/docker-compose.yml up --force-recreate --abort-on-container-exit --remove-orphans || (docker-compose -f test/docker-compose.yml down && exit 1)
+	docker-compose -f test/docker-compose.yml down
 
 all: bootstrap ## cross-build multiarch manifest(s) with configured platforms
 	docker buildx build ${BUILD_OPTIONS} \

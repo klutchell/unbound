@@ -1,10 +1,9 @@
 version: '3'
-
 services:
     unbound:
         image: klutchell/unbound
     dig:
         image: alpine
-        command: sh -c 'apk add --no-cache bind-tools && dig nlnetlabs.nl -p 5053 @unbound'
+        command: sh -c 'apk add --no-cache bind-tools && dig nlnetlabs.nl -p 5053 @unbound | tee /dev/stderr | grep -q NOERROR'
         links:
             - unbound
