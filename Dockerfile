@@ -41,7 +41,7 @@ ARG SSL_SHA1=056057782325134b76d1931c48f2c7e6595d7ef4
 RUN curl -L "${SSL_SOURCE}${SSL_VERSION}.tar.gz" -o /tmp/ssl.tar.gz \
 	&& echo "${SSL_SHA1}  /tmp/ssl.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ssl.tar.gz --strip 1 \
-	&& ./config --prefix=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-shared enable-ec_nistp_64_gcc_128 -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
+	&& ./config --prefix=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-shared -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
 	&& make depend \
 	&& make \
 	&& make install_sw

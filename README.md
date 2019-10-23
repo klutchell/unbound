@@ -78,7 +78,11 @@ Please open an issue or submit a pull request with any features, fixes, or chang
 
 Original software is by NLnet Labs: <https://github.com/NLnetLabs/unbound>
 
-## License
+## Licenses
 
 - klutchell/unbound: [MIT License](./LICENSE)
-- Unbound: [BSD License](https://github.com/NLnetLabs/unbound/blob/master/LICENSE)
+- unbound: [BSD 3-Clause "New" or "Revised" License](https://github.com/NLnetLabs/unbound/blob/master/LICENSE)
+- ldns: [BSD 3-Clause "New" or "Revised" License](https://github.com/NLnetLabs/ldns/blob/develop/LICENSE)
+- openssl: [OpenSSL License & Original SSLeay License](https://www.openssl.org/source/license-openssl-ssleay.txt)
+- libevent: [BSD License](https://libevent.org/LICENSE.txt)
+- libexpat: [MIT License](https://github.com/libexpat/libexpat/blob/master/expat/COPYING)
