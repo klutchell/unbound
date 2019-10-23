@@ -21,8 +21,9 @@ The architectures supported by this image are:
 - `linux/arm64`
 - `linux/ppc64le`
 - `linux/s390x`
-- `linux/386`
+- ~~`linux/386`~~
 - `linux/arm/v7`
+- ~~`linux/arm/v6`~~
 
 Simply pulling `klutchell/unbound` should retrieve the correct image for your arch.
 
@@ -32,11 +33,17 @@ Simply pulling `klutchell/unbound` should retrieve the correct image for your ar
 # display available commands
 make help
 
-# build and test on the host OS architecture
-make build test BUILD_OPTIONS=--no-cache
+# clean dangling images, containers, and build instances
+make clean
 
-# cross-build multiarch manifest(s) with configured platforms
-make all BUILD_OPTIONS=--push
+# build on the host OS architecture
+make build
+
+# test on the host OS architecture
+make test
+
+# cross-build multiarch manifest
+make buildx
 
 # inspect manifest contents
 make inspect

@@ -1,14 +1,10 @@
-FROM debian:10 as builder
+FROM buildpack-deps:buster-curl as builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -qq --no-install-recommends \
-	build-essential=12.6 \
-	ca-certificates=20190110 \
-	curl=7.64.0-4 \
-	&& c_rehash
+RUN apt-get update && apt-get install -qq --no-install-recommends build-essential=12.6 file=1:5.35-4
 
 WORKDIR /tmp/libevent
 
@@ -32,7 +28,7 @@ RUN curl -L "${LIBEXPAT_SOURCE}${LIBEXPAT_VERSION}.tar.gz" -o /tmp/libexpat.tar.
 	&& make \
 	&& make install
 
-WORKDIR /tmp/openssl
+WORKDIR /tmp/ssl
 
 ARG SSL_VERSION=openssl-1.1.1d
 ARG SSL_SOURCE=https://www.openssl.org/source/
@@ -41,8 +37,7 @@ ARG SSL_SHA1=056057782325134b76d1931c48f2c7e6595d7ef4
 RUN curl -L "${SSL_SOURCE}${SSL_VERSION}.tar.gz" -o /tmp/ssl.tar.gz \
 	&& echo "${SSL_SHA1}  /tmp/ssl.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ssl.tar.gz --strip 1 \
-	&& ./config --prefix=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-shared -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong \
-	&& make depend \
+	&& ./config --prefix=/opt/ssl --openssldir=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-heartbeats enable-ec_nistp_64_gcc_128 -fstack-protector-strong \
 	&& make \
 	&& make install_sw
 
@@ -105,3 +100,5 @@ ENTRYPOINT ["unbound", "-d"]
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 	CMD [ "drill", "-Q", "-p", "5053", "nlnetlabs.nl", "@localhost" ]
+
+RUN ["unbound", "-V"]

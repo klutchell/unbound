@@ -1,49 +1,48 @@
 
 DOCKER_REPO := klutchell/unbound
 TAG := 1.9.4
-PLATFORM := linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7
-BUILD_OPTIONS += --pull
+PLATFORM := linux/amd64,linux/arm64,linux/s390x,linux/arm/v7
+BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF --tag ${DOCKER_REPO}:${TAG} --tag ${DOCKER_REPO}:latest
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := ${TAG}-$(strip $(shell git describe --tags --always --dirty))
 VCS_REF := $(strip $(shell git rev-parse HEAD))
 
 DOCKER_CLI_EXPERIMENTAL := enabled
+BUILDX_INSTANCE := $(subst /,-,${DOCKER_REPO})
+COMPOSE_PROJECT_NAME := $(subst /,-,${DOCKER_REPO})
+COMPOSE_FILE := test/docker-compose.yml
 
 .EXPORT_ALL_VARIABLES:
 
 .DEFAULT_GOAL := build
 
-.PHONY: build test all inspect help
+.PHONY: build buildx inspect test clean bootstrap binfmt qemu-user-static help
 
-build: ## build on the host OS architecture
-	docker build ${BUILD_OPTIONS} \
-		--build-arg BUILD_VERSION \
-		--build-arg BUILD_DATE \
-		--build-arg VCS_REF \
-		--tag ${DOCKER_REPO} .
-	docker run --rm --entrypoint unbound-checkconf ${DOCKER_REPO}
-	docker run --rm --entrypoint unbound ${DOCKER_REPO} -V
+build: bootstrap ## build on the host OS architecture
+	docker buildx build ${BUILD_OPTIONS} --pull --load .
 
-test: ## test on the host OS architecture
-	docker-compose -f test/docker-compose.yml up --force-recreate --abort-on-container-exit --remove-orphans || (docker-compose -f test/docker-compose.yml down && exit 1)
-	docker-compose -f test/docker-compose.yml down
-
-all: bootstrap ## cross-build multiarch manifest(s) with configured platforms
-	docker buildx build ${BUILD_OPTIONS} \
-		--platform ${PLATFORM} \
-		--build-arg BUILD_VERSION \
-		--build-arg BUILD_DATE \
-		--build-arg VCS_REF \
-		--tag ${DOCKER_REPO}:${TAG} \
-		--tag ${DOCKER_REPO}:latest .
+buildx: bootstrap ## cross-build multiarch manifest
+	docker buildx build ${BUILD_OPTIONS} --pull --platform ${PLATFORM} .
 
 inspect: ## inspect manifest contents
 	docker buildx imagetools inspect ${DOCKER_REPO}:${TAG}
 
+test: ## test on the host OS architecture
+	docker-compose up --build --force-recreate --abort-on-container-exit
+	docker-compose down
+
+clean: ## clean dangling images, containers, and build instances
+	-docker-compose down
+	-docker buildx rm ${BUILDX_INSTANCE}
+	-docker rmi $(docker images -q ${DOCKER_REPO})
+
 bootstrap: binfmt
-	-docker buildx create --use --name ci
-	docker buildx inspect --bootstrap
+	-docker buildx create --use --name ${BUILDX_INSTANCE}
+	-docker buildx inspect --bootstrap
+
+qemu-user-static:
+	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 binfmt:
 	docker run --rm --privileged docker/binfmt:66f9012c56a8316f9244ffd7622d7c21c1f6f28d
