@@ -2,7 +2,7 @@
 DOCKER_REPO := klutchell/unbound
 TAG := 1.9.4
 PLATFORM := linux/amd64,linux/arm64,linux/s390x,linux/arm/v7
-override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF --tag ${DOCKER_REPO}:${TAG} --tag ${DOCKER_REPO}:latest $(BUILD_OPTIONS)
+override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF --tag ${DOCKER_REPO}:${TAG} --tag ${DOCKER_REPO}:latest
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := ${TAG}-$(strip $(shell git describe --tags --always --dirty))
