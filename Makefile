@@ -2,7 +2,7 @@
 DOCKER_REPO := klutchell/unbound
 TAG := 1.9.4
 PLATFORM := linux/amd64,linux/arm64,linux/s390x,linux/arm/v7
-override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF --tag ${DOCKER_REPO}:${TAG} --tag ${DOCKER_REPO}:latest
+override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := ${TAG}-$(strip $(shell git describe --tags --always --dirty))
@@ -19,17 +19,17 @@ COMPOSE_FILE := test/docker-compose.yml
 
 .PHONY: build buildx inspect test clean bootstrap binfmt qemu-user-static help
 
-build: bootstrap ## build on the host OS architecture
-	docker buildx build ${BUILD_OPTIONS} --pull --load .
+build: ## build on the host OS architecture
+	docker build --tag ${DOCKER_REPO} ${BUILD_OPTIONS} .
 
 buildx: bootstrap ## cross-build multiarch manifest
-	docker buildx build ${BUILD_OPTIONS} --pull --platform ${PLATFORM} .
+	docker buildx build --pull --tag ${DOCKER_REPO}:${TAG} --tag ${DOCKER_REPO}:latest --platform ${PLATFORM} ${BUILD_OPTIONS} .
 
 inspect: ## inspect manifest contents
 	docker buildx imagetools inspect ${DOCKER_REPO}:${TAG}
 
 test: ## test on the host OS architecture
-	docker-compose up --build --force-recreate --abort-on-container-exit
+	docker-compose up --force-recreate --abort-on-container-exit
 	docker-compose down
 
 clean: ## clean dangling images, containers, and build instances
