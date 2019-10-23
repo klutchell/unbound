@@ -1,10 +1,12 @@
-FROM buildpack-deps:buster-curl as builder
+FROM buildpack-deps:buster-curl as build
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -qq --no-install-recommends build-essential=12.6 file=1:5.35-4
+RUN apt-get update && apt-get install -qq --no-install-recommends build-essential=12.6 file=1:5.35-4 \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/libevent
 
@@ -37,7 +39,7 @@ ARG SSL_SHA1=056057782325134b76d1931c48f2c7e6595d7ef4
 RUN curl -L "${SSL_SOURCE}${SSL_VERSION}.tar.gz" -o /tmp/ssl.tar.gz \
 	&& echo "${SSL_SHA1}  /tmp/ssl.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ssl.tar.gz --strip 1 \
-	&& ./config --prefix=/opt/ssl --openssldir=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-heartbeats enable-ec_nistp_64_gcc_128 -fstack-protector-strong \
+	&& ./config --prefix=/opt/ssl --openssldir=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-heartbeats -fstack-protector-strong \
 	&& make \
 	&& make install_sw
 
@@ -50,7 +52,7 @@ ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
 RUN curl -L "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/ssl --enable-event-api --disable-flto --disable-static --prefix=/opt/unbound --with-run-dir=/home/nonroot --with-username= --with-chroot-dir= \
+	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/ssl --enable-event-api --disable-flto --disable-dependency-tracking --prefix=/opt/unbound --with-run-dir=/home/nonroot --with-username= --with-chroot-dir= \
 	&& make install \
 	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf
 
@@ -88,7 +90,7 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-COPY --from=builder /opt /opt
+COPY --from=build /opt /opt
 
 COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
