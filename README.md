@@ -57,7 +57,7 @@ docker run --rm klutchell/unbound -h
 docker run -p 53:5053/tcp -p 53:5053/udp klutchell/unbound
 
 # mount external configuration directory
-docker run -v /path/to/config:/usr/local/etc/unbound klutchell/unbound
+docker run -v /path/to/config:/opt/unbound/etc/unbound klutchell/unbound
 
 # generate a root trust anchor for DNSSEC validation
 docker run --entrypoint unbound-anchor klutchell/unbound
