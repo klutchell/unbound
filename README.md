@@ -19,7 +19,6 @@ The architectures supported by this image are:
 
 - `linux/amd64`
 - `linux/arm64`
-- `linux/ppc64le`
 - `linux/s390x`
 - `linux/arm/v7`
 - `linux/arm/v6`
@@ -42,7 +41,7 @@ make build
 make test
 
 # cross-build multiarch manifest
-make buildx
+make all
 
 # inspect manifest contents
 make inspect
