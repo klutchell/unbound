@@ -21,9 +21,8 @@ The architectures supported by this image are:
 - `linux/arm64`
 - `linux/ppc64le`
 - `linux/s390x`
-- ~~`linux/386`~~
 - `linux/arm/v7`
-- ~~`linux/arm/v6`~~
+- `linux/arm/v6`
 
 Simply pulling `klutchell/unbound` should retrieve the correct image for your arch.
 
@@ -69,9 +68,6 @@ docker run -v /path/to/config:/opt/unbound/etc/unbound klutchell/unbound
 # generate a root trust anchor for DNSSEC validation
 docker run --entrypoint unbound-anchor klutchell/unbound
 ```
-
-Note that this image is [distroless](https://github.com/GoogleContainerTools/distroless) and contains no shell or busybox binaries.
-Logging in to the container is not possible for security reasons.
 
 ## Author
 

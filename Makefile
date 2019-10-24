@@ -1,7 +1,7 @@
 
 DOCKER_REPO := klutchell/unbound
 TAG := 1.9.4
-PLATFORM := linux/amd64,linux/arm64,linux/s390x,linux/arm/v7
+PLATFORM := linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/arm/v7,linux/arm/v6
 override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))

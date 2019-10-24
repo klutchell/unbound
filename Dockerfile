@@ -52,7 +52,7 @@ ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
 RUN curl -L "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/ssl --enable-event-api --disable-flto --disable-dependency-tracking --prefix=/opt/unbound --with-run-dir=/home/nonroot --with-username= --with-chroot-dir= \
+	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/ssl --enable-event-api --disable-flto --disable-dependency-tracking --prefix=/opt/unbound --with-run-dir=/root --with-username= --with-chroot-dir= \
 	&& make install \
 	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf
 
@@ -73,7 +73,7 @@ RUN rm -rf /opt/*/include /opt/*/share /opt/*/man
 
 # ----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/base-debian10:nonroot
+FROM debian:buster
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
