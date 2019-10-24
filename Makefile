@@ -5,8 +5,8 @@ PLATFORM := linux/amd64,linux/arm64,linux/s390x,linux/arm/v7,linux/arm/v6
 override BUILD_OPTIONS += --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
-BUILD_VERSION := ${TAG}-$(strip $(shell git describe --tags --always --dirty))
-VCS_REF := $(strip $(shell git rev-parse HEAD))
+BUILD_VERSION := ${TAG}
+VCS_REF := $(strip $(shell git describe --tags --always --dirty))
 
 DOCKER_CLI_EXPERIMENTAL := enabled
 BUILDX_INSTANCE := $(subst /,-,${DOCKER_REPO})
