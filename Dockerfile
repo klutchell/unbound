@@ -6,7 +6,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -qq --no-install-recommends build-essential=12.6 file=1:5.35-4 \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& adduser --system nonroot
 
 WORKDIR /tmp/libevent
 
@@ -15,7 +16,7 @@ ARG LIBEVENT_SOURCE=https://github.com/libevent/libevent/releases/download/
 
 RUN curl -L "${LIBEVENT_SOURCE}${LIBEVENT_VERSION}.tar.gz" -o /tmp/libevent.tar.gz \
 	&& tar xzf /tmp/libevent.tar.gz --strip 1 \
-	&& ./configure --prefix=/opt/libevent --disable-static \
+	&& ./configure --prefix=/usr/local --disable-static \
 	&& make \
 	&& make install
 
@@ -26,7 +27,7 @@ ARG LIBEXPAT_SOURCE=https://github.com/libexpat/libexpat/releases/download/
 
 RUN curl -L "${LIBEXPAT_SOURCE}${LIBEXPAT_VERSION}.tar.gz" -o /tmp/libexpat.tar.gz \
 	&& tar xzf /tmp/libexpat.tar.gz --strip 1 \
-	&& ./configure --prefix=/opt/libexpat --disable-static \
+	&& ./configure --prefix=/usr/local --disable-static \
 	&& make \
 	&& make install
 
@@ -39,7 +40,7 @@ ARG SSL_SHA1=056057782325134b76d1931c48f2c7e6595d7ef4
 RUN curl -L "${SSL_SOURCE}${SSL_VERSION}.tar.gz" -o /tmp/ssl.tar.gz \
 	&& echo "${SSL_SHA1}  /tmp/ssl.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ssl.tar.gz --strip 1 \
-	&& ./config --prefix=/opt/ssl --openssldir=/opt/ssl no-weak-ssl-ciphers no-ssl3 no-heartbeats -fstack-protector-strong \
+	&& ./config --prefix=/usr/local --openssldir=/usr/local no-weak-ssl-ciphers no-ssl3 no-heartbeats -fstack-protector-strong \
 	&& make \
 	&& make install_sw
 
@@ -52,9 +53,9 @@ ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
 RUN curl -L "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/ssl --enable-event-api --disable-flto --disable-dependency-tracking --prefix=/opt/unbound --with-run-dir=/root --with-username= --with-chroot-dir= \
+	&& ./configure --with-pthreads --with-libevent=/usr/local --with-libexpat=/usr/local --with-ssl=/usr/local --prefix=/usr/local --with-run-dir=/home/nonroot --with-username= --with-chroot-dir= --enable-fully-static --enable-event-api --disable-flto --disable-dependency-tracking \
 	&& make install \
-	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf
+	&& mv /usr/local/etc/unbound/unbound.conf /usr/local/etc/unbound/example.conf
 
 WORKDIR /tmp/ldns
 
@@ -65,15 +66,13 @@ ARG LDNS_SHA1=d075a08972c0f573101fb4a6250471daaa53cb3e
 RUN curl -L "${LDNS_SOURCE}${LDNS_VERSION}.tar.gz" -o /tmp/ldns.tar.gz \
 	&& echo "${LDNS_SHA1}  /tmp/ldns.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ldns.tar.gz --strip 1 \
-	&& ./configure --prefix=/opt/ldns --disable-static --with-drill --with-ssl=/opt/ssl \
+	&& ./configure --prefix=/usr/local --disable-static --with-drill --with-ssl=/usr/local \
 	&& make \
 	&& make install
 
-RUN rm -rf /opt/*/include /opt/*/share /opt/*/man
-
 # ----------------------------------------------------------------------------
 
-FROM debian:buster
+FROM scratch
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -90,13 +89,18 @@ LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.version="${BUILD_VERSION}"
 LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
-COPY --from=build /opt /opt
+COPY --from=build /usr/local/bin /usr/local/bin
+COPY --from=build /usr/local/etc /usr/local/etc
+COPY --from=build /usr/local/lib /usr/local/lib
+COPY --from=build /usr/local/sbin /usr/local/sbin
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
+COPY a-records.conf unbound.conf /usr/local/etc/unbound/
 
-WORKDIR /opt/unbound
+USER nonroot
 
-ENV PATH /opt/unbound/sbin:/opt/ldns/bin:${PATH}
+WORKDIR /usr/local
 
 ENTRYPOINT ["unbound", "-d"]
 
