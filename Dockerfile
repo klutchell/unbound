@@ -78,16 +78,18 @@ ARG BUILD_DATE
 ARG BUILD_VERSION
 ARG VCS_REF
 
-LABEL maintainer="Kyle Harding <https://klutchell.dev>"
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.name="klutchell/unbound"
-LABEL org.label-schema.description="Unbound is a validating, recursive, caching DNS resolver"
-LABEL org.label-schema.url="https://unbound.net/"
-LABEL org.label-schema.vcs-url="https://github.com/klutchell/unbound"
-LABEL org.label-schema.docker.cmd="docker run --rm klutchell/unbound -h"
-LABEL org.label-schema.build-date="${BUILD_DATE}"
-LABEL org.label-schema.version="${BUILD_VERSION}"
-LABEL org.label-schema.vcs-ref="${VCS_REF}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.authors="Kyle Harding <https://klutchell.dev>"
+LABEL org.opencontainers.image.url="https://klutchell.dev/unbound"
+LABEL org.opencontainers.image.documentation="https://klutchell.dev/unbound"
+LABEL org.opencontainers.image.source="https://klutchell.dev/unbound"
+LABEL org.opencontainers.image.version="${BUILD_VERSION}"
+LABEL org.opencontainers.image.revision="${VCS_REF}"
+# LABEL org.opencontainers.image.vendor=""
+# LABEL org.opencontainers.image.licenses=""
+# LABEL org.opencontainers.image.ref.name=""
+LABEL org.opencontainers.image.title="klutchell/unbound"
+LABEL org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver"
 
 COPY --from=build /usr/local/bin /usr/local/bin
 COPY --from=build /usr/local/etc /usr/local/etc
