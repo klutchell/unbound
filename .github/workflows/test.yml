@@ -10,13 +10,13 @@ jobs:
     steps:
       - name: install docker
         run: curl -fsSL get.docker.com | sh
-        
+
       - name: checkout source
         uses: actions/checkout@v1
 
       - name: build on the host architecture
         run: make build
-      
+
       - name: test on the host architecture
         run: make test
 
