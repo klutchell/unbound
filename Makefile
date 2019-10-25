@@ -13,7 +13,7 @@ COMPOSE_PROJECT_NAME := $(subst /,-,$(DOCKER_REPO))
 COMPOSE_FILE := test/docker-compose.yml
 COMPOSE_OPTIONS := -e COMPOSE_PROJECT_NAME -e COMPOSE_FILE
 
-BUILD_CMD = docker buildx build $(BUILD_ARGS) $(BUILD_TAGS) --pull --progress plain
+BUILD_CMD = docker buildx build $(BUILD_ARGS) $(BUILD_TAGS) --pull
 BUILD_ARGS = --build-arg BUILD_VERSION --build-arg BUILD_DATE --build-arg VCS_REF
 BUILD_TAGS = --tag $(DOCKER_REPO):$(TAG) --tag $(DOCKER_REPO):latest
 
