@@ -1,6 +1,7 @@
 
 DOCKER_REPO := klutchell/unbound
 TAG := 1.9.4
+ALL_PLATFORMS := linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/arm/v7,linux/arm/v6
 
 BUILD_DATE := $(strip $(shell docker run --rm busybox date -u +'%Y-%m-%dT%H:%M:%SZ'))
 BUILD_VERSION := $(TAG)
@@ -26,7 +27,7 @@ build: bootstrap ## build on the host OS architecture
 	$(BUILD_CMD) . --load $(EXTRA_OPTS)
 
 all: bootstrap ## cross-build multiarch manifest
-	$(BUILD_CMD) . $(EXTRA_OPTS) --platform=linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/arm/v7,linux/arm/v6
+	$(BUILD_CMD) . $(EXTRA_OPTS) --platform $(ALL_PLATFORMS)
 
 inspect: ## inspect manifest contents
 	docker buildx imagetools inspect $(DOCKER_REPO):$(TAG)
@@ -49,4 +50,3 @@ binfmt:
 
 help: ## display available commands
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN (FS = ":.*?## "); (printf "\033[36m%-30s\033[0m %s\n", $$1, $$2)'
-
