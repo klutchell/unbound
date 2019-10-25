@@ -3,7 +3,7 @@ services:
     unbound:
         image: klutchell/unbound
     drill:
-        image: alpine
-        command: sh -c 'apk add -q --no-cache drill && drill -p 5053 nlnetlabs.nl @unbound'
+        image: alpine:3.10
+        command: sh -c 'apk add -q --no-cache drill=1.7.0-r2 && drill -p 5053 nlnetlabs.nl @unbound | tee /dev/stderr | grep -q NOERROR'
         links:
             - unbound
