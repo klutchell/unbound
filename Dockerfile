@@ -67,11 +67,12 @@ RUN curl -L "${LDNS_SOURCE}${LDNS_VERSION}.tar.gz" -o /tmp/ldns.tar.gz \
 	&& make \
 	&& make install
 
+WORKDIR /var/run/unbound
+
 RUN mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf \
 	&& rm -rf /opt/*/include /opt/*/man /opt/*/share \
 	&& strip /opt/unbound/sbin/unbound \
-	&& strip /opt/ldns/bin/drill \
-	&& mkdir /var/run/unbound
+	&& strip /opt/ldns/bin/drill
 
 RUN ldd /opt/unbound/sbin/unbound
 RUN ldd /opt/ldns/bin/drill
