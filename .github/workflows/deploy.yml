@@ -7,7 +7,7 @@ on:
       - 'releases/**'
 
 jobs:
-  job-01:
+  DOCKER_REPO:
     runs-on: ubuntu-latest
 
     steps:
