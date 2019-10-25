@@ -52,9 +52,7 @@ RUN curl -L "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/unbound.tar.gz 
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
 	&& sed -e 's/@LDFLAGS@/@LDFLAGS@ -all-static/' -i Makefile.in \
 	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/openssl --prefix=/opt/unbound --with-run-dir=/var/run/unbound --with-username= --with-chroot-dir= --enable-fully-static --enable-event-api --disable-flto \
-	&& make install \
-	&& mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf \
-	&& mkdir /var/run/unbound
+	&& make install
 
 WORKDIR /tmp/ldns
 
@@ -69,10 +67,13 @@ RUN curl -L "${LDNS_SOURCE}${LDNS_VERSION}.tar.gz" -o /tmp/ldns.tar.gz \
 	&& make \
 	&& make install
 
-RUN rm -rf /opt/*/include /opt/*/man /opt/*/share
+RUN mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf \
+	&& rm -rf /opt/*/include /opt/*/man /opt/*/share \
+	&& strip /opt/unbound/sbin/unbound \
+	&& strip /opt/ldns/bin/drill \
+	&& mkdir /var/run/unbound
 
 RUN ldd /opt/unbound/sbin/unbound
-RUN ldd /opt/unbound/sbin/unbound-anchor
 RUN ldd /opt/ldns/bin/drill
 
 # ----------------------------------------------------------------------------
@@ -107,7 +108,7 @@ COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
 USER nonroot
 
-ENV LD_LIBRARY_PATH=/opt/openssl/lib
+ENV LD_LIBRARY_PATH /opt/openssl/lib
 
 ENV PATH /opt/unbound/sbin:/opt/ldns/bin:${PATH}
 
