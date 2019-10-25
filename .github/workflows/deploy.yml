@@ -17,10 +17,10 @@ jobs:
       - name: checkout source
         uses: actions/checkout@v1
 
-      - name: build on the host OS architecture
+      - name: build on the host architecture
         run: make build DOCKER_REPO=${{ secrets.DOCKER_REPO }}
       
-      - name: test on the host OS architecture
+      - name: test on the host architecture
         run: make test DOCKER_REPO=${{ secrets.DOCKER_REPO }}
 
       - name: docker login
