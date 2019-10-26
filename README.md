@@ -44,16 +44,13 @@ make build test
 NLnet Labs documentation: <https://nlnetlabs.nl/documentation/unbound/>
 
 ```bash
-# print version info
-docker run --rm klutchell/unbound -v
-
 # print general usage
 docker run --rm klutchell/unbound -h
 
-# run dns server on host port 53
+# run a recursive dns server on host port 53
 docker run -p 53:5053/tcp -p 53:5053/udp klutchell/unbound
 
-# mount external configuration directory
+# mount a local configuration directory
 docker run -v /path/to/config:/opt/unbound/etc/unbound klutchell/unbound
 
 # generate a root trust anchor for DNSSEC validation
