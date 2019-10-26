@@ -104,8 +104,6 @@ COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
 USER nonroot
 
-ENV LD_LIBRARY_PATH /opt/openssl/lib
-
 ENV PATH /opt/unbound/sbin:/opt/ldns/bin:${PATH}
 
 ENTRYPOINT ["unbound", "-d"]
