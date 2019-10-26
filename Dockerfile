@@ -13,7 +13,7 @@ ARG LIBEVENT_SOURCE=https://github.com/libevent/libevent/releases/download/
 RUN curl -fsSL --retry 3 "${LIBEVENT_SOURCE}${LIBEVENT_VERSION}.tar.gz" -o /tmp/libevent.tar.gz \
 	&& tar xzf /tmp/libevent.tar.gz --strip 1 \
 	&& ./configure --prefix=/opt/libevent \
-	&& make \
+	&& make -j 4 \
 	&& make install
 
 WORKDIR /tmp/libexpat
@@ -24,7 +24,7 @@ ARG LIBEXPAT_SOURCE=https://github.com/libexpat/libexpat/releases/download/
 RUN curl -fsSL --retry 3 "${LIBEXPAT_SOURCE}${LIBEXPAT_VERSION}.tar.gz" -o /tmp/libexpat.tar.gz \
 	&& tar xzf /tmp/libexpat.tar.gz --strip 1 \
 	&& ./configure --prefix=/opt/libexpat \
-	&& make \
+	&& make -j 4 \
 	&& make install
 
 WORKDIR /tmp/openssl
@@ -37,7 +37,7 @@ RUN curl -fsSL --retry 3 "${OPENSSL_SOURCE}${OPENSSL_VERSION}.tar.gz" -o /tmp/op
 	&& echo "${OPENSSL_SHA1}  /tmp/openssl.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/openssl.tar.gz --strip 1 \
 	&& ./config --prefix=/opt/openssl --openssldir=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-heartbeats -fstack-protector-strong \
-	&& make \
+	&& make -j 4 \
 	&& make install_sw
 
 WORKDIR /tmp/unbound
@@ -52,7 +52,7 @@ RUN curl -fsSL --retry 3 "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/un
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
 	&& sed -e 's/@LDFLAGS@/@LDFLAGS@ -all-static/' -i Makefile.in \
 	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/openssl --prefix=/opt/unbound --with-run-dir=/var/run/unbound --with-username= --with-chroot-dir= --enable-fully-static --enable-event-api --disable-flto \
-	&& make install
+	&& make -j 4 install
 
 WORKDIR /tmp/ldns
 
@@ -64,7 +64,7 @@ RUN curl -fsSL --retry 3 "${LDNS_SOURCE}${LDNS_VERSION}.tar.gz" -o /tmp/ldns.tar
 	&& echo "${LDNS_SHA1}  /tmp/ldns.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/ldns.tar.gz --strip 1 \
 	&& ./configure --prefix=/opt/ldns --with-drill --with-ssl=/opt/openssl \
-	&& make \
+	&& make -j 4 \
 	&& make install
 
 WORKDIR /var/run/unbound
