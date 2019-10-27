@@ -26,7 +26,7 @@ build: bootstrap ## build on the host architecture
 		--build-arg VCS_REF \
 		--tag $(DOCKER_REPO):$(TAG) \
 		--tag $(DOCKER_REPO):latest \
-		--progress plain --pull --load \
+		--progress plain --pull --output=type=docker \
 		$(EXTRA_OPTS)
 
 test: binfmt ## test on the host architecture
