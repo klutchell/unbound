@@ -3,7 +3,7 @@ FROM alpine:3.10 as build
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 RUN apk add --no-cache build-base=0.5-r1 ca-certificates=20190108-r0 curl=7.66.0-r0 linux-headers=4.19.36-r0 perl=5.28.2-r1 \
-	&& adduser -S nonroot
+	&& addgroup -S nonroot && adduser -S nonroot -G nonroot
 
 WORKDIR /tmp/libevent
 
@@ -46,12 +46,10 @@ ARG UNBOUND_VERSION=unbound-1.9.4
 ARG UNBOUND_SOURCE=https://www.nlnetlabs.nl/downloads/unbound/
 ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
 
-# https://github.com/NLnetLabs/unbound/issues/91
 RUN curl -fsSL --retry 3 "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o /tmp/unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  /tmp/unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf /tmp/unbound.tar.gz --strip 1 \
-	&& sed -e 's/@LDFLAGS@/@LDFLAGS@ -all-static/' -i Makefile.in \
-	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/openssl --prefix=/opt/unbound --with-run-dir=/var/run/unbound --with-username= --with-chroot-dir= --enable-fully-static --enable-event-api --disable-flto \
+	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/openssl --prefix=/opt/unbound --with-run-dir=/var/run/unbound --with-username= --with-chroot-dir= --enable-fully-static --disable-shared --enable-event-api --disable-flto \
 	&& make -j 4 install
 
 WORKDIR /tmp/ldns
