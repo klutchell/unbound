@@ -8,6 +8,7 @@ VCS_REF := $(strip $(shell git describe --tags --always --dirty))
 
 DOCKER_CLI_EXPERIMENTAL := enabled
 BUILDX_INSTANCE_NAME := $(subst /,-,$(DOCKER_REPO))
+EXTRA_OPTS := --load --progress plain --pull
 
 COMPOSE_PROJECT_NAME := $(subst /,-,$(DOCKER_REPO))
 COMPOSE_FILE := test/docker-compose.yml
@@ -26,7 +27,6 @@ build: bootstrap ## build on the host architecture
 		--build-arg VCS_REF \
 		--tag $(DOCKER_REPO):$(TAG) \
 		--tag $(DOCKER_REPO):latest \
-		--progress plain --pull --output=type=docker \
 		$(EXTRA_OPTS)
 
 test: binfmt ## test on the host architecture
