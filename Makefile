@@ -30,6 +30,7 @@ build: bootstrap ## build on the host architecture
 		$(EXTRA_OPTS)
 
 test: binfmt ## test on the host architecture
+	docker run --rm --entrypoint unbound-anchor $(DOCKER_REPO) -v | grep "anchor is ok"
 	docker-compose up --force-recreate --abort-on-container-exit
 	docker-compose down
 
