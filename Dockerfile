@@ -71,8 +71,7 @@ RUN mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.co
 	&& rm -rf /tmp/* /opt/*/include /opt/*/man /opt/*/share \
 	&& strip /opt/unbound/sbin/unbound \
 	&& strip /opt/ldns/bin/drill \
-	&& addgroup -S -g 1001 nonroot \
-	&& adduser -S -u 1001 nonroot -G nonroot
+	&& adduser -S nonroot
 
 # ----------------------------------------------------------------------------
 
@@ -98,11 +97,11 @@ COPY --from=build /lib/ld-musl-*.so.1 /lib/
 
 COPY --from=build /opt/ldns /opt/ldns
 COPY --from=build /opt/unbound /opt/unbound
-COPY --from=build --chown=1001:1001 /var/run/unbound /var/run/unbound
+COPY --from=build --chown=nonroot:0 /var/run/unbound /var/run/unbound
 
 COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
-USER 1001
+USER nonroot
 
 ENV PATH /opt/unbound/sbin:/opt/ldns/bin:${PATH}
 
