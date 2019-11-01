@@ -48,6 +48,7 @@ ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
 RUN curl -fsSL --retry 3 "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  unbound.tar.gz" | sha1sum -c - \
 	&& tar xzf unbound.tar.gz --strip 1 \
+	&& sed -e 's/@LDFLAGS@/@LDFLAGS@ -all-static/' -i Makefile.in \
 	&& ./configure --with-pthreads --with-libevent=/opt/libevent --with-libexpat=/opt/libexpat --with-ssl=/opt/openssl --prefix=/opt/unbound --with-run-dir=/var/run/unbound --with-username= --with-chroot-dir= --enable-fully-static --disable-shared --enable-event-api --disable-flto \
 	&& make -j 4 install
 
