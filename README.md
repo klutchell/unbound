@@ -65,6 +65,13 @@ docker run \
 docker exec unbound unbound-anchor -v
 ```
 
+Please note the following if you are using a custom configuration file:
+
+- `chroot:` is not required (and will not work) as the container is running as nonroot
+- `username:` is not required as the container is running as nonroot
+- `auto-trust-anchor-file:` is not required as the default value is `/var/run/unbound/root.key`
+- any additional paths should be provided as absolute or relative to `/var/run/unbound`
+
 ## Author
 
 Kyle Harding: <https://klutchell.dev>
