@@ -90,13 +90,13 @@ LABEL org.opencontainers.image.revision="${VCS_REF}"
 LABEL org.opencontainers.image.title="klutchell/unbound"
 LABEL org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver"
 
-COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /lib/ld-musl-*.so.1 /lib/
 
 COPY --from=build /opt/ldns /opt/ldns
 COPY --from=build /opt/unbound /opt/unbound
-COPY --from=build --chown=nobody /var/run/unbound /var/run/unbound
+COPY --from=build --chown=nobody:nogroup /var/run/unbound /var/run/unbound
 
 COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
