@@ -70,8 +70,7 @@ WORKDIR /var/run/unbound
 RUN mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.conf \
 	&& rm -rf /tmp/* /opt/*/include /opt/*/man /opt/*/share \
 	&& strip /opt/unbound/sbin/unbound \
-	&& strip /opt/ldns/bin/drill \
-	&& adduser -S nonroot
+	&& strip /opt/ldns/bin/drill
 
 # ----------------------------------------------------------------------------
 
@@ -91,17 +90,17 @@ LABEL org.opencontainers.image.revision="${VCS_REF}"
 LABEL org.opencontainers.image.title="klutchell/unbound"
 LABEL org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver"
 
-COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /lib/ld-musl-*.so.1 /lib/
 
 COPY --from=build /opt/ldns /opt/ldns
 COPY --from=build /opt/unbound /opt/unbound
-COPY --from=build --chown=nonroot:0 /var/run/unbound /var/run/unbound
+COPY --from=build --chown=nobody:nogroup /var/run/unbound /var/run/unbound
 
 COPY a-records.conf unbound.conf /opt/unbound/etc/unbound/
 
-USER nonroot
+USER nobody
 
 ENV PATH /opt/unbound/sbin:/opt/ldns/bin:${PATH}
 
