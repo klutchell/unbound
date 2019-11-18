@@ -52,7 +52,7 @@ test: binfmt ## run a simple image test with docker-compose
 clean: ## clean dangling images, containers, and build instances
 	-docker-compose down
 	-docker buildx rm $(BUILDX_INSTANCE_NAME)
-	-docker image prune --all --force --filter "label=org.opencontainers.image.title=${DOCKER_REPO}"
+	-docker image prune --all --force --filter "label=org.opencontainers.image.title=$(DOCKER_REPO)"
 
 binfmt:
 	docker run --rm --privileged aptman/qus -s -- -r
