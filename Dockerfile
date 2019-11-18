@@ -76,20 +76,6 @@ RUN mv /opt/unbound/etc/unbound/unbound.conf /opt/unbound/etc/unbound/example.co
 
 FROM scratch
 
-ARG BUILD_DATE
-ARG BUILD_VERSION
-ARG VCS_REF
-
-LABEL org.opencontainers.image.created="${BUILD_DATE}"
-LABEL org.opencontainers.image.authors="Kyle Harding <https://klutchell.dev>"
-LABEL org.opencontainers.image.url="https://klutchell.dev/unbound"
-LABEL org.opencontainers.image.documentation="https://klutchell.dev/unbound"
-LABEL org.opencontainers.image.source="https://klutchell.dev/unbound"
-LABEL org.opencontainers.image.version="${BUILD_VERSION}"
-LABEL org.opencontainers.image.revision="${VCS_REF}"
-LABEL org.opencontainers.image.title="klutchell/unbound"
-LABEL org.opencontainers.image.description="Unbound is a validating, recursive, caching DNS resolver"
-
 COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /lib/ld-musl-*.so.1 /lib/

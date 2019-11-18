@@ -35,11 +35,11 @@ make help
 # clean dangling images, containers, and build instances
 make clean
 
-# build and test on the host architecture
-make build test
+# build and test a local image
+make
 
-# cross-build for other architectures
-make build test EXTRA_OPTS=--platform=linux/arm/v7
+# cross-build on supported platforms with buildx
+make buildx EXTRA_OPTS="--load --platform=linux/arm/v7"
 ```
 
 ## Usage
