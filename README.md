@@ -5,15 +5,6 @@
 
 [Unbound](https://unbound.net/) is a validating, recursive, and caching DNS resolver.
 
-## Tags
-
-These tags including rolling updates, so occasionally the associated image may change to include fixes.
-
-- `1.9.5`, `latest`
-- `1.9.4`
-- `1.9.3`
-- `1.9.0`
-
 ## Architectures
 
 The architectures supported by this image are:
@@ -54,11 +45,6 @@ docker run --rm klutchell/unbound -h
 # run a recursive dns server on host port 53
 docker run -p 53:5053/tcp -p 53:5053/udp klutchell/unbound
 
-# copy the example configuration files from the image to a host directory
-docker run --name unbound -d --rm klutchell/unbound
-docker cp unbound:/opt/unbound/etc/unbound /path/to/config
-docker stop unbound
-
 # run unbound server with configuration mounted from a host directory
 docker run --name unbound -p 53:5053/udp -v /path/to/config:/opt/unbound/etc/unbound klutchell/unbound
 
@@ -69,10 +55,9 @@ docker exec unbound unbound-anchor -v
 
 Please note the following if you are using a custom configuration file:
 
-- `chroot:` is not required (and will not work) as the container is running as nonroot
-- `username:` is not required as the container is running as nonroot
-- `auto-trust-anchor-file:` is not required as the default value is `/var/run/unbound/root.key`
-- any additional paths should be provided as absolute or relative to `/var/run/unbound`
+- `chroot` and `username` are not supported as the service is already running as `nobody:nogroup`
+- `auto-trust-anchor-file` should be omitted or set to `root.key`
+- any additional paths should be relative to `/var/run/unbound`
 
 ## Author
 
