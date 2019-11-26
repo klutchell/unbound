@@ -9,7 +9,8 @@
 
 These tags including rolling updates, so occasionally the associated image may change to include fixes.
 
-- `1.9.4`, `latest`
+- `1.9.5`, `latest`
+- `1.9.4`
 - `1.9.3`
 - `1.9.0`
 

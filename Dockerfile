@@ -41,9 +41,9 @@ RUN curl -fsSL --retry 3 "${OPENSSL_SOURCE}${OPENSSL_VERSION}.tar.gz" -o openssl
 
 WORKDIR /tmp/unbound
 
-ARG UNBOUND_VERSION=unbound-1.9.4
+ARG UNBOUND_VERSION=unbound-1.9.5
 ARG UNBOUND_SOURCE=https://www.nlnetlabs.nl/downloads/unbound/
-ARG UNBOUND_SHA1=364724dc2fe73cb7b45feeabdbfdff02271c5df7
+ARG UNBOUND_SHA1=e5a417fe46e5f2911b91e5ec6bbedc2ed14d9d0b
 
 RUN curl -fsSL --retry 3 "${UNBOUND_SOURCE}${UNBOUND_VERSION}.tar.gz" -o unbound.tar.gz \
 	&& echo "${UNBOUND_SHA1}  unbound.tar.gz" | sha1sum -c - \
