@@ -1,6 +1,6 @@
 
 DOCKER_REPO := klutchell/unbound
-TAG := 1.9.5
+TAG := 1.9.6
 AUTHORS := Kyle Harding <https://klutchell.dev>
 SOURCE_URL := https://github.com/$(DOCKER_REPO)
 DESCRIPTION := Unbound is a validating, recursive, caching DNS resolver
